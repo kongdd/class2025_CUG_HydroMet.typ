@@ -1,35 +1,40 @@
 #import "@preview/codly:1.0.0": *
 
 
+#let beamer_block(value) =  {
+  block(
+    fill: luma(240), 
+    inset: 0.6em,
+    stroke: (left: 0.25em))[#value]
+}
+
 #let ref_zh(it) = {
   let el = it.element
   let eq = math.equation
-  let fig = image
-  let tab = table
   
   if el != none {
     if el.func() == eq {
       link(el.location(), numbering(
-        "式 (1)", 
+        "(1)", 
         ..counter(eq).at(el.location())
       ))
-    } else if el.func() == fig {
+    } else if el.func() == figure {
       link(el.location(), numbering(
-        "图 1", 
-        ..counter(fig).at(el.location())
+        "1.1", 
+        ..counter(figure).at(el.location())
       ))
-    } else if el.func() == tab {
-      link(el.location(), numbering(
-        "表 1", 
-        ..counter(tab).at(el.location())
-      ))
-    } else {
-      it
     }
+    // else if el.func() == table {
+    //   link(el.location(), numbering(
+    //     "表 1", 
+    //     ..counter(tab).at(el.location())
+    //   ))
+    // } 
+    // el.func()
+  } else {
+    it
   }
 }
-
-
 
 #let btext(x, color: red, bg: rgb("fffd11a1")) = {
   highlight(fill: bg)[
@@ -37,18 +42,29 @@
   ]
 }
 
+
 #let template(doc, size: 14pt, footer: "", header: "") = {
   set text(size: size) // font: ("Microsoft YaHei")
   set heading(numbering: "1.1")
-  
+  set par(justify: true)
+  set math.equation(numbering: "(1)")
+  set list(indent: 1em)
+
   // 代码
   show: codly-init.with()
   codly(stroke: 1pt + blue)
   codly(display-icon: true)
-
-  // 数学公式
-  set math.equation(numbering: "(1)")
-  show ref: ref_zh  // 引用公式
+  
+  set figure(
+    numbering: it => strong[#numbering("1.1", it)], 
+    supplement: text("图", weight:"bold"))
+  set figure.caption(separator: ". ")
+  
+  show ref: ref_zh  // 引用
+  
+  show figure.where(
+    kind: table
+  ): set figure.caption(position: top)
 
   // 链接
   show link: underline

@@ -1,6 +1,8 @@
 #import "config.typ": *
 #import "@preview/showybox:2.0.2": showybox
-
+#import "@preview/physica:0.9.3": *
+#import "@preview/cuti:0.2.1": show-cn-fakebold
+#show: show-cn-fakebold
 
 #show: (doc) => template(doc, 
   footer: "CUG水文气象学2024",
@@ -12,10 +14,15 @@
 
 === 三级标题
 
-#block(
-  [*测试英文字体* \
-  #lorem(50)]
-)
+
+*测试英文字体* \
+#lorem(50)
+
+// #set par(justify: true)[
+//   #lorem(50)
+// ]
+
+#lorem(50)
 
 - 列表
   - 二级列表
@@ -23,7 +30,8 @@
 
 == 使用体验
 
-=== 缺点
+
+== 缺点
 
 - 加粗、倾斜，不太方便
 - 中文加粗无法生效。
@@ -48,7 +56,6 @@
 
 #highlight[#text("君不见，高堂明镜悲白发，朝如青丝暮成雪。", weight: "extrabold", fill: red)]
 
-// // 接下来是如何插入图片。
 
 = 图片
 
@@ -56,14 +63,6 @@
   image("images/三峡水库.png", width: 50%),
   caption: [This is the caption for the image.]
 ) <三峡>
-
-引用图片。
-
-这里我要引用图片了，@三峡。
-
-= 表格
-
-
 
 = 公式定理
 
@@ -76,9 +75,10 @@ $ sum_(k=1)^n k = (n(n+1)) / 2 $ <eq2>
 
 如何引用公式呢？@eq1、@eq2。
 
+诸神退场，这里我要引用图片了，@三峡。
+
 定理：
 
-#pagebreak()
 
 = 表格
 
@@ -87,8 +87,8 @@ $ sum_(k=1)^n k = (n(n+1)) / 2 $ <eq2>
     columns: 4,
     [t], [1], [2], [3],
     [y], [0.3s], [0.4s], [0.8s],
-  ),
-  caption: figure.caption(position: top, [Caption.]),
+  ), 
+  caption: "Caption."
 )
 
 = 代码
