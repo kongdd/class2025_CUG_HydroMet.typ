@@ -1,5 +1,11 @@
 #import "@preview/codly:1.0.0": *
+#import "@preview/mitex:0.2.4": *
 
+#let format_eq(it) = {
+  show "{": ""
+  show "}": ""
+  it
+}
 
 #let beamer_block(value) =  {
   block(
@@ -47,7 +53,7 @@
 }
 
 
-#let template(doc, size: 14pt, footer: "", header: "") = {
+#let template(doc, size: 13pt, footer: "", header: "") = {
   set text(size: size) // font: ("Microsoft YaHei")
   set heading(numbering: "1.1")
   set par(justify: true)

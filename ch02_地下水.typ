@@ -6,94 +6,47 @@
 
 #show: (doc) => template(doc, 
   footer: "CUG水文气象学2024",
-  header: "第一章. 地下水运动公式推导")
+  header: "第二章 地下水运动公式推导")
 
-= 章节编号
+#show math.equation: format_eq
+#counter(heading).update(1)
 
-== 二级标题
+#let delta(x) = $Delta(#x)$
 
-=== 三级标题
+$
+  delta(y + x) = 1
+$
 
+= 地下水模块
 
-*测试英文字体* \
-#lorem(50)
+== 给水度（specific yield）
 
-// #set par(justify: true)[
-//   #lorem(50)
-// ]
+靠近地下水水位$z_{"wt"}$的土壤层，认为土壤水势达到均衡状态，即：
 
-#lorem(50)
+$ psi + z = psi_("sat") + z_("wt") $
 
-- 列表
-  - 二级列表
-  - 二级列表
+通过积分推导（CoLM，公式12.30~12.34），可以得到，
+#mitext(`
+第i层土壤$layer_i$的产水率$s_{y,i}$（specific yield），$s_{y,i} = \theta_{sat,i} - \theta(\psi_{sat,i} + z_{wt})$。
 
-== 使用体验
+$s_{y,i}$的物理意义为土壤表层（$z=0$）的空气体积百分比。这主要是因为地下水水位的上升，等价于土壤含水量曲线的整体向上平移，即最上层的干旱部分被地下水附近的饱和部分代替。
 
+== 地下水的水位更新
 
-== 缺点
+=== 补给
 
-- 加粗、倾斜，不太方便
-- 中文加粗无法生效。
-- 无block
-- 模型配置不优好，学习门槛较高，教程不详细。碰到问题，gpt无法解决。
+补给只影响地下水水位，不影响土壤含水量。补给的计算公式为：
 
-总结，没有markdown简单、方便。
+$$
+z_{wt} = z_{wt} + \frac{ q_{recharge}  \Delta t}{s_{y}}
+$$
 
-=== 优点
+其中，地下水的水位$z_{wt}$向下为负，地表为0。
 
-- 排版控制比markdown精准。
+`)
 
+=== 排泄
 
-= 特殊标记
-
-给文字上色：#text("Hello, World!", fill: red)
-
-给背景调色：#btext("Hello, World!")。==yellow==这里是正常的。==中文字体也是支持的==，但是中间有特殊符号不行，例如：`==中文符号 ==`。
-
-
-#highlight(fill: rgb("abcdef88"))[#text("君不见，黄河之水天上来，奔流到海不复回。", weight: "extrabold", fill: red)]
-
-#highlight[#text("君不见，高堂明镜悲白发，朝如青丝暮成雪。", weight: "extrabold", fill: red)]
-
-
-= 图片
-
-#figure(
-  image("images/三峡水库.png", width: 50%),
-  caption: [This is the caption for the image.]
-) <三峡>
-
-= 公式定理
-
-$ 
-y &= x + 1  \
-  &= 2x + 1
-$ <eq1>
-
-$ sum_(k=1)^n k = (n(n+1)) / 2 $ <eq2>
-
-如何引用公式呢？@eq1、@eq2。
-
-诸神退场，这里我要引用图片了，@三峡。
-
-定理：
-
-
-= 表格
-
-#figure(
-  table(
-    columns: 4,
-    [t], [1], [2], [3],
-    [y], [0.3s], [0.4s], [0.8s],
-  ), 
-  caption: "Caption."
-)
-
-= 代码
-
-// #set text(size: 11pt, font: ("consolas", "Microsoft Yahei", "SimSun"))
 ```julia
 # sy = 0.02 # 给水度
 function GW_update!(θ::Vector{T}, zwt::T, ∑::T, sy::T=0.2) where {T<:Real}
