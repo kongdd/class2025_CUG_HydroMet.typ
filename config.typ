@@ -1,3 +1,6 @@
+#import "@preview/codly:1.0.0": *
+
+
 #let ref_zh(it) = {
   let el = it.element
   let eq = math.equation
@@ -38,6 +41,11 @@
   set text(size: size) // font: ("Microsoft YaHei")
   set heading(numbering: "1.1")
   
+  // 代码
+  show: codly-init.with()
+  codly(stroke: 1pt + blue)
+  codly(display-icon: true)
+
   // 数学公式
   set math.equation(numbering: "(1)")
   show ref: ref_zh  // 引用公式
@@ -71,15 +79,4 @@
     btext(txt)
   }
   doc
-}
-
-#let foot() = {
-  set page(footer: context [
-    *American Society of Proceedings*
-    #h(1fr)
-    #counter(page).display(
-      "1/1",
-      both: true,
-    )
-  ])
 }
