@@ -8,6 +8,10 @@
     stroke: (left: 0.25em))[#value]
 }
 
+#let set_supplement(it) = {
+  it
+}
+
 #let ref_zh(it) = {
   let el = it.element
   let eq = math.equation

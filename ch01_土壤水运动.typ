@@ -49,12 +49,10 @@ $ <d_theta>
 
 将公式@q_i0 、@q_i1 带入@d_theta，得到：
 
-$
-  (Delta theta_(i)) / (Delta t)  Delta z_i = 
+$ (Delta theta_(i)) / (Delta t)  Delta z_i = 
     -&[calqRight(i-1, i, n, n+1)] + \
     &[calqRight(i, i+1, n, n+1)]
-    - e_i
-$ 
+    - e_i $ 
 
 合并同类项，整理成$a Delta  theta_(i-1) + b Delta  theta_(i) + c Delta  theta_(i+1) = r$的形式：
 
@@ -69,12 +67,62 @@ $
 因此，
 $
   a &= - pdv(q_(i-1), theta_(i-1)) \
-  b &= pdv(q_(i), theta_(i)) - pdv(q_(i-1), theta_(i)) - Delta z_i  / (Delta t) \
+  b &= pdv(q_(i), theta_(i)) - pdv(q_(i-1), theta_(i)) - (Delta z_i)  / (Delta t) \
   c &= pdv(q_(i), theta_(i+1)) \
   r &= q_(i-1)^(n) - q_(i)^(n) + e_i
 $
 
 之后，可利用带状矩阵的方法进行求解。
+
+// 两类边界条件。
+
+- #btext("i=1时")：
+
+$ (Delta theta_(i)) / (Delta t)  Delta z_i = 
+    -q_(i-1)^(n+1) + 
+    &[calqRight(i, i+1, n, n+1)]
+    - e_i $ 
+$
+  [pdv(q_i, theta_i) - (Delta z_i) / (Delta t)] Delta theta_(i) + 
+  pdv(q_i, theta_(i+1)) Delta theta_(i+1) = q_(i-1)^(n+1) + e_i
+$
+
+$
+  a &= 0, \
+  b &= pdv(q_i, theta_i) - (Delta z_i) / (Delta t) \
+  c &= pdv(q_i, theta_(i+1)) \
+  r &= q_(i-1)^(n+1) + e_i
+$
+#beamer_block(
+  [另外一种理解方式：$q_0$是初始边界条件，不随$theta_0$和$theta_1$变化而变化。]
+)
+
+- #btext("i=N时")：
+
+*若底部自由排水*，$q_i^(n+1) = -K_i^(n+1) = -K_I^(n) + pdv(K_i, theta_i) Delta theta_i $，$pdv(q_i^(n+1), theta_i) = -pdv(K_i, theta_i)$、$pdv(q_i^(n+1), theta_(i+1)) = 0$，可得，
+
+$
+  a &= - pdv(q_(i-1), theta_(i-1)) \
+  b &= pdv(q_(i), theta_(i)) - pdv(q_(i-1), theta_(i)) - (Delta z_i)  / (Delta t)  = -pdv(K_i, theta_i) - pdv(q_(i-1), theta_(i)) - (Delta z_i)  / (Delta t)\
+  c &= 0 \
+  r &= q_(i-1)^(n) - q_(i)^(n) + e_i
+$
+
+*若底部零排水*，$q_i^(n+1) = C = 0$
+
+$ (Delta theta_(i)) / (Delta t)  Delta z_i = 
+    -[calqRight(i-1, i, n, n+1)] + 
+    q_i^(n+1) - e_i $
+
+$ -pdv(q_(i-1), theta_(i-1)) Delta theta_(i-1) 
+  -[(Delta z_i) / (Delta t) + pdv(q_(i-1), theta_i) ]Delta theta_i = q_(i-1)^n - q_i^n + e_i $
+
+$
+  a &= -pdv(q_(i-1), theta_(i-1)), \
+  b &= -[(Delta z_i) / (Delta t) + pdv(q_(i-1), theta_i)], \
+  c &= 0, \
+  r &= q_(i-1)^n - q_i^n + e_i
+$
 
 
 // #pagebreak()
@@ -111,6 +159,8 @@ $ pdv(q_(i), theta_(i+1)) =
     - pdv(K_(i+1/2), theta_(i+1)) [(psi_(i+1) + z_(i+1) - psi_(i) - z_(i)) / (z_(i+1) - z_(i))] $ <dq4>
 
 
+
+
 Zeng et al. (2009)对式 @q 采用均衡水势进行了修改（式@q_psi_e），仅$pdv(q, theta)$偏微分部分需要更新，其他计算过程与CLM5完全一致，式@dq1 \~ @dq4 。
 
 $ q = -K pdv((psi - psi_E), z) $ <q_psi_e>
@@ -133,7 +183,7 @@ for i in 2:N-1
   dqodθ1[i] = -(-K₊ₕ[i] * dψdθ[i] + dψ * dKdθ[i]) / dz
   dqodθ2[i] = -(K₊ₕ[i] * dψdθ[i+1] + dψ * dKdθ[i]) / dz
 
-  rmx[i] = qin[i] - qout[i] - qflx_rootsoi_col[i]
+  rmx[i] = qin[i] - qout[i] - e[i]
   amx[i] = -dqidθ0[i]
   bmx[i] = dzmm[i] / dtime - dqidθ1[i] + dqodθ1[i]
   cmx[i] = dqodθ2[i]
