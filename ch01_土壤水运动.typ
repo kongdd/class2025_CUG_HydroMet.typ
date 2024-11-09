@@ -10,12 +10,18 @@
   header: "第一章 土壤水运动")
 
 
-= 数值解求解
+= 土壤水运动求解
+
+#figure(
+  image("images/Bonan_Soil_SM.png", width: 55%),
+  caption: [土壤分层与土壤水运动示意图。]
+) <fig_soil>
 
 == 构造三角矩阵
 
+在微积分中，若$z = f(x, y)$，则$ d z = pdv(z, x)d y + pdv(z, y) d x$。若$ q_(i-1) = f(theta_(i-1), theta_i)$，根据积分法则可以得到：
 
-在微积分中，若$z = f(x, y)$，则$ d z = pdv(z, x)d y + pdv(z, y) d x$。若$ q_(i)^(n+1) = f(theta_(i-1), theta_i)$，根据积分法则可以得到：
+$ d q_(i-1) = pdv(q_(i-1), theta_(i-1)) d theta_(i-1) +  pdv(q_(i-1), theta_(i)) d theta_(i) $
 
 // q = $#(q)_#iq$
 #let dqdw(q, w) = pdv(q, w) + $Delta$ + w
@@ -70,11 +76,6 @@ $
 
 之后，可利用带状矩阵的方法进行求解。
 
-
-#figure(
-  image("images/Bonan_Soil_SM.png", width: 55%),
-  caption: [土壤分层与土壤水运动示意图。]
-) <fig_soil>
 
 // #pagebreak()
 
