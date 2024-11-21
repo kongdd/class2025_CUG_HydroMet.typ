@@ -56,6 +56,37 @@
   ]
 }
 
+#let set_figure(body) = {
+  set figure(numbering: it => strong[#numbering("1.1", it)])
+  set figure.caption(separator: ". ")
+  // set figure(numbering: it => strong[#numbering("1.1", it)])
+  set figure(numbering: num => numbering("1.1", counter(heading).get().first(), num))
+  // set figure(numbering: num => numbering("1.1", counter(heading).get().first(), num))
+  
+  show figure.where(kind: image): set figure(supplement:  text("图", weight:"bold"))
+  show figure.where(kind: table): set figure(supplement:  text("表", weight:"bold"))
+  show figure.where(kind: table): set figure.caption(position: top)
+  body
+}
+
+// See the strokes section for details on this!
+#let frame(stroke) = (x, y) => (
+  left: 0pt, right: 0pt,
+  // left: if x > 0 { 0pt } else { stroke },
+  // right: stroke,
+  top: if y < 2 { stroke } else { 0pt },
+  bottom: stroke,
+)
+
+#let set_table(it) = {
+  show table.cell.where(y: 0): strong
+  set table(
+    // fill: (rgb("EAF2F5"), none),
+    stroke: frame(rgb("21222C")),
+    align: (x, y) => ( if x > 0 { center } else { left } )
+  )
+  it
+}
 
 #let template(doc, size: 13pt, footer: "", header: "") = {
   set text(size: size) // font: ("Microsoft YaHei")
@@ -68,11 +99,6 @@
   show: codly-init.with()
   codly(stroke: 1pt + blue)
   codly(display-icon: true)
-  
-  set figure(
-    numbering: it => strong[#numbering("1.1", it)], 
-    supplement: text("图", weight:"bold"))
-  set figure.caption(separator: ". ")
   
   show ref: ref_zh  // 引用
 
@@ -87,14 +113,10 @@
   set math.equation(numbering: num =>
     numbering("(1.1)", counter(heading).get().first(), num)
   )
-  set figure(numbering: num =>
-    numbering("1.1", counter(heading).get().first(), num)
-  )
   
-  show figure.where(
-    kind: table
-  ): set figure.caption(position: top)
-
+  show: set_figure
+  show: set_table
+  
   // 链接
   show link: underline
   show link: set text(fill: rgb(0, 0, 255))
