@@ -1,5 +1,6 @@
 #import "@preview/codly:1.0.0": *
 #import "@preview/mitex:0.2.4": *
+#import "@preview/showybox:2.0.3": showybox
 
 #let format_eq(it) = {
   show "{": ""
@@ -18,21 +19,24 @@
   it
 }
 
+#let num_include_chapter(num) = {
+  numbering("1.1", counter(heading).get().first(), num)
+}
+
 #let ref_zh(it) = {
   let el = it.element
   let eq = math.equation
   
   if el != none {
     if el.func() == eq {
-      link(el.location(), numbering(
-        "(1)", 
-        ..counter(eq).at(el.location())
-      ))
+      link(el.location(), 
+        // numbering("(1)", ..counter(eq).at(el.location()))
+        numbering("1.1", counter(heading).get().first(), ..counter(eq).at(el.location()))
+      )
     } else if el.func() == figure {
-      link(el.location(), numbering(
-        "1.1", 
-        ..counter(figure).at(el.location())
-      ))
+      link(el.location(), 
+        numbering("1.1", counter(heading).get().first(), ..counter(figure).at(el.location()))
+      )
     }
     // else if el.func() == table {
     //   link(el.location(), numbering(
@@ -57,7 +61,7 @@
   set text(size: size) // font: ("Microsoft YaHei")
   set heading(numbering: "1.1")
   set par(justify: true)
-  set math.equation(numbering: "(1)")
+  set math.equation(numbering: "(1.1)")
   set list(indent: 1em)
 
   // 代码
@@ -71,6 +75,21 @@
   set figure.caption(separator: ". ")
   
   show ref: ref_zh  // 引用
+
+  // https://github.com/typst/typst/issues/1896
+  show heading.where(level: 1): it => {
+    counter(math.equation).update(0)
+    counter(figure.where(kind: image)).update(0)
+    counter(figure.where(kind: table)).update(0)
+    counter(figure.where(kind: raw)).update(0)
+    it
+  }
+  set math.equation(numbering: num =>
+    numbering("(1.1)", counter(heading).get().first(), num)
+  )
+  set figure(numbering: num =>
+    numbering("1.1", counter(heading).get().first(), num)
+  )
   
   show figure.where(
     kind: table

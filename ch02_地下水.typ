@@ -6,80 +6,136 @@
 
 #show: (doc) => template(doc, 
   footer: "CUG水文气象学2024",
-  header: "第二章 地下水运动公式推导")
+  header: "第二章 地下水运动")
 
 #show math.equation: format_eq
 #counter(heading).update(1)
 
-#let delta(x) = $Delta(#x)$
+#let delta(x) = $Delta #x$
 
-$
-  delta(y + x) = 1
-$
+= 渗流
 
-= 地下水模块
+== 导水系数
 
-== 给水度（specific yield）
+=== 垂向导水系数
 
-靠近地下水水位$z_{"wt"}$的土壤层，认为土壤水势达到均衡状态，即：
+#figure(
+  image("images/Figure_Soil_K.svg", width: 60%),
+  caption: [(a)地下水储水$S_g$，侧视图；(b) 俯视图；(c)正八面体网格; 
+    (d) 导水系数（Transmissivity，$m^2\/s$）。图件源自Fan et al., 2007。]
+) <fig2_T>
 
-$ psi + z = psi_("sat") + z_("wt") $
 
-通过积分推导（CoLM，公式12.30~12.34），可以得到，
-#mitext(`
-第i层土壤$layer_i$的产水率$s_{y,i}$（specific yield），$s_{y,i} = \theta_{sat,i} - \theta(\psi_{sat,i} + z_{wt})$。
+*浅层土壤的导水系数$T_1$*（1.5m以上，图@fig2_T d ）
 
-$s_{y,i}$的物理意义为土壤表层（$z=0$）的空气体积百分比。这主要是因为地下水水位的上升，等价于土壤含水量曲线的整体向上平移，即最上层的干旱部分被地下水附近的饱和部分代替。
+  - 1.5m以上，K是已知的（图@fig2_T d ，因此这部分的K可以通过以下公式计算：
 
-== 地下水的水位更新
+    #mitex(`$$
+    T_1 = \sum K_m \Delta z_m
+    $$`)
 
-=== 补给
+    下标m代表土壤层，$Delta z_m$代表土壤层的厚度，$K_m$代表土壤层的水力传导系数。
 
-补给只影响地下水水位，不影响土壤含水量。补给的计算公式为：
+*深层土壤的导水系数$T_2$*（1.5m以下）
 
-$$
-z_{wt} = z_{wt} + \frac{ q_{recharge}  \Delta t}{s_{y}}
-$$
+- 1.5m以下，认为K随深度z'指数变化：
+  #mitex(`$$
+  K = K_{0} e^{\frac{-z'}{f}} \\
+  $$`)
+  $K_0$: 1.5m处的水力传导系数；$z'$: 1.5m以下土壤深度，$z' = z - 1.5m$。
 
-其中，地下水的水位$z_{wt}$向下为负，地表为0。
+#showybox(
+  // shadow: (color: yellow.lighten(55%), offset: 3pt),
+  // body-color: red.lighten(95%)
+  frame: (
+    title-color: red.darken(30%),
+    border-color: red.darken(30%),
+    body-color: red.lighten(95%)
+  ),
+)[
+  其中，$ f = a / {1 + b beta}$ for $beta <= 0.16$；f = 5m for $beta > 0.16$，$beta$为坡度。
+  Fan et al. (2007)的结果中，对于土壤，a = 120m, b = 150。对于基岩，a = 20m, b = 125。
+  网上只有埋深浅于1.5m的基岩数据（http://www.soilinfo.psu.edu/index.cgi?soil_data&conus&data_cov&dtb&methods）。
+]
+  #highlight()[TODO: 根据上述公式可以得出 f的空间分布图，类似Fan 2007, Fig. 8c。]
 
-`)
+  模型对$e^{-z'/f}$的最小值进行了限制，即：
+  $
+  "factor" = e^{-z'/f}, "factor" = "clamp"("factor", 0.1, 1.0)
+  $
 
-=== 排泄
+**(1) h < 1.5m**，
 
-```julia
-# sy = 0.02 # 给水度
-function GW_update!(θ::Vector{T}, zwt::T, ∑::T, sy::T=0.2) where {T<:Real}
-  uex = 0.0 # exceed water to soil surface
-  if ∑ > 0 # 补给，水位上升
-    ## 从地下水所在的水位开始补给
-    jwt = find_jwt(z₊ₕ, zwt)
-    for j in jwt+1:-1:1
-      z0 = j == 1 ? 0.0 : z₊ₕ[j-1]
-      _layer = clamp(∑, 0, sy * (zwt - z0)) # 剩余补给空间
+  #mitex(`$$
+  T2 = \int_0^\infty K dz' = \int_0^\infty K_{sat} e^{\frac{-z'}{f}} dz' = K_0 f  
+  $$`)
+  
+**(2) h > 1.5m**
+  #mitex(`$$
+  T2 = \int_d^\infty K dz' = \int_d^\infty K_{sat} e^{\frac{-z'}{f}} dz' = K_0 f e^{\frac{-d}{f}}  
+  $$`)
+    
+  - $d$: $z - h - 1.5$（图@fig2_T d）。
+  - $z$: 地表高程，文章中向下为正
+  - $h$: 地下水头（潜水层中的水位深度）
 
-      θ[j] += _layer / Δz[j]   # TODO: 土壤不能超饱和
-      zwt -= _layer / sy       # 补给，水位上升
-      ∑ -= _layer
-      ∑ <= 0 && break
-    end
-    ∑ > 0 && (uex = ∑) # excess water to soil surface, [m]
-  else # 排泄，水位下降
-    for j = jwt+1:N
-      z1 = z₊ₕ[j]
-      _layer = clamp(∑, sy * (zwt - z1), 0) # 剩余排泄空间, Note: ∑ < 0
+=== 侧向导水系数
 
-      θ[j] += _layer / Δz[j]   # 可能存在亏损
-      zwt -= _layer / sy       # 需要注意单位转换
-      ∑ -= _layer
-      ∑ >= 0 && break
-    end
-    ∑ < 0 && (zwt -= ∑ / sy)
-  end
-end
-```
-// #set ref.figure: it => link(it.target.location(), set text(fill: blue)[it])
-// #set ref.table: it => link(it.target.location(), set text(fill: blue)[it])
+== 地下水与河道的交互
 
+=== $z_"wt" > z_{"river", "surf"}$ （Gaining River）
+
+*地下水补给河道*
+
+#mitex(`$$
+Q_{rf} = (h - \bar z_r) \frac{\bar K_{rb}}{\bar b_{rb}} \bar{w}_r \sum{L_r}
+$$`) <eq_>
+
+#mitex(`$$
+RC = \frac{\bar K_{rb}}{\bar b_{rb}} \bar{w}_r \sum{L_r}
+$$`)
+
+// $ "RC" = w l K / delta(z) $
+$ q = "RC" (h - z_{"river"}) $ // [m s-1]
+
+#mitex(`$$
+R_{rf} = q \Delta t / area_{i,j} % [m]
+$$`)
+
+- $"RC"$: 河道水力传导率（river hydraulic conductance），$m^2\/s$
+- $K$: 水力传导系数, $m\/s$
+- $h$: *地下水头*（潜水层中的水位深度）
+- $w$: 河道宽度，$m$
+- $l$: 河道长度，$m$
+- $q$: 补给的流量，$m^3\/s$
+- $R_{"rf"}$: 补给河道的水量，转换为网格径流深，$m$
+
+=== $z_{"river", "surf"} >= z_{"wt"} > z_{"river", "bed"}$
+
+*河道补给地下水*，补给量受$z_{"wt"}$的影响
+
+套用的公式相同，需要注意此时$q$为负值，同时限制排泄量不能高于河道水量$d_"river" f$：
+
+#mitex(`$$
+R_{rf} = clamp(q \Delta t / area_{i,j}, -d_{river} f, 0)  % 正值
+$$`)
+
+其中，$f = {w l}/ "area"_{i,j}$是水量转换因子，将河道的水位深度转换为网格的深度。
+
+
+=== $z_{"wt"} < z_{"river", "bed"}$ （Losing River）
+
+Losing River情景，对于Gaining River的情景进行了简化。**认为$h - overline(z)_r = overline(b)_{"rb"}$，因此公式变为：**
+
+#mitex(`$$
+Q_{rf} = - \bar K_{rb} \bar{w}_r \sum{L_r}
+$$`)
+
+其中负号表示，河道向地下水补给。
+
+这里Fan et al. (2007)与MODFLOW6的处理方式不同，MODFLOW6认为，当$z_"wt" < z_{"river","bed"}$时，河流与含水层之间出现非饱和带，此时河流向含水层的补给量与含水层的水头$h$无关，仅与河床的厚度$b_{"rb"}$和河道的$overline(z)_r$水头有关。因此，在MODFLOW6中，$Q_{"rf"}$的计算公式为：
+$ Q_{"rf"} = - "RC" (z_"river" - z_{"river","bed"}) $
+
+== 侧向流
 
 

@@ -8,7 +8,7 @@
   size: 13pt,
   footer: "CUG水文气象学2024",
   header: "第一章 土壤水运动")
-
+#counter(heading).update(0)
 
 = 土壤水运动求解
 
@@ -17,7 +17,9 @@
   caption: [土壤分层与土壤水运动示意图。]
 ) <fig_soil>
 
-== 构造三角矩阵
+== CLM土壤水运动求解方案
+
+=== 构造三角矩阵
 
 在微积分中，若$z = f(x, y)$，则$ d z = pdv(z, x)d y + pdv(z, y) d x$。若$ q_(i-1) = f(theta_(i-1), theta_i)$，根据积分法则可以得到：
 
@@ -40,6 +42,8 @@ $ calq(i, i+1, n, n+1) $ <q_i1>
 $
   (Delta theta_(i)) / (Delta t)  Delta z_i = -q_(i-1)^(n+1) + q_(i)^(n+1) - e_i
 $ <d_theta>
+
+其中，上标$n$和$n+1$代表时间；下标$i-1$、$i$、$i+1$代表土壤层（图@fig_soil）。
 
 #beamer_block(
   [1. $q$为矢量，向下为负，$-q$是为了从矢量转为标量。*进多出少，则$theta$增。反之，则降。*
@@ -124,10 +128,9 @@ $
   r &= q_(i-1)^n - q_i^n + e_i
 $
 
-
 // #pagebreak()
 
-== 偏微分
+=== $q$的偏微分
 
 $ q = -K pdv(psi + z, z) $ <q>
 
@@ -158,10 +161,11 @@ $ pdv(q_(i), theta_(i+1)) =
     -K_(i+1/2) / (z_(i+1) - z_(i)) pdv(psi_(i+1), theta_(i+1)) 
     - pdv(K_(i+1/2), theta_(i+1)) [(psi_(i+1) + z_(i+1) - psi_(i) - z_(i)) / (z_(i+1) - z_(i))] $ <dq4>
 
+// #pagebreak()
 
+== Zeng2009 地下水与土壤水交互方案
 
-
-Zeng et al. (2009)对式 @q 采用均衡水势进行了修改（式@q_psi_e），仅$pdv(q, theta)$偏微分部分需要更新，其他计算过程与CLM5完全一致，式@dq1 \~ @dq4 。
+Zeng et al. (2009)对式 @q 采用均衡水势进行了修改（式@q_psi_e），仅$pdv(q, theta)$偏微分部分需要更新，其他计算过程与CLM完全一致，式@dq1 \~ @dq4 。
 
 $ q = -K pdv((psi - psi_E), z) $ <q_psi_e>
 
@@ -190,3 +194,56 @@ for i in 2:N-1
 end
 ```
 其中，对于i-1层， qin: $q_(i-1)$，qout: $q_(i)$。
+
+1. *若zwt位于土壤中*，假定在第N层（i=N）。
+
+  由于下方c处于均衡状态，因此$q_o = q_i = 0, pdv(q_i, theta_(i))=0, pdv(q_i, theta_(i+1))=0$。
+
+  *对于第$N$层：*
+  $
+    a &= - pdv(q_(i-1), theta_(i-1)) \
+    b &= pdv(q_(i), theta_(i)) - pdv(q_(i-1), theta_(i)) - (Delta z_i)  / (Delta t) = 
+         - pdv(q_(i-1), theta_(i)) - (Delta z_i)  / (Delta t) \
+    c &= pdv(q_(i), theta_(i+1)) = 0 \
+    r &= q_(i-1)^(n) - q_(i)^(n) + e_i = q_(i-1)^(n) + e_i
+  $
+
+  *对于第$N+1$层：* $q_i = 0, q_o = 0$，地下水不存在直接蒸发$e_(i+1)=0$。
+
+  $
+    a = 0, b = (Delta z_i)  / (Delta t), c = 0, r = 0
+  $
+
+2. *若zwt位于土壤之下*，设置了一个虚拟层N+1层，向下不排水，厚度为$Delta z_(N+1) = "zwt" - z_(+h,N)$，中心位置
+   $z_(N + 1) = ("zwt" + z_(+h,N) ) / 2$。对于第N+1层，
+   
+   土壤水$theta$的水势：$theta = (theta_N + theta_("sat"))/2$，$psi = cal\_psi(theta)$。
+   
+   均衡水势：根据土壤的上下边界$z_0, z_1$，以及水位$"zwt"$，可以计算出均衡水势$psi_E$和均衡土壤含水量$theta_E$。
+
+  *对于第$N$层：* 正常求解。
+
+  *对于第$N+1$层：* 底部为0，$q_i = 0, pdv(q_i, theta_(i+1)) =0$
+
+  $
+    a &= - pdv(q_(i-1), theta_(i-1)) \
+    b &= pdv(q_(i), theta_(i)) - pdv(q_(i-1), theta_(i)) - (Delta z_i)  / (Delta t) = 
+         - pdv(q_(i-1), theta_(i)) - (Delta z_i)  / (Delta t) \
+    c &= pdv(q_(i), theta_(i+1)) = 0 \
+    r &= q_(i-1)^(n) - q_(i)^(n) + e_i = q_(i-1)^(n) + e_i
+  $
+
+#highlight([*遗留问题*])
+
+#showybox(
+  // shadow: (color: yellow.lighten(55%), offset: 3pt),
+  // body-color: red.lighten(95%)
+  frame: (
+    title-color: red.darken(30%),
+    border-color: red.darken(30%),
+    body-color: red.lighten(95%)
+  ),
+  // title: 
+)[
+  *地下水与土壤水的交互，体现在什么地方？*
+]
