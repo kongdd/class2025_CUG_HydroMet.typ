@@ -1,8 +1,4 @@
 #import "config.typ": *
-#import "@preview/showybox:2.0.2": showybox
-#import "@preview/physica:0.9.3": *
-#import "@preview/cuti:0.2.1": show-cn-fakebold
-#show: show-cn-fakebold
 
 #show: (doc) => template(doc, 
   size: 13pt,
@@ -163,11 +159,55 @@ $ pdv(q_(i), theta_(i+1)) =
 
 // #pagebreak()
 
+=== 给水度（specific yield）
+
+靠近地下水水位$z_{"wt"}$的土壤层，认为土壤水势达到均衡状态，即：
+
+#mitex(`$$
+\psi + z = \psi_{sat} + z_{wt}
+$$`)
+
+$ s_(y,i) =& theta_("sat",i) - theta(psi_("sat",i) + z_("wt")) \
+ =& theta_("sat",i) - theta(psi_(0) ) $
+
+通过积分推导（CoLM，公式12.30~12.34），可以得到，第i层土壤$"layer"_i$的产水率$s_(y,i)$（specific yield）。$s_(y,i)$的物理意义为土壤表层（$z=0$）的空气体积百分比。这主要是因为地下水水位的上升，等价于土壤含水量曲线的整体向上平移，即最上层的干旱部分被地下水附近的饱和部分代替。
+
+
 == Zeng2009 地下水与土壤水交互方案
 
 Zeng et al. (2009)对式 @q 采用均衡水势进行了修改（式@q_psi_e），仅$pdv(q, theta)$偏微分部分需要更新，其他计算过程与CLM完全一致，式@dq1 \~ @dq4 。
 
 $ q = -K pdv((psi - psi_E), z) $ <q_psi_e>
+
+$ psi_e + z = psi_"sat" [theta_E(z) / theta_"sat"]^(-B) + z = psi_"sat" + z_"wt" = C $
+
+=== $theta_E$ 求解
+
+$ psi_"sat" [theta_E(z) / theta_"sat"]^(-B) = C - z $
+
+$ theta_E(z) = theta_"sat" ((C - z) / psi_"sat")^(-1/B)  
+  = theta_"sat" psi_"sat"^(1/B) (C - z)^(-1/B) $
+
+$ integral_(z_1)^(z_2) theta_E(z) d z &= 
+    theta_"sat" psi_"sat"^(1/B) integral_(z_1)^(z_2) (C - z)^(-1/B) d z \
+  &= theta_"sat" psi_"sat"^(1/B) B / (B-1) [-(C - z)^(1 - 1/B)]_(z_1)^(z_2) \
+  &= theta_"sat" psi_"sat"^(1/B) B / (B-1) [(C - z_1)^(1 - 1/B) - (C - z_2)^(1 - 1/B)] 
+$
+
+
+```julia
+function cal_θE(z1::T, z0::T, zwt::T, ψ_sat::T, B::T; use_clamp=true) where {T<:Real}
+  C = ψ_sat + zwt
+  u1 = ((C - z1) / ψ_sat)^(1 - 1 / B) # z1 = z[j]
+  u0 = ((C - z0) / ψ_sat)^(1 - 1 / B) # z2 = z[j-1]
+  θE = -ψ_sat[j] * θ_sat[j] / (1 - 1 / B) / Δz * (u1 - u0) # Zeng2009, Eq.9
+  use_clamp && (θE = clamp(θE, 0, θ_sat))
+  return θE
+end
+```
+
+=== 方程求解
+
 
 #figure(``, caption: "Zeng2009代码实现。", 
   supplement: text("表", weight:"bold"))

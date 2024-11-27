@@ -1,8 +1,4 @@
 #import "config.typ": *
-#import "@preview/showybox:2.0.2": showybox
-#import "@preview/physica:0.9.3": *
-#import "@preview/cuti:0.2.1": show-cn-fakebold
-#show: show-cn-fakebold
 
 #show: (doc) => template(doc, 
   footer: "CUG水文气象学2024",
@@ -92,7 +88,7 @@ qlat[i, j] = 0.5 * q * deltat / area[i, j]   # m3 to m
 
 === 八向
 
-#beamer_block()[模型中，在计算距离l的时候，用的正常网格；但计算过水截面面积时，用的是正八边形网格。]
+#beamer_block()[模型中，在计算距离的时候，用的正常网格；但计算过水截面面积时，用的是正八边形网格。]
 
 
 == 导水系数
@@ -168,18 +164,17 @@ end
 
 === 侧向导水系数
 
-土壤质地：soiltextures，`[nlon, nlat, 2]`，对与第三维，分别存放的是深层（z <= -0.3）与浅层数据（z > -0.3）：
-深层。
-
+土壤质地：soiltextures，`[nlon, nlat, 2]`，对与第三维，分别存放的是深层（z <= -0.3）与浅层数据（z > -0.3）。
 $Q_n$主要指的是地下水的交互，因此采用的是深层的土壤质地。
+
 ```julia
 nsoil = soiltxt[i, j, 1]
 Klat[i, j] = K0(nsoil) * Klat_factor[nsoil]
 ```
-Klat_factor的取值详见，Fan 2007, Table 2。
+Klat_factor取值详见下表。
 
 #figure(
-  caption: [土壤类型与$K$值。],
+  caption: [土壤类型、$K$、与$K"lat"_"factor"$值。表格出自Fan et al. (2007) Table 2。],
   table(
     columns: (1.5cm, 4cm, 3cm, 2cm),
     // inset: 10pt,
@@ -263,6 +258,9 @@ $ Q_{"rf"} = - "RC" (z_"river" - z_{"river","bed"}) $
 
 == 地下水水位更新 (update_wtd)
 
+=== Fan2007
+
+
 #mitex(`$$
 (z_{gw} - z_{i+1}) \theta_{sat} + (z_i - z_{gw}) \theta_e = \theta dz 
 $$`)
@@ -270,6 +268,22 @@ $$`)
 #mitex(`$$
 z_{gw} (\theta_{sat} - \theta_e) = \theta dz - z_i \theta_e + z_{i+1} \theta_{sat}
 $$`)
+
+#figure(
+  image("images/Fan_土壤层定义.svg", width: 60%),
+  caption: [(a)地下水储水$S_g$，侧视图；(b) 俯视图；(c)正八边形网格，边长$w = delta(x) sqrt(0.5 tan(pi\/8))$; 
+    (d) 导水系数（Transmissivity，$m^2\/s$）。
+    图件源自Fan et al., 2007。在地下水侧向交互时，采用的是正八边形网格，每个方向的$Q_n$通过的剖面面积和距离都相同。
+    ]
+) // <fig2_T>
+
+=== CoLM2024
+
+#highlight()[深层地下水与浅层地下水的更新方法。]
+
+可以采用CoLM的土壤水与地下水的交互更新方案。
+
+需要知道，*补给量*与*排泄量*。
 
 #bibliography("References.bib")
 // #import "@preview/modern-nju-thesis:0.3.4": documentclass, bilingual-bibliography

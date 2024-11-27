@@ -1,6 +1,9 @@
 #import "@preview/codly:1.0.0": *
 #import "@preview/mitex:0.2.4": *
 #import "@preview/showybox:2.0.3": showybox
+#import "@preview/physica:0.9.3": *
+#import "@preview/cuti:0.2.1": show-cn-fakebold
+
 
 #let format_eq(it) = {
   show "{": ""
@@ -39,10 +42,7 @@
       )
     }
     // else if el.func() == table {
-    //   link(el.location(), numbering(
-    //     "表 1", 
-    //     ..counter(tab).at(el.location())
-    //   ))
+    //   link(el.location(), numbering("表 1",  ..counter(tab).at(el.location())))
     // } 
     // el.func()
   } else {
@@ -69,17 +69,17 @@
   body
 }
 
-// See the strokes section for details on this!
-#let frame(stroke) = (x, y) => (
-  left: 0pt, right: 0pt,
-  // left: if x > 0 { 0pt } else { stroke },
-  // right: stroke,
-  top: if y < 2 { stroke } else { 0pt },
-  bottom: stroke,
-)
 
 #let set_table(it) = {
   show table.cell.where(y: 0): strong
+  // See the strokes section for details on this!
+  let frame(stroke) = (x, y) => (
+    left: 0pt, right: 0pt,
+    // left: if x > 0 { 0pt } else { stroke },
+    // right: stroke,
+    top: if y < 2 { stroke } else { 0pt },
+    bottom: stroke,
+  )
   set table(
     // fill: (rgb("EAF2F5"), none),
     stroke: frame(rgb("21222C")),
@@ -116,7 +116,8 @@
   
   show: set_figure
   show: set_table
-  
+  show: show-cn-fakebold
+
   // 链接
   show link: underline
   show link: set text(fill: rgb(0, 0, 255))
