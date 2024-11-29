@@ -20,6 +20,7 @@ d.time = DateTime.(d.time, "yyyy-mm-ddTHH:MM:SSZ")
 
 xlims = DateTime(2019, 9, 1), DateTime(2019, 10, 10, 23)
 itime = DateTime(2019, 9, 1) .<= d.time .<= DateTime(2019, 10, 10, 23)
+
 # dat = d[itime, :]
 # fwrite(dat, "SM_small.csv")
 x = collect(xlims[1]:Hour(1):xlims[2])
