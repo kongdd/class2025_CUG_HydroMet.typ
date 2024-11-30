@@ -1,16 +1,83 @@
 #import "config.typ": *
-// #show math.equation: format_eq
 #counter(heading).update(2)
 #let delta(x) = $Delta #x$
 
 #show: (doc) => template(doc, 
   footer: "CUG水文气象学2024",
-  header: "蒸发信号分离")
-
+  header: "蒸散发的基本原理")
 
 = 蒸散发的基本原理
 
-== 气化潜热
+== 蒸散发数据观测
+
+中科院禹城综合试验站（简称禹城站）是黄河下游灌区冬小麦夏玉米农田生态
+系统的典型试验站。冬小麦夏玉米农田生态系统是黄淮海平原最大的生态系统类型。
+
+#figure(
+  image("images/蒸散发/FluxMet_禹城_daily.svg", width: 100%),
+  caption: [
+    禹城站基本的通量与气象变量观测。
+
+    $"GPP"$: 总光合速率，单位$"gC"\/m^2\/d$；
+    $"LE"$: 潜热通量，单位$W\/m^2$；
+    $T_a$：空气温度，单位℃；
+    $R_s$：短波辐射，单位$W\/m^2$；
+    $R_n$：净辐射，单位$W\/m^2$；
+    $"Prcp"$: 降水，单位$"mm"$；
+    $"VPD"$: 饱和水气压差，单位$"kPa"$；
+    $"SM_1"$: 5cm土壤湿度，单位$%$；
+    $"SM_2"$: 10cm土壤湿度，单位$%$；
+    ]
+) <fig1_yuchen>
+
+#figure(
+  image("images/蒸散发/FluxMet_禹城_hourly_heatmap.png", width: 100%),
+  caption: [
+    禹城站2003年，实际蒸散发ET, 相对湿度RH, 气温Tair，净辐射Rn，短波辐射Rs日内变化。横坐标为儒若日(day of year)，纵坐标为小时。
+    ]
+) <fig1_yuchen_2003>
+
+== 蒸散发理论
+
+=== 气象基础
+
+==== 理想气体状态方程
+
+$ P V = n R^* T = m R^(*)/M T $
+$ P =  rho R T $
+
+- P: 压强，单位$"Pa"$；
+- V: 体积，单位$m^3$；
+- n: 气体的摩尔数，单位$"mol"$；M: 气体的摩尔质量，单位$"kg/mol"$；
+
+- $R^*$: 理想气体常数，单位$J\/("mol" K)$；$R$: 比气体常数，单位$J\/("kg" K)$；
+- T: 温度，单位$K$；
+- m: 气体的质量，单位$"kg"$；
+- $rho$: 气体的密度，单位$"kg"\/m^3$。
+
+
+==== 水汽压与水汽密度的转换
+
+对于干空气和水汽，二者的比气体常数分别采用$R_d$和$R_v$进行表示，二者的比值采用$epsilon$表示。
+
+$ R_d / R_v = M_v / M_d = epsilon approx 0.622 $
+
+对于空气和水汽，分别代入理想气体状态方程，可以得到：
+
+$ e = rho_v R_v T $
+
+$ P = rho R T approx rho R_d T $
+
+二者相除可以得到：
+
+$ rho_v = rho e/P R_d / R_v = epsilon rho e /P $ <eq_rho_v>
+
+
+=== 物理基础
+
+==== 气化潜热
+
+
 
 #showybox(frame: (
     // title-color: red.darken(30%),
@@ -20,17 +87,16 @@
   )[
   
   *气化潜热* $lambda$：单位质量的液体，气化所需要吸收的热量，$"MJ"\/"kg"$。
-  
-  根据比热容$c_p$的定义，可以得到温度变化引起的潜热$"LE"$：
-  
-  $ "LE" = lambda delta(m_v) = lambda delta(rho_v) V $
+  $ lambda = 2.5 "MJ" "kg"^(-1) $
+
+  根据气化潜热$lambda$的定义，可以得到潜热$"LE"$：
+
+  $ "LE" = lambda delta(m_v) = lambda delta(rho_v) V $ <eq_le>
 ]
 
+其中，$delta(m_v)$是蒸发导致的水汽质量的变化，$"LE"$是蒸发所需的能量，$rho_v$水汽的密度。
 
-
-其中，$delta(m_v)$是蒸发导致的水汽质量的变化，$"LE"$是蒸发所需的能量。
-
-== 比热容
+==== 比热容
 
 #showybox(frame: (
     // title-color: red.darken(30%),
@@ -39,14 +105,275 @@
     // title: [*比热容*]
   )[
   *比热容* $c_p$：单位质量的物质升高1℃所需要的能量，$J \/ ("kg" ℃)$。
-  
+
   根据比热容$c_p$的定义，可以得到温度变化引起的感热$H$：
-  $ H = c_p rho V delta(t) $
+  $ H = c_p rho V delta(T) $ <eq_h>
 ]
 
+其中，$rho$: 空气密度，$V$: 空气体积。
+
 #beamer_block([
-  空气的比热容$c_p = 1103 J \/ ("kg" ℃)$，空气的密度$rho = 1.2 "kg" \/ m^3$。
-  $1m^3$的空气，温度升高1℃，需要吸收多少能量？
+  *小试牛刀：*
+
+  1. $"Rn" = 100 W m^(-2)$，能量全部转换为潜热，1天的总能量为多少？对应的蒸发量是多少mm？#highlight()[考察点：汽化潜热]
+
+    #nonum([$
+      "LE" = 100 W m^(-2) times 86400 s = 8.64 "MJ" \
+      E = "LE"/lambda = (8.64 "MJ") / (2.5 "MJ" "kg"^(-1)) = 3.456 "kg" \
+    $])
+
+  2. $1m^3$的空气，温度升高1℃，需要吸收多少能量？#highlight()[考察点：比热容]
+  
+    空气的比热容$c_p = 1103 J \/ ("kg" ℃)$，空气的密度$rho = 1.2 "kg" \/ m^3$。
+
+    #nonum([$ 
+      m = rho V = 1.2 times 1 = 1.2 "kg" \
+      H = 1103 J \/ ("kg" ℃) times 1.2"kg" times 1℃ = 1323.6 J 
+    $])
+    
 ])
 
 
+=== 湿度计常数
+
+湿度计常数，通过如下公式推导得到：
+$ "Rn" = "LE" + H $
+
+上式忽略了土壤热通量$G$，主要是因为土壤热通量$G$在长时间尺度仅占10%左右。当$"Rn" = 0$的情景下，感热与潜热相加等于0，二者相互转换。
+
+代入公式#[@eq_le]和#[@eq_h]代入上式，同时借用水汽压与水汽密度的转换公式#[@eq_rho_v]（$delta(rho_v) = epsilon rho delta(e) /P$），可以得到：
+
+$
+  lambda delta(rho_v) V + c_p rho V delta(T) = 0 \
+  delta(rho_v) = -c_p rho delta(T) / lambda \ 
+  epsilon rho delta(e) /P = -c_p delta(T) / lambda \
+  delta(e) = -(c_p P)  / (epsilon lambda) delta(T) \
+  delta(e) = -gamma delta(T) \
+$
+
+其中，$gamma$是湿度计常数，单位$"Pa"\/℃$。
+
+=== 干球温度与湿球温度
+
+- *湿球温度*：百叶箱中避光情景下（$"Rn"=0$），湿布包裹，充分供水，蒸发降温得到的最低温度。
+
+*(a) $"Rn" = 0$*
+
+  从X -> Y过程，$lambda E + H = 0$，X -> Y，令$delta(e) = "es"(T') - e$，可以得到：
+  $
+    lambda E [X -> Y] = lambda delta(rho_v) V
+     = lambda epsilon rho delta(e) / P V, (rho_v = epsilon rho e / P) \
+  $
+  $ H[X -> Y] = c_p rho V delta(T) $
+  
+  代入能量平衡公式：
+
+  $ 
+    lambda E [X -> Y] + H[X -> Y] = 0 \
+    lambda epsilon rho delta(e) / P V + c_p rho V delta(T) = 0 \ 
+    lambda epsilon delta(e) / P + c_p delta(T) = 0 
+  $
+  $ delta(e) = -gamma delta(T), (gamma = (c_p P) / (epsilon lambda) ) $
+
+  其中，$delta(e)$和$delta(T)$分别表示$X->Y$过程中，水汽压和温度的变化。
+
+  - $delta(e) = "es"(T') - e$, 如图#[@fig_Tdry_Twet]，从$X->Y$水汽压变大，是一个蒸发的过程；
+
+  - $delta(T) = T' - T$，是一个降温的过程。
+  
+
+  #box_red[
+    根据该情景，可以推出湿球温度的理论值。
+  ]
+
+  
+#figure(
+  image("images/蒸散发/湿球温度计算.png", width: 80%),
+  caption: [
+    干球温度与湿球温度示意图。
+  ]
+) <fig_Tdry_Twet>
+
+*(b) $"Rn" > 0$，且充分供水*
+
+若充分供水，空气中的水汽压可达到饱和，意味着初始状态和结束状态，都处于饱和水汽压曲线上，正如从$Y->A$过程。
+
+$
+  lambda E [Y -> A] = lambda delta(rho_v) V
+   =& lambda epsilon rho delta(e) / P V, (delta(e) = "es"(T_A) - "es"(T_Y)) \
+   =& lambda epsilon rho abs("OA") / P V 
+  // c_p rho V delta(T)
+$
+
+$
+  H[Y -> A] =& H[Y -> X] = -lambda E [Y -> X] \
+            =& lambda E [X -> Y] \
+            =& lambda epsilon rho ("es"(T') - e) / P V = lambda epsilon rho abs("OX") / P V
+$
+
+因此，
+
+$  
+  Delta = abs("OA") / abs("OY"), gamma = abs("YB") / abs("BX") = abs("OX") / abs("OY")  \ 
+
+  (lambda E [Y -> A]) / H[Y -> A] = abs("OA") / abs("OX")  = Delta / gamma
+$
+
+联立方程，即可解出$lambda E$和$H$：
+
+$ cases( 
+  "Rn" = lambda E + H \
+  (lambda E ) / H = Delta / gamma
+) $
+
+$ lambda = (Delta "Rn") / (Delta + gamma) $
+$ H = (gamma "Rn") / (Delta + gamma) $
+
+*(c) $"Rn" > 0$，供水不充分*
+
+如图#[@fig_Tdry_Twet]，从X -> A过程，初始状态水汽压不饱和。
+#box_red([
+  求解的过程，将该过程划分为两段：$X -> Y$ 和$Y -> A$两段，分别写出两段的感热与潜热，之后相加即可得到，在此不再赘述。
+])
+
+// #pagebreak()
+
+
+== 通量
+
+#beamer_block([“百花丛中过，片叶不沾身”——通量])
+
+#showybox(frame: (
+    // title-color: red.darken(30%),
+    border-color: blue.darken(10%),
+    body-color: blue.lighten(95%) ), 
+    // title: [*比热容*]
+  )[
+  若能量全部转换为感热，1天的总能量为多少？对应的温度升高是多少℃？
+
+  #nonum([$
+    H = 100 W m^(-2) times 86400 s = 8.64 "MJ" \
+    delta(T) = H / (c_p rho V) = (8.64 "MJ") / (1103 J \/ ("kg" ℃) times 1.2 "kg") = 6528 ℃
+  $])
+
+  $delta(T)$按10℃算，$1 m^3$空气，升温所需要的能量：
+
+  #nonum([$
+    E_H =1103 J \/ ("kg" ℃) times 1.2"kg" times 10℃ = 13,236 J 
+  $])
+]
+
+*为何会出现这种现象？* #highlight([主要是因为干净的空气是个“小透明”])，拦截辐射的能力较弱。正常情况下，Rn=100 $W\/m^2$，升温幅度在10℃左右（图@fig1_yuchen），升温所耗的能量$E_H$仅占总能量的0.15%。
+
+*那能量都去哪里了？*
+
+大部分能量是穿过，而非截留。
+
+
+#figure(
+  image("images/蒸散发/通量-水汽.png", width: 80%),
+  caption: [
+    水汽通量。图件源自#[@monteith2013] Figure 3.4。
+    ]
+) <fig_flux_le>
+
+=== 潜热通量
+
+#highlight()[*(a) 比湿的形式：*]
+
+$ E = -D pdv(rho_v, z) = -D rho pdv(q, z) $
+
+- D是水汽的分子扩散系数，单位$m^2\/s$。
+
+在积分过程中，认为大气的状态达到均衡，认为E是常数。从地表$z_1$到参考高度$z_2$进行积分，可以得到：
+
+$ integral_(z_1)^(z_2) E  d z = integral_(z_1)^(z_2) -D rho d q $
+
+$ lambda E &= - lambda D rho (integral_(z_1)^(z_2) d q) / (integral_(z_1)^(z_2) d z) \
+    &= lambda rho (q(z_1) - q(z_2)) / ((z_2 - z_1) / D) \
+    &= lambda (rho delta(q)) / r_v, (r_v = (z_2 - z_1) / D)
+$
+
+上式，定义了水汽传递阻力$r_v$ ($s\/m$)，导度$g_v$等于阻力的倒数（$g_v = 1/r_v$, $m\/s$），$delta(q) = q(z_1) - q(z_2)$。蒸发的水汽通常来源于湿润的地表。一般而言，$q(z_1) > q(z_2)$。
+
+#highlight()[*(b) 水汽压的形式：*]
+
+$ $
+
+$ lambda E &= -lambda D pdv(rho_v, z) 
+    = -lambda D ( epsilon rho) / P pdv(e, z), (rho_v = (epsilon rho)/ P e ) \
+  &= -(D rho c_p) / gamma pdv(e, z), (gamma = (c_p P) / (epsilon lambda) )
+$
+
+$ lambda E &= -(D rho c_p) / gamma (integral_(z_1)^(z_2) d e ) / (integral_(z_1)^(z_2) d z  )  \
+   &= -(D rho c_p) / gamma (e(z_2) - e(z_1)) / (z_2 - z_1)
+    = (rho c_p delta(e)) / (gamma r_v), (r_v = (z_2 - z_1) / (D) )
+$
+
+// = -D rho pdv(q, z) 
+
+=== 感热通量
+
+#figure(
+  image("images/蒸散发/通量-热量.png", width: 80%),
+  caption: [
+    感热通量。图件源自#[@monteith2013] Figure 3.3。
+    ]
+) <fig_flux_le>
+
+$ H = -k pdv(rho c_p T, z)  = - k rho c_p pdv(T, z) $
+
+$ integral_(z_1)^(z_2) H d z = integral_(z_1)^(z_2) - k rho c_p d T $
+
+$ H =& - k rho c_p (integral_(z_1)^(z_2) d T ) / (integral_(z_1)^(z_2) d z) \
+    =& k rho c_p (T(z_1) - T(z_2)) / (z_2 - z_1) \
+    =& (rho c_p delta(T)) / r_h, (r_h = (z_2 - z_1) / k)
+$
+
+// - $kappa$：热传导系数，单位$W\/(m K)$；
+- $k$：热扩散系数，单位$m^2\/ s$；
+- $H$: 感热通量，单位$W\/m^2$；
+- $c_p$: 比热容，单位$J\/("kg" K)$；
+- $rho$: 空气密度，单位$"kg"\/m^3$；
+
+
+
+== 潜热蒸散发
+
+=== 水面蒸发 (Penman 1948)
+
+=== 叶片与冠层蒸发 (Monteith 1965)
+
+#figure(
+  image("images/蒸散发/叶片蒸发.png", width: 80%),
+  caption: [
+    叶片蒸腾阻力示意图。图件源自#[@monteith2013] Figure 13.4。
+    ]
+) <fig1_yuchen_2003>
+
+=== 参考作物蒸发 (FAO98)
+
+
+
+== 实际蒸发
+
+=== 植被蒸腾与植被光合
+
+=== 蒸散发与土壤水之间的关系
+
+无论是土壤蒸发还是植被蒸腾，都与土壤水分有关。
+
+
+#bibliography("References.bib", title: "参考文献", style:"gb-7714-2015-author-date")
+
+// "gb-7714-2005-numeric"	
+// China National Standard GB/T 7714-2005 (numeric, 中文)
+
+// "gb-7714-2015-author-date"	
+// China National Standard GB/T 7714-2015 (author-date, 中文)
+
+// "gb-7714-2015-note"	
+// China National Standard GB/T 7714-2015 (note, 中文)
+
+// "gb-7714-2015-numeric"	
+// China National Standard GB/T 7714-2015 (numeric, 中文)

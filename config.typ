@@ -4,7 +4,6 @@
 #import "@preview/physica:0.9.3": *
 #import "@preview/cuti:0.2.1": show-cn-fakebold
 
-
 #let format_eq(it) = {
   show "{": ""
   show "}": ""
@@ -147,4 +146,24 @@
     btext(txt)
   }
   doc
+}
+
+#let nonum(eq) = math.equation(block: true, numbering: none, eq)
+
+#let box_blue(it) = {
+  showybox(it, frame: (
+    // title-color: red.darken(30%),
+    border-color: blue.darken(10%),
+    body-color: blue.lighten(95%) ), 
+    // title: [*比热容*]
+  )
+}
+
+#let box_red(it) = {
+  showybox(it, frame: (
+    // title-color: red.darken(30%),
+    border-color: red.darken(30%),
+    body-color: red.lighten(95%) ),
+    // title: [*比热容*]
+  )
 }
