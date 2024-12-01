@@ -72,11 +72,9 @@ $ P = rho R T approx rho R_d T $
 
 $ rho_v = rho e/P R_d / R_v = epsilon rho e /P $ <eq_rho_v>
 
-
 === 物理基础
 
 ==== 气化潜热
-
 
 
 #showybox(frame: (
@@ -89,10 +87,11 @@ $ rho_v = rho e/P R_d / R_v = epsilon rho e /P $ <eq_rho_v>
   *气化潜热* $lambda$：单位质量的液体，气化所需要吸收的热量，$"MJ"\/"kg"$。
   $ lambda = 2.5 "MJ" "kg"^(-1) $
 
+]
+
   根据气化潜热$lambda$的定义，可以得到潜热$"LE"$：
 
   $ "LE" = lambda delta(m_v) = lambda delta(rho_v) V $ <eq_le>
-]
 
 其中，$delta(m_v)$是蒸发导致的水汽质量的变化，$"LE"$是蒸发所需的能量，$rho_v$水汽的密度。
 
@@ -159,7 +158,7 @@ $
 
 *(a) $"Rn" = 0$*
 
-  从X -> Y过程，$lambda E + H = 0$，X -> Y，令$delta(e) = "es"(T') - e$，可以得到：
+  如图#[@fig_Tdry_Twet]，从X -> Y过程，$lambda E + H = 0$，X -> Y，令$delta(e) = "es"(T') - e$，可以得到：
   $
     lambda E [X -> Y] = lambda delta(rho_v) V
      = lambda epsilon rho delta(e) / P V, (rho_v = epsilon rho e / P) \
@@ -196,7 +195,7 @@ $
 
 *(b) $"Rn" > 0$，且充分供水*
 
-若充分供水，空气中的水汽压可达到饱和，意味着初始状态和结束状态，都处于饱和水汽压曲线上，正如从$Y->A$过程。
+若充分供水，空气中的水汽压可达到饱和，意味着初始状态和结束状态，都处于饱和水汽压曲线上，正如从$Y->A$过程（图#[@fig_Tdry_Twet]）。
 
 $
   lambda E [Y -> A] = lambda delta(rho_v) V
@@ -263,12 +262,11 @@ $ H = (gamma "Rn") / (Delta + gamma) $
   $])
 ]
 
-*为何会出现这种现象？* #highlight([主要是因为干净的空气是个“小透明”])，拦截辐射的能力较弱。正常情况下，Rn=100 $W\/m^2$，升温幅度在10℃左右（图@fig1_yuchen），升温所耗的能量$E_H$仅占总能量的0.15%。
+*为何会出现这种现象？* #highlight([主要是因为干净的空气是个“小透明”])，拦截辐射的能力较弱。正常情况下，Rn=100 $W\/m^2$，升温幅度在10℃左右（图@fig1_yuchen），空气升温所耗的能量$E_H$仅占总能量的0.15%。
 
 *那能量都去哪里了？*
 
-大部分能量是穿过，而非截留。
-
+#beamer_block([大部分能量是穿过，而非截留。])
 
 #figure(
   image("images/蒸散发/通量-水汽.png", width: 80%),
@@ -327,7 +325,7 @@ $ integral_(z_1)^(z_2) H d z = integral_(z_1)^(z_2) - k rho c_p d T $
 
 $ H =& - k rho c_p (integral_(z_1)^(z_2) d T ) / (integral_(z_1)^(z_2) d z) \
     =& k rho c_p (T(z_1) - T(z_2)) / (z_2 - z_1) \
-    =& (rho c_p delta(T)) / r_h, (r_h = (z_2 - z_1) / k)
+    =& (rho c_p delta(T)) / r_H, (r_H = (z_2 - z_1) / k)
 $
 
 // - $kappa$：热传导系数，单位$W\/(m K)$；
@@ -335,6 +333,23 @@ $
 - $H$: 感热通量，单位$W\/m^2$；
 - $c_p$: 比热容，单位$J\/("kg" K)$；
 - $rho$: 空气密度，单位$"kg"\/m^3$；
+- $r_H$: 热量的传递阻力，单位$s\/m$；
+
+#beamer_block([$rho c_p$的作用是把$Delta T$转化为能量的单位。])
+
+=== 修正湿度计常数
+
+考虑水汽和热量的传递阻力后，如图#[@fig_Tdry_Twet]，感热与潜热的公式变形为：
+
+$ lambda E = lambda (epsilon rho delta(e)) / (P r_v) V, H = (rho c_p delta(T)) / r_H V $
+
+$lambda E + H = 0$ 可得，
+$ 
+  lambda epsilon delta(e) / (P r_v) = - c_p delta(T) / r_H
+   delta(e) / ( r_v) = - (c_p P) / (lambda epsilon) r_v / r_H delta(T)
+$
+
+令$gamma^* = (c_p P) / (lambda epsilon) r_v / r_H = gamma r_v / r_H $。$gamma^*$被称为修正湿度计常数。
 
 
 
@@ -342,20 +357,97 @@ $
 
 === 水面蒸发 (Penman 1948)
 
+#figure(
+  image("images/蒸散发/Penman1948_示意图.png", width: 75%),
+  caption: [Penman 1948水面蒸发示意图。]
+) <fig_penman1948>
+
+这里水面蒸发指的是：从水面到参考高度（一般指2m）的潜热通量，图中从点W到Y的过程。
+
+$ lambda E [W -> X] = -H[W -> X] = (rho c_p D) / r_H $
+$ lambda E [X -> Y] = (Delta "Rn") / (Delta + gamma^*) $
+$ lambda E [Y -> Z] = -H[Y -> Z] = -(rho c_p D_0) / r_H $
+
+$W -> Z$，对应的蒸发面水汽不饱和，该过程总的潜热和感热为：
+
+$ lambda E [W -> Z] = (Delta "Rn") / (Delta + gamma^*) + (rho c_p (D - D_0)) / r_H $
+
+$
+  H [W -> Z] =& "Rn" - lambda E [W -> Z] \
+    =&  (gamma^* "Rn") / (Delta + gamma^*) - (rho c_p (D - D_0)) / r_H
+$
+
+若蒸发面水汽饱和（充分供水），则是$W -> Y$过程：
+
+$ lambda E [W -> Y] = (Delta "Rn") / (Delta + gamma^*) + (rho c_p D) / r_H $ <ch3_eq37>
+
+$
+  H [W -> Y] =& "Rn" - lambda E [W -> Z] \
+    =&  (gamma^* "Rn") / (Delta + gamma^*) - (rho c_p D) / r_H
+$ <ch3_eq38>
+
+*另一种推导方法：暴力求解*
+
+跳过图#[@fig_Tdry_Twet]和#[@fig_penman1948]的几何过程，针对$W -> Y$（图#[@fig_penman1948]，湿表面到空气的热量与水汽交互）的过程，采用暴力求解。
+
+下标$""_w$和$""_a$分别代表湿表面和空气。空气指的是参考高度处的空气，一般为2m。
+
+$ H = "Rn" - lambda E =  rho c_p (T_w - T_a) \/ r_H $ <ch3_2_h>
+
+$ 
+  lambda E = lambda epsilon rho (e_w - e_a) / (P r_v) 
+
+   &= rho c_p (e_w - e_a) / (gamma^* r_H) = rho c_p ("es"(T_w) - e_a) / (gamma^* r_H) $
+
+其中，认为水面的水汽压为饱和$e_w  = "es"(T_w)$，
+$
+  e_w - e_a = "es"(T_w) - e_a = "es"(T_w) - "es"(T_a) + "es"(T_a) - e_a \ = "es"(T_w) - "es"(T_a) + "VPD"
+$
+
+$ lambda E = rho c_p ("es"(T_w) - "es"(T_a) + "VPD") / (gamma^* r_H) \ 
+= rho c_p (Delta (T_w - T_a) + "VPD") / (gamma^* r_H) $ <ch3_2_le>
+
+求出#[@ch3_2_h]中的$T_w - T_a$，代入#[@ch3_2_le]，可以得到：
+
+$
+  lambda E = (Delta "Rn") / (Delta + gamma^*) + (rho c_p "VPD" \/ r_H)  / (Delta + gamma^*) 
+$ <ch3_pm_le>
+
+$
+  H = (gamma^* "Rn") / (Delta + gamma^*) - (rho c_p "VPD" \/ r_H)  / (Delta + gamma^*) 
+$ <ch3_pm_h>
+
+#box_red([为何与#[@ch3_eq37]和#[@ch3_eq38]的结果不同？
+
+#nonum([$
+  lambda E = (Delta "Rn") / (Delta + gamma^*) + rho c_p D \/ r_H
+$])
+
+*其实他们是等价的，因为$ "VPD" = D (Delta + gamma^*)$。*可借助图#[@fig_penman1948]的几何关系，推导得出。
+])
+
 === 叶片与冠层蒸发 (Monteith 1965)
 
 #figure(
-  image("images/蒸散发/叶片蒸发.png", width: 80%),
+  image("images/蒸散发/叶片蒸发.png", width: 70%),
   caption: [
     叶片蒸腾阻力示意图。图件源自#[@monteith2013] Figure 13.4。
-    ]
-) <fig1_yuchen_2003>
+  ]
+) <fig_monteith>
+
+相比于水面蒸发，叶片蒸发在水汽传导阻力中多了气孔阻力。
+
 
 === 参考作物蒸发 (FAO98)
 
 
 
 == 实际蒸发
+
+#figure(
+  image("images/蒸散发/根区土壤水分布.png", width: 85%),
+  caption: [根区土壤水分布。]
+) <fig_>
 
 === 植被蒸腾与植被光合
 
