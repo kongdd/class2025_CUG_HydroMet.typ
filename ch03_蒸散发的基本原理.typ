@@ -397,7 +397,7 @@ $ H = "Rn" - lambda E =  rho c_p (T_w - T_a) \/ r_H $ <ch3_2_h>
 $ 
   lambda E = lambda epsilon rho (e_w - e_a) / (P r_v) 
 
-   &= rho c_p (e_w - e_a) / (gamma^* r_H) = rho c_p ("es"(T_w) - e_a) / (gamma^* r_H) $
+   &= rho c_p (e_w - e_a) / (gamma^* r_H) = rho c_p ("es"(T_w) - e_a) / (gamma^* r_H) $ <ch3_eq40>
 
 其中，认为水面的水汽压为饱和$e_w  = "es"(T_w)$，
 $
@@ -435,8 +435,16 @@ $])
   ]
 ) <fig_monteith>
 
-相比于水面蒸发，叶片蒸发在水汽传导阻力中多了气孔阻力。
+相比于水面蒸发，叶片蒸发在水汽传导阻力中多了气孔阻力。因此，$H$的表达形式不变，$lambda E$的表达形式变为：
 
+$ 
+  lambda E &= lambda epsilon rho (e_w - e_a) / (P (r_v + r_s) ) = 
+    lambda epsilon rho (e_w - e_a) / (P r_v (1 + r_s/r_v) ) \
+   &= rho c_p ("es"(T_w) - e_a) / (gamma^* r_H (1 + r_s / r_v)), 
+    (gamma^* = (c_p P) / (lambda epsilon) r_v / r_H)
+$ <ch3_eq45>
+
+重新联立方程#[@ch3_2_h]，可以得到：
 
 === 参考作物蒸发 (FAO98)
 
