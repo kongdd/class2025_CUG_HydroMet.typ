@@ -2,15 +2,29 @@
 #import "config.typ": *
 #counter(heading).update(4)
 #let delta(x) = $Delta #x$
-#show math.equation: set text(11.5pt)
+#show math.equation: set text(11pt)
 
 #show: (doc) => template(doc, 
+  size: 13pt,
   footer: "CUG水文气象学2024",
-  header: "辐射与能量平衡")
+  header: "土壤热通量")
 
 = 土壤热通量
 
-== 基本公式
+为何要研究土壤热通量？在日内尺度，土壤温度变化剧烈，若想准确模拟陆表能量平衡和水量平衡过程，需要清楚土壤温度是如何变化的。本章理论主要参考#cite(<bonan2019climate>, form: "prose")。
+
+如下图所示，表层的土壤温度变化非常剧烈，地表的土壤温度TS_0日内变化幅度甚至超过了空气温度，在空气温度为30℃时，地表温度甚至可以达到50℃。与之形成鲜明对比，深层土壤温度变化非常缓慢，40cm以下的土壤温度几乎看不到日内波动，80cm以下的土壤温度在图中几乎是一条直线。
+
+#figure(
+  image("images/土壤热通量/Figure_CUG_Tsoil_202306.svg", width: 100%),
+  caption: [中国地质大学（武汉）大气系气象观测站2023年6月逐小时土壤温度。
+
+    其中黑线为空气温度。
+  ]
+) <fig_CUG_Tsoil>
+
+
+== 基本原理
 
 #figure(
   image("images/土壤热通量/土壤热通量_连续性原理.png", width: 100%),
@@ -19,6 +33,8 @@
     $z_i$代表的是每一层土壤的中间位置；$z_(i+1/2)$代表的是每层土壤的下边界。$z$与$F$均是向下为负。
   ]
 ) <fig_Tsoil_cont>
+
+#pagebreak()
 
 *热通量公式：*
 
@@ -38,11 +54,17 @@ $ c_v delta(T) / delta(t) = - delta(F) / delta(z), c_v = rho c_v^\* $
 
 $ c_v pdv(T, t) = - pdv(F, z) = kappa pdv(T, z, 2) $ <eq_heat>
 
-#pagebreak()
+
+#figure(
+  image("images/土壤热通量/土壤热通量-土壤结构.png", width: 54%),
+  caption: [
+    每层的土壤状态与土壤热通量。
+  ]
+) <fig_Tsoil_cont>
+
+// #pagebreak()
 
 == 数值求解——复杂版 三角矩阵
-
-大气系气象观测站，土壤温度过程如下图。
 
 #highlight()[如何求解土壤温度随时间的变化？] 主要用的是一个1个核心公式，式@eq_heat。
 
@@ -78,10 +100,258 @@ $ (T_i^(n+1) - T_i^(n)) / delta(t) = kappa / c_v (
   (T_(i-1)^(n+1) - 2T_i^(n+1) + T_(i+1)^(n+1)) / (2 delta(z^2))
 ) $
 
+
+
 === 求解过程
 
+*(a) 隐式差分为例，展示求解过程。*
+
+#let kappa-coef(i)={
+  // let p = $i+1/2$
+  $kappa_#i / delta(z_#i)$
+}
+
+// #let cal_F(i) = {
+//   // let i = $i+1$
+//   $ - #kappa-coef(#i+1/2) (T_i^(n+1) - T_(i+1)^(n+1)) $
+// }
+// $ #cal_F(i) $
+
+$
+  F_i^n = - #kappa-coef($i+1/2$) (T_i^(n+1) - T_(i+1)^(n+1)) \
+  F_(i-1)^n = - #kappa-coef($i-1/2$) (T_(i-1)^(n+1) - T_(i)^(n+1)) \
+$
+
+$ c_(v, i) delta(z_i) (T_i^(n+1) - T_i^n) / delta(t) = -(F_(i-1)^n - F_i^n) $ <eq_5_11>
+
+$
+  c_(v, i) delta(z_i) (T_i^(n+1) - T_i^n) / delta(t) = #kappa-coef($i-1/2$) (T_(i-1)^(n+1) - T_(i)^(n+1)) - #kappa-coef($i+1/2$) (T_i^(n+1) - T_(i+1)^(n+1)) \ 
+$ <eq_5_12>
+
+$
+  - #kappa-coef($i-1/2$) T_(i-1)^(n+1)  + (c_(v, i) delta(z_i) / delta(t) + #kappa-coef($i-1/2$) + #kappa-coef($i+1/2$)) T_i^(n+1) - #kappa-coef($i+1/2$) T_(i+1)^(n+1) = c_(v, i) delta(z_i) T_i^n / delta(t)
+$
+
+其中，$delta(z_i) = z_(i-1) - z_i$。上式可以写成矩阵形式：
+
+$ a_i T_(i-1)^(n+1) + b_i T_i^(n+1) + c_i T_(i+1)^(n+1) = d_i $
+
+之后便可利用三角阵的方式进行求解。
+
+
+*边界条件*
+
+对于第一层：
+
+- 已知通量：土壤热通量$F_0$（也是能量平衡中的$G$），带入式#[@eq_5_11]：
+
+$
+  c_(v, i) delta(z_i) (T_i^(n+1) - T_i^n) / delta(t) = -F_0 - #kappa-coef($i+1/2$) (T_i^(n+1) - T_(i+1)^(n+1)) \ 
+$
+
+$
+  (c_(v, i) delta(z_i) / delta(t) + #kappa-coef($i+1/2$) ) T_i^(n+1) 
+    - #kappa-coef($i+1/2$) T_(i+1)^(n+1) = -F_0 + c_(v, i) delta(z_i) T_i^n / delta(t)
+$
+
+- 已知状态：土壤温度$T_0^(n+1)$，带入式#[@eq_5_12]：
+
+$
+  c_(v, i) delta(z_i) (T_i^(n+1) - T_i^n) / delta(t) = #kappa-coef($i-1/2$) (T_(0)^(n+1) - T_(i)^(n+1)) - #kappa-coef($i+1/2$) (T_i^(n+1) - T_(i+1)^(n+1)) \ 
+$
+
+$
+  (c_(v, i) delta(z_i) / delta(t) + #kappa-coef($i-1/2$) + #kappa-coef($i+1/2$)) T_i^(n+1) - #kappa-coef($i+1/2$) T_(i+1)^(n+1) = c_(v, i) delta(z_i) T_i^n / delta(t) + #kappa-coef($i-1/2$) T_(0)^(n+1) 
+$
+
+对于第N层，认为$F_N = 0$，，带入式#[@eq_5_11]：
+
+$
+   c_(v, i) delta(z_i) (T_i^(n+1) - T_i^n) / delta(t) = #kappa-coef($i-1/2$) (T_(i-1)^(n+1) - T_(i)^(n+1)) - F_N 
+$
+
+$
+  - #kappa-coef($i-1/2$) T_(i-1)^(n+1) + (c_(v, i) delta(z_i) / delta(t) + #kappa-coef($i-1/2$) ) T_i^(n+1) = -F_N + c_(v, i) delta(z_i) T_i^n / delta(t)
+$
+
+
+*(b) 另一种解法，根据变化量$delta(T_i^n)$ （本科生跳过）* 
+
+定义$delta(T_i^n) = T_i^(n+1) - T_i^(n)$。
+
+$
+  T_(i-1)^(n+1) &= (T_(i-1)^(n+1) - T_(i-1)^(n)) + T_(i-1)^(n) = delta(T_(i-1)^n) + T_(i-1)^(n)  \
+  T_(i)^(n+1) &= (T_(i)^(n+1) - T_(i)^(n)) + T_(i)^(n) = delta(T_(i)^n) + T_(i)^(n)  \
+  T_(i+1)^(n+1) &= (T_(i+1)^(n+1) - T_(i+1)^(n)) + T_(i+1)^(n) = delta(T_(i+1)^n) + T_(i+1)^(n) 
+$
+
+式#[@eq_5_12]可以写成：
+
+$
+  c_(v, i) delta(z_i) delta(T_i^n) / delta(t) = 
+    #kappa-coef($i-1/2$) [ delta(T_(i-1)^n) + T_(i-1)^(n)  -(delta(T_(i)^n) + T_(i)^(n) ) ] \
+    - #kappa-coef($i+1/2$) [ delta(T_(i)^n) + T_(i)^(n)  -(delta(T_(i+1)^n) + T_(i+1)^(n) ) ]
+$
+
+$
+  - #kappa-coef($i-1/2$) delta(T_(i-1)^n) + 
+    (c_(v, i) delta(z_i) / delta(t) + #kappa-coef($i-1/2$) + #kappa-coef($i+1/2$)) delta(T_(i)^n) 
+    -#kappa-coef($i+1/2$) delta(T_(i+1)^n) = \
+    #kappa-coef($i-1/2$) (T_(i-1)^(n)  - T_(i)^(n)) - #kappa-coef($i+1/2$) (T_(i)^(n) - T_(i+1)^(n))
+$
+
+*边界条件*
+
+对于第一层：
+
+- 已知通量：土壤热通量$F_0$（也是能量平衡中的$G$），带入式#[@eq_5_11]：
+
+$
+  c_(v, i) delta(z_i) delta(T_i^n) / delta(t) = -F_0 - 
+    #kappa-coef($i+1/2$) [ delta(T_(i)^n) + T_(i)^(n)  -(delta(T_(i+1)^n) + T_(i+1)^(n) ) ] \ 
+$
+
+$
+  (c_(v, i) delta(z_i) / delta(t) + #kappa-coef($i+1/2$) )  delta(T_i^n)
+    - #kappa-coef($i+1/2$) delta(T_(i+1)^n) = -F_0 - #kappa-coef($i+1/2$) (T_(i)^(n) - T_(i+1)^(n))
+$
+
+
+- 已知状态：土壤温度$T_0^(n+1)$，带入式#[@eq_5_12]：
+
+$
+  c_(v, i) delta(z_i) (T_i^(n+1) - T_i^n) / delta(t) = #kappa-coef($i-1/2$) (T_(0)^(n+1) - T_(i)^(n+1)) - #kappa-coef($i+1/2$) (T_i^(n+1) - T_(i+1)^(n+1)) \ 
+$
+
+$
+  c_(v, i) delta(z_i) delta(T_i^n) / delta(t) = 
+    #kappa-coef($i-1/2$) (T_(0)^(n+1) - (delta(T_(i)^n) + T_(i)^(n) ) ) 
+    -#kappa-coef($i+1/2$) [ delta(T_(i)^n) + T_(i)^(n)  -(delta(T_(i+1)^n) + T_(i+1)^(n) ) ] 
+$
+
+$
+  ( c_(v, i) delta(z_i) / delta(t) + #kappa-coef($i-1/2$) + #kappa-coef($i+1/2$) )delta(T_i^n) 
+  - #kappa-coef($i+1/2$) delta(T_i^(n+1)) = \
+  #kappa-coef($i-1/2$) (T_(0)^(n+1) - T_(i)^(n)) - #kappa-coef($i+1/2$) (T_i^(n) - T_(i+1)^(n))
+$
+
+
+
+// 对于第N层，认为$F_N = 0$，，带入式#[@eq_5_11]：
+
+// $
+//    c_(v, i) delta(z_i) (T_i^(n+1) - T_i^n) / delta(t) = #kappa-coef($i-1/2$) (T_(i-1)^(n+1) - T_(i)^(n+1)) - F_N 
+// $
+
+// $
+//   - #kappa-coef($i-1/2$) T_(i-1)^(n+1) + (c_(v, i) delta(z_i) / delta(t) + #kappa-coef($i-1/2$) ) T_i^(n+1) = -F_N + c_(v, i) delta(z_i) T_i^n / delta(t)
+// $
 
 == 数值求解——简易版 偏微分方程
 
+计算每一层的土壤热通量$F_i (i=0,...,N)$，这里套用的主要是如下公式。
+
+$
+  F_i^n = - #kappa-coef($i+1/2$) (T_i^(n+1) - T_(i+1)^(n+1))
+$
 
 
+```jl
+function soil_HeatFlux!(F::V, T::V, κ::V, z::V, z₊ₕ::V;
+  F0::FT=NaN, TS0::FT=NaN, 
+  method="TS0", ibeg::Int=1) where {FT<:Real,V<:AbstractVector{FT}}
+
+  N = length(T)
+  if method == "TS0"
+    if ibeg == 1
+      F0 = -κ[1] * (TS0 - T[1]) / (0 - z[1])
+    elseif ibeg > 1
+      F0 = -κ[ibeg] * (TS0 - T[ibeg]) / (z[ibeg-1] - z[ibeg])
+    end
+  end
+
+  @inbounds for i in ibeg:N-1
+    d1 = z[i] - z₊ₕ[i]
+    d2 = z₊ₕ[i] - z[i+1]
+    κ₊ₕ = κ[i] * κ[i+1] * (d1 + d2) / (κ[i] * d2 + κ[i+1] * d1) # Eq. 5.16, 
+    # κ₊ₕ = (κ[i] + κ[i+1]) / 2
+    Δz₊ₕ = z[i] - z[i+1]
+    F[i] = -κ₊ₕ * (T[i] - T[i+1]) / Δz₊ₕ
+  end
+  F[N] = 0
+  return F0
+end
+```
+
+得出每一层的热通量后，可以根据式#[@eq_5_11]求解每一层的温度变化。
+
+$ c_(v, i) delta(z_i) (T_i^(n+1) - T_i^n) / delta(t) = -(F_(i-1)^n - F_i^n) $ 
+
+
+```jl
+function TsoilEquation(dT, T, soil::Soil, t; method="TS0", ibeg::Int=1)
+  soil.timestep += 1
+  # TODO: 根据t，更新TS0
+  (; N, Δz, z, z₊ₕ, F, TS0) = soil
+  (; κ, cv) = soil.param
+  F0 = soil_HeatFlux!(F, T, κ, z, z₊ₕ; TS0, F0=soil.F0, method, ibeg)
+
+  dT[ibeg] = -(F0 - F[ibeg]) / (Δz[ibeg] * cv[ibeg])
+  @inbounds for i in ibeg+1:N
+    dT[i] = -(F[i-1] - F[i]) / (Δz[i] * cv[i])
+  end
+end
+
+# 该函数目的：跳过不需要求解的签1:ibeg-1层
+function TsoilEquation_partial(dT, T, p::Soil, t; method="TS0", ibeg::Int=1)
+  p.du[ibeg:end] .= dT
+  p.u[ibeg:end] .= T
+  TsoilEquation(p.du, p.u, p, t; method, ibeg)
+  dT .= p.du[ibeg:end]
+  return nothing
+end
+```
+
+之后带入偏微分方程求解器，即可得到每一层的土壤温度。
+
+- 解一个时刻：
+  ```jl
+  using DifferentialEquations
+  tspan = (0, dt)
+  prob = ODEProblem(TsoilEquation, u0, tspan, soil)
+  sol = solve(prob, solver; reltol, abstol, saveat=dt)
+  Tsoil = sol.u[end]
+  ```
+
+- 解所有时刻（本科生可跳过）：
+  ```jl
+  function solve_Tsoil_ODE(soil, TS0; solver, 
+    reltol=1e-3, abstol=1e-3, verbose=false)
+    (; N, inds_obs, ibeg, dt) = soil
+
+    ntime = length(TS0)
+    u0 = soil.Tsoil[ibeg:end]
+
+    _TsoilEquation(dT, T, p, t) = TsoilEquation_partial(dT, T, p, t; ibeg)
+    tspan = (0, dt)
+    prob = ODEProblem(_TsoilEquation, u0, tspan, soil)
+
+    R = zeros(ntime, N - ibeg + 1)
+    R[1, :] .= soil.Tsoil[ibeg:end]
+
+    for i = 2:ntime
+      soil.TS0 = TS0[i]
+      prob.u0 .= soil.Tsoil[ibeg:end]
+
+      sol = solve(prob, solver; reltol, abstol, saveat=dt)
+      soil.Tsoil[ibeg:end] .= sol.u[end] # 更新这个时刻的结果
+      R[i, :] .= soil.Tsoil[ibeg:end]
+    end
+
+    inds = @. inds_obs - ibeg + 1
+    R[:, inds]
+  end
+  ```
+// === 参数优化
+
+#bibliography("References.bib", title: "参考文献", style:"gb-7714-2015-author-date")
