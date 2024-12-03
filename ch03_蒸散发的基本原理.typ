@@ -114,7 +114,7 @@ $ rho_v = rho e/P R_d / R_v = epsilon rho e /P $ <eq_rho_v>
 #beamer_block([
   *小试牛刀：*
 
-  1. $"Rn" = 100 W m^(-2)$，能量全部转换为潜热，1天的总能量为多少？对应的蒸发量是多少mm？#highlight()[考察点：汽化潜热]
+  1. $R_n = 100 W m^(-2)$，能量全部转换为潜热，1天的总能量为多少？对应的蒸发量是多少mm？#highlight()[考察点：汽化潜热]
 
     #nonum([$
       "LE" = 100 W m^(-2) times 86400 s = 8.64 "MJ" \
@@ -136,9 +136,9 @@ $ rho_v = rho e/P R_d / R_v = epsilon rho e /P $ <eq_rho_v>
 === 湿度计常数
 
 湿度计常数，通过如下公式推导得到：
-$ "Rn" = "LE" + H $
+$ R_n = "LE" + H $
 
-上式忽略了土壤热通量$G$，主要是因为土壤热通量$G$在长时间尺度仅占10%左右。当$"Rn" = 0$的情景下，感热与潜热相加等于0，二者相互转换。
+上式忽略了土壤热通量$G$，主要是因为土壤热通量$G$在长时间尺度仅占10%左右。当$R_n = 0$的情景下，感热与潜热相加等于0，二者相互转换。
 
 代入公式#[@eq_le]和#[@eq_h]代入上式，同时借用水汽压与水汽密度的转换公式#[@eq_rho_v]（$delta(rho_v) = epsilon rho delta(e) /P$），可以得到：
 
@@ -154,9 +154,9 @@ $
 
 === 干球温度与湿球温度
 
-- *湿球温度*：百叶箱中避光情景下（$"Rn"=0$），湿布包裹，充分供水，蒸发降温得到的最低温度。
+- *湿球温度*：百叶箱中避光情景下（$R_n=0$），湿布包裹，充分供水，蒸发降温得到的最低温度。
 
-*(a) $"Rn" = 0$*
+*(a) $R_n = 0$*
 
   如图#[@fig_Tdry_Twet]，从X -> Y过程，$lambda E + H = 0$，X -> Y，令$delta(e) = "es"(T') - e$，可以得到：
   $
@@ -193,7 +193,7 @@ $
   ]
 ) <fig_Tdry_Twet>
 
-*(b) $"Rn" > 0$，且充分供水*
+*(b) $R_n > 0$，且充分供水*
 
 若充分供水，空气中的水汽压可达到饱和，意味着初始状态和结束状态，都处于饱和水汽压曲线上，正如从$Y->A$过程（图#[@fig_Tdry_Twet]）。
 
@@ -221,14 +221,14 @@ $
 联立方程，即可解出$lambda E$和$H$：
 
 $ cases( 
-  "Rn" = lambda E + H \
+  R_n = lambda E + H \
   (lambda E ) / H = Delta / gamma
 ) $
 
-$ lambda = (Delta "Rn") / (Delta + gamma) $
-$ H = (gamma "Rn") / (Delta + gamma) $
+$ lambda = (Delta R_n) / (Delta + gamma) $
+$ H = (gamma R_n) / (Delta + gamma) $
 
-*(c) $"Rn" > 0$，供水不充分*
+*(c) $R_n > 0$，供水不充分*
 
 如图#[@fig_Tdry_Twet]，从X -> A过程，初始状态水汽压不饱和。
 #box_red([
@@ -352,7 +352,6 @@ $
 令$gamma^* = (c_p P) / (lambda epsilon) r_v / r_H = gamma r_v / r_H $。$gamma^*$被称为修正湿度计常数。
 
 
-
 == 潜热蒸散发
 
 === 水面蒸发 (Penman 1948)
@@ -365,25 +364,25 @@ $
 这里水面蒸发指的是：从水面到参考高度（一般指2m）的潜热通量，图中从点W到Y的过程。
 
 $ lambda E [W -> X] = -H[W -> X] = (rho c_p D) / r_H $
-$ lambda E [X -> Y] = (Delta "Rn") / (Delta + gamma^*) $
+$ lambda E [X -> Y] = (Delta R_n) / (Delta + gamma^*) $
 $ lambda E [Y -> Z] = -H[Y -> Z] = -(rho c_p D_0) / r_H $
 
 $W -> Z$，对应的蒸发面水汽不饱和，该过程总的潜热和感热为：
 
-$ lambda E [W -> Z] = (Delta "Rn") / (Delta + gamma^*) + (rho c_p (D - D_0)) / r_H $
+$ lambda E [W -> Z] = (Delta R_n) / (Delta + gamma^*) + (rho c_p (D - D_0)) / r_H $
 
 $
-  H [W -> Z] =& "Rn" - lambda E [W -> Z] \
-    =&  (gamma^* "Rn") / (Delta + gamma^*) - (rho c_p (D - D_0)) / r_H
+  H [W -> Z] =& R_n - lambda E [W -> Z] \
+    =&  (gamma^* R_n) / (Delta + gamma^*) - (rho c_p (D - D_0)) / r_H
 $
 
 若蒸发面水汽饱和（充分供水），则是$W -> Y$过程：
 
-$ lambda E [W -> Y] = (Delta "Rn") / (Delta + gamma^*) + (rho c_p D) / r_H $ <ch3_eq37>
+$ lambda E [W -> Y] = (Delta R_n) / (Delta + gamma^*) + (rho c_p D) / r_H $ <ch3_eq37>
 
 $
-  H [W -> Y] =& "Rn" - lambda E [W -> Z] \
-    =&  (gamma^* "Rn") / (Delta + gamma^*) - (rho c_p D) / r_H
+  H [W -> Y] =& R_n - lambda E [W -> Z] \
+    =&  (gamma^* R_n) / (Delta + gamma^*) - (rho c_p D) / r_H
 $ <ch3_eq38>
 
 *另一种推导方法：暴力求解*
@@ -392,7 +391,7 @@ $ <ch3_eq38>
 
 下标$""_w$和$""_a$分别代表湿表面和空气。空气指的是参考高度处的空气，一般为2m。
 
-$ H = "Rn" - lambda E =  rho c_p (T_w - T_a) \/ r_H $ <ch3_2_h>
+$ H = R_n - lambda E =  rho c_p (T_w - T_a) \/ r_H $ <ch3_2_h>
 
 $ 
   lambda E = lambda epsilon rho (e_w - e_a) / (P r_v) 
@@ -410,17 +409,17 @@ $ lambda E = rho c_p ("es"(T_w) - "es"(T_a) + "VPD") / (gamma^* r_H) \
 求出#[@ch3_2_h]中的$T_w - T_a$，代入#[@ch3_2_le]，可以得到：
 
 $
-  lambda E = (Delta "Rn") / (Delta + gamma^*) + (rho c_p "VPD" \/ r_H)  / (Delta + gamma^*) 
+  lambda E = (Delta R_n) / (Delta + gamma^*) + (rho c_p "VPD" \/ r_H)  / (Delta + gamma^*) 
 $ <ch3_pm_le>
 
 $
-  H = (gamma^* "Rn") / (Delta + gamma^*) - (rho c_p "VPD" \/ r_H)  / (Delta + gamma^*) 
+  H = (gamma^* R_n) / (Delta + gamma^*) - (rho c_p "VPD" \/ r_H)  / (Delta + gamma^*) 
 $ <ch3_pm_h>
 
 #box_red([为何与#[@ch3_eq37]和#[@ch3_eq38]的结果不同？
 
 #nonum([$
-  lambda E = (Delta "Rn") / (Delta + gamma^*) + rho c_p D \/ r_H
+  lambda E = (Delta R_n) / (Delta + gamma^*) + rho c_p D \/ r_H
 $])
 
 *其实他们是等价的，因为$ "VPD" = D (Delta + gamma^*)$。*可借助图#[@fig_penman1948]的几何关系，推导得出。
@@ -439,16 +438,38 @@ $])
 
 $ 
   lambda E &= lambda epsilon rho (e_w - e_a) / (P (r_v + r_s) ) = 
-    lambda epsilon rho (e_w - e_a) / (P r_v (1 + r_s/r_v) ) \
-   &= rho c_p ("es"(T_w) - e_a) / (gamma^* r_H (1 + r_s / r_v)), 
-    (gamma^* = (c_p P) / (lambda epsilon) r_v / r_H)
+    rho c_p (e_w - e_a) / (gamma (r_v + r_s) ), 
+    gamma = (c_p P) / (lambda epsilon)
 $ <ch3_eq45>
 
-重新联立方程#[@ch3_2_h]，可以得到：
+重新联立公式#[@ch3_2_h]，可以得到：
+
+$ gamma^* = gamma (r_v + r_s) / r_H $
+
+$
+  lambda E &= (Delta R_n + rho c_p "VPD" \/ r_H) / (Delta + gamma^*)  \
+   &= (Delta R_n + rho c_p "VPD" \/ r_H) / (Delta + gamma ( 1 + r_s/r_H)) 
+$ <ch3_monteith1965>
+
+#beamer_block([
+这里认为$r_H approx r_v$。根据辐射理论 #[@monteith2013] ，$r_v = (kappa / D)^0.67 r_H approx 0.93 r_H$。
+D是水汽的分子扩散系数，单位$m^2\/s$。$kappa$是空气的热扩散系数，单位$m^2\/s$。
+])
 
 === 参考作物蒸发 (FAO98)
 
+// #beamer_block([
+  一种假想的参考作物，高度为0.12m，固定的地表阻力为70 $s\/m$，反射率为0.23。
 
+  A hypothetical reference crop with an assumed crop height of 0.12 m, a fixed surface resistance of 70 $s\/m$ and an albedo of 0.23.
+// ])
+
+#figure(
+  image("images/蒸散发/参考作物_FAO98_Figure9.png", width: 70%),
+  caption: [
+    参考作物蒸发示意图。图件源自FAO No. 56, Figure 9。
+  ]
+) <fig_fao98>
 
 == 实际蒸发
 

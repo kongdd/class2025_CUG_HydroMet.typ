@@ -124,6 +124,11 @@
   // 代码
   show raw: set text(font: ("consolas", "Microsoft Yahei", "SimSun"), size: 10pt)
 
+  show heading.where(level: 2): it => block(width: 100%)[
+    #(it)
+    #v(0.2em)
+  ]
+        
   // 页眉页脚
   
   // footer
