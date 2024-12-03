@@ -2,10 +2,10 @@
 
 #show: (doc) => template(doc, 
   footer: "CUG水文气象学2024",
-  header: "第二章 地下水运动")
+  header: "地下水运动")
 
 #show math.equation: format_eq
-#counter(heading).update(1)
+#counter(heading).update(6)
 
 #let delta(x) = $Delta #x$
 

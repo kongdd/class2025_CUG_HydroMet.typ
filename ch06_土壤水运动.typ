@@ -3,8 +3,8 @@
 #show: (doc) => template(doc, 
   size: 13pt,
   footer: "CUG水文气象学2024",
-  header: "第一章 土壤水运动")
-#counter(heading).update(0)
+  header: "土壤水运动")
+#counter(heading).update(5)
 
 = 土壤水运动求解
 
