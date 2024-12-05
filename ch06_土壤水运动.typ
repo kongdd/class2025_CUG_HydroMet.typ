@@ -1,10 +1,12 @@
-#import "config.typ": *
+#import "typst/lib.typ": *
 
 #show: (doc) => template(doc, 
-  size: 13pt,
+  size: font.小四,
   footer: "CUG水文气象学2024",
   header: "土壤水运动")
 #counter(heading).update(5)
+#set par(leading: 1.24em)
+
 
 = 土壤水运动求解
 
@@ -74,9 +76,9 @@ $
 
 之后，可利用带状矩阵的方法进行求解。
 
-// 两类边界条件。
+两类边界条件。
 
-- #btext("i=1时")：
+- #highlight()[i=1时：]
 
 $ (Delta theta_(i)) / (Delta t)  Delta z_i = 
     -q_(i-1)^(n+1) + 
@@ -97,7 +99,7 @@ $
   [另外一种理解方式：$q_0$是初始边界条件，不随$theta_0$和$theta_1$变化而变化。]
 )
 
-- #btext("i=N时")：
+- #highlight()[i=N时：]
 
 *若底部自由排水*，$q_i^(n+1) = -K_i^(n+1) = -K_I^(n) + pdv(K_i, theta_i) Delta theta_i $，$pdv(q_i^(n+1), theta_i) = -pdv(K_i, theta_i)$、$pdv(q_i^(n+1), theta_(i+1)) = 0$，可得，
 

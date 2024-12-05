@@ -3,6 +3,7 @@
 #import "@preview/physica:0.9.3": *
 #import "@preview/cuti:0.2.1": show-cn-fakebold
 #import "./box.typ": *
+#import "./paragraph.typ": *
 
 #let rm-bracket(it) = {
   show "{": ""
@@ -13,7 +14,7 @@
 #let nonum(eq) = math.equation(block: true, numbering: none, eq)
 
 #let num-include-chapter(num) = {
-  numbering("1.1", counter(heading).get().first(), num)
+  numbering("(1.1)", counter(heading).get().first(), num)
 }
 
 #let ref-zh(it) = {
@@ -85,48 +86,22 @@
 }
 
 
-#let template(doc, size: 13pt, footer: "", header: "") = {
+
+#let template(doc, size: 12pt, footer: "", header: "") = {
   set text(size: size) // font: ("Microsoft YaHei")
-  set heading(numbering: "1.1")
   set par(justify: true)
-  set math.equation(numbering: "(1.1)")
+  set heading(numbering: "1.1")
+  // set math.equation(numbering: "(1.1)")
+  set math.equation(numbering: num-include-chapter)
   set list(indent: 1em)
 
   // 代码
-  show: codly-init.with()
+  show raw: codly-init.with()
   codly(stroke: 1pt + blue)
   codly(display-icon: true)
   
   show ref: ref-zh  // 引用
-
-  // https://github.com/typst/typst/issues/1896
-  // https://github.com/shuosc/SHU-Bachelor-Thesis-Typst/issues/12
-  show heading: it => {
-    v(0.4em)
-    it
-    v(-1.0em)
-    text(size:0.0em)[h(0.0em)]
-    // fake-par
-  }
-
-  show heading.where(level: 1): it => {
-    set text(size: size + 3pt) 
-    counter(math.equation).update(0)
-    counter(figure.where(kind: image)).update(0)
-    counter(figure.where(kind: table)).update(0)
-    counter(figure.where(kind: raw)).update(0)
-    it
-  }
-
-  show heading.where(level: 2): it => {
-    set text(size: size + 1pt) 
-    it
-  }
-  // show heading.where(level: 1): it => block(width: 100%)[#(it) #v(0.2em)]
-  // show heading.where(level: 2): it => block(width: 100%)[#(it) #v(0.2em)]
-  
-  set math.equation(numbering: num =>
-    numbering("(1.1)", counter(heading).get().first(), num))
+  show heading: it => set-heading(it, size: size)
   
   show: set-figure
   show: set-table

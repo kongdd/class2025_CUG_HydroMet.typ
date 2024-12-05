@@ -6,6 +6,12 @@
 //   v(-measure(b + b).height)
 // }
 
+#let font = (
+  四号: 14pt, 
+  小四: 12pt, 
+  五号: 10.5pt
+)
+
 #let l = 1.24em
 
 #let p-style-default = (
@@ -41,4 +47,36 @@
   // let line-edge = (style.line-height - 1em)/2
   set text(font: (style.font-en, style.font-cn))
   it
+}
+
+
+
+#let set-heading(it, size:font.四号) = {
+  // https://github.com/typst/typst/issues/1896
+  // https://github.com/shuosc/SHU-Bachelor-Thesis-Typst/issues/12
+  
+  show heading: it => {
+    v(0.4em)
+    it
+    v(-1.0em)
+    text(size:0.0em)[h(0.0em)]
+    // fake-par
+  }
+  
+  show heading.where(level: 1): it => {
+    set text(size: size + 3pt) 
+    counter(math.equation).update(0)
+    counter(figure.where(kind: image)).update(0)
+    counter(figure.where(kind: table)).update(0)
+    counter(figure.where(kind: raw)).update(0)
+    it
+  }
+
+  show heading.where(level: 2): it => {
+    set text(size: size + 1pt) 
+    it
+  }
+  it
+  // show heading.where(level: 1): it => block(width: 100%)[#(it) #v(0.2em)]
+  // show heading.where(level: 2): it => block(width: 100%)[#(it) #v(0.2em)]
 }
