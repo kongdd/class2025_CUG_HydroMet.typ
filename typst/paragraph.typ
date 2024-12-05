@@ -11,7 +11,7 @@
 #let p-style-default = (
   leading: l,                   // 1.5倍行距
   // line-height: 1.5em,        // 行高
-  spacing: l + l * 0.2 * 2,     // 段前段后, 0.3倍行距
+  spacing: l + l * 0.1 * 2,     // 段前段后, 0.3倍行距
   font-en: "Times New Roman", 
   font-cn: "STKaiti", // SimSun, STKaiti
 )

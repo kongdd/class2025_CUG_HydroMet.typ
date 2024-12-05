@@ -102,9 +102,9 @@
   // https://github.com/typst/typst/issues/1896
   // https://github.com/shuosc/SHU-Bachelor-Thesis-Typst/issues/12
   show heading: it => {
-    v(0.5em)
+    v(0.4em)
     it
-    v(-0.9em)
+    v(-1.0em)
     text(size:0.0em)[h(0.0em)]
     // fake-par
   }
@@ -115,6 +115,11 @@
     counter(figure.where(kind: image)).update(0)
     counter(figure.where(kind: table)).update(0)
     counter(figure.where(kind: raw)).update(0)
+    it
+  }
+
+  show heading.where(level: 2): it => {
+    set text(size: size + 1pt) 
     it
   }
   // show heading.where(level: 1): it => block(width: 100%)[#(it) #v(0.2em)]
