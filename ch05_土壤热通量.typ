@@ -80,7 +80,7 @@ $ c_v pdv(T, t) = - pdv(F, z) = kappa pdv(T, z, 2) $ <eq_heat>
 
   $ M T_(i-1)^n + (1 - 2M) T_i^n + M T_(i+1)^n = T_i^(n+1) $
 
-  #beamer_block([这种方法的优点是简单，但是需要满足稳定性条件$M≤1/2$，稳定性相对较差。])
+  #beamer-block([这种方法的优点是简单，但是需要满足稳定性条件$M≤1/2$，稳定性相对较差。])
 
 *隐式差分*（implicit），又称向后差分，空间偏微分求解用的是未来时刻。
 
@@ -88,7 +88,7 @@ $ (T_i^(n+1) - T_i^(n)) / delta(t) = kappa / c_v ( (T_(i-1)^(n+1) - 2T_i^(n+1) +
 
 $ -M T_(i-1)^(n+1) + (1+2M) T_(i)^(n+1) - M T_(i+1)^(n+1) = T_i^n $
 
-#beamer_block([稳定性条件$M>0$，稳定性相对较好。])
+#beamer-block([稳定性条件$M>0$，稳定性相对较好。])
 
 // 第一个时刻，$i=1$，
 // $ c_v (T_i^(n+1) - T_i^(n)) / delta(t) = -( F_0 - kappa / delta(z) (T_i^(n+1) - T_(i+1)^(n+1))) / delta(z) ) $

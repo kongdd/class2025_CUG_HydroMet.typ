@@ -6,12 +6,11 @@
 
 #show math.equation: format_eq
 #counter(heading).update(6)
-
 #let delta(x) = $Delta #x$
 
 = 地下水运动
 
-#beamer_block()[
+#beamer-block()[
   该部分模型编写主要参考了Fan et al. (2007)#[@fan_incorporating_2007]的工作。
 ]
 
@@ -88,7 +87,7 @@ qlat[i, j] = 0.5 * q * deltat / area[i, j]   # m3 to m
 
 === 八向
 
-#beamer_block()[模型中，在计算距离的时候，用的正常网格；但计算过水截面面积时，用的是正八边形网格。]
+#beamer-block()[模型中，在计算距离的时候，用的正常网格；但计算过水截面面积时，用的是正八边形网格。]
 
 
 == 导水系数

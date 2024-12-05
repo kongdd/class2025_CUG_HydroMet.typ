@@ -37,7 +37,7 @@ $ G = kappa / delta(z) (T_s - T_1) $
 - $T_1$：第一层土壤的温度
 - $delta(z)$: 第一层土壤的厚度
 
-#beamer_block([这里需要注意，公式1中所有变量都是通量的概念。])
+#beamer-block([这里需要注意，公式1中所有变量都是通量的概念。])
 
 == 地表净辐射
 
@@ -52,11 +52,11 @@ $ R_n = "Rns" + "Rnl" = (1 - alpha) R_s + epsilon"Rln" - epsilon sigma T_s^4 $ <
 - $epsilon$: 地表辐射率；
 - $sigma$: 斯特藩-玻尔兹曼常数(Stefan-Boltzmann constant)，$σ=5.67×10^(-8) W (m^(-2) K^(-4)）$。
 
-#beamer_block([上式的推导，涉及辐射的三个基本定律。])
+#beamer-block([上式的推导，涉及辐射的三个基本定律。])
 
 === 太阳辐射
 
-#box_red([
+#box-red([
   - 辐射能$delta(F)$：辐射的总能量，$J$；
   - 辐射通量：单位时间通过的辐射能，$W$；
   - 辐射通量密度$F$：单位时间、单位面积通过的辐射能，$W m^(-2)$；

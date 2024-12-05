@@ -10,22 +10,18 @@
   it
 }
 
-#let beamer_block(value) =  {
+#let beamer-block(value) =  {
   block(
     fill: luma(240), 
     inset: 0.6em,
     stroke: (left: 0.25em))[#value]
 }
 
-#let set_supplement(it) = {
-  it
-}
-
-#let num_include_chapter(num) = {
+#let num-include-chapter(num) = {
   numbering("1.1", counter(heading).get().first(), num)
 }
 
-#let ref_zh(it) = {
+#let ref-zh(it) = {
   let el = it.element
   let eq = math.equation
   
@@ -55,7 +51,7 @@
   ]
 }
 
-#let set_figure(body) = {
+#let set-figure(body) = {
   set figure(numbering: it => strong[#numbering("1.1", it)])
   set figure.caption(separator: ". ")
   // set figure(numbering: it => strong[#numbering("1.1", it)])
@@ -69,7 +65,7 @@
 }
 
 
-#let set_table(it) = {
+#let set-table(it) = {
   show table.cell.where(y: 0): strong
   // See the strokes section for details on this!
   let frame(stroke) = (x, y) => (
@@ -87,6 +83,16 @@
   it
 }
 
+// 设置paragraph
+#let fake-par = context {
+  // let b = par(box())
+  let b = box()
+  b
+  v(-measure(b + b).height)
+}
+
+
+
 #let template(doc, size: 13pt, footer: "", header: "") = {
   set text(size: size) // font: ("Microsoft YaHei")
   set heading(numbering: "1.1")
@@ -99,22 +105,35 @@
   codly(stroke: 1pt + blue)
   codly(display-icon: true)
   
-  show ref: ref_zh  // 引用
+  show ref: ref-zh  // 引用
 
   // https://github.com/typst/typst/issues/1896
+  // https://github.com/shuosc/SHU-Bachelor-Thesis-Typst/issues/12
+  show heading: it => {
+    v(0.5em)
+    it
+    v(-0.9em)
+    text(size:0.0em)[h(0.0em)]
+    // fake-par
+  }
+
   show heading.where(level: 1): it => {
+    set text(size: size + 3pt) 
     counter(math.equation).update(0)
     counter(figure.where(kind: image)).update(0)
     counter(figure.where(kind: table)).update(0)
     counter(figure.where(kind: raw)).update(0)
     it
   }
+  // show heading.where(level: 1): it => block(width: 100%)[#(it) #v(0.2em)]
+  // show heading.where(level: 2): it => block(width: 100%)[#(it) #v(0.2em)]
+  
   set math.equation(numbering: num =>
     numbering("(1.1)", counter(heading).get().first(), num)
   )
   
-  show: set_figure
-  show: set_table
+  show: set-figure
+  show: set-table
   show: show-cn-fakebold
 
   // 链接
@@ -124,8 +143,6 @@
   // 代码
   show raw: set text(font: ("consolas", "Microsoft Yahei", "SimSun"), size: 10pt)
 
-  show heading.where(level: 1): it => block(width: 100%)[#(it) #v(0.2em)]
-  show heading.where(level: 2): it => block(width: 100%)[#(it) #v(0.2em)]
   // 页眉页脚
 
   // footer
@@ -152,7 +169,7 @@
 
 #let nonum(eq) = math.equation(block: true, numbering: none, eq)
 
-#let box_blue(it) = {
+#let box-blue(it) = {
   showybox(it, frame: (
     // title-color: red.darken(30%),
     border-color: blue.darken(10%),
@@ -161,7 +178,7 @@
   )
 }
 
-#let box_red(it) = {
+#let box-red(it) = {
   showybox(it, frame: (
     // title-color: red.darken(30%),
     border-color: red.darken(30%),

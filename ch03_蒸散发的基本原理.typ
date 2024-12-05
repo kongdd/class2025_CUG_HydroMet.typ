@@ -111,7 +111,7 @@ $ rho_v = rho e/P R_d / R_v = epsilon rho e /P $ <eq_rho_v>
 
 其中，$rho$: 空气密度，$V$: 空气体积。
 
-#beamer_block([
+#beamer-block([
   *小试牛刀：*
 
   1. $R_n = 100 W m^(-2)$，能量全部转换为潜热，1天的总能量为多少？对应的蒸发量是多少mm？#highlight()[考察点：汽化潜热]
@@ -181,7 +181,7 @@ $
   - $delta(T) = T' - T$，是一个降温的过程。
   
 
-  #box_red[
+  #box-red[
     根据该情景，可以推出湿球温度的理论值。
   ]
 
@@ -231,7 +231,7 @@ $ H = (gamma R_n) / (Delta + gamma) $
 *(c) $R_n > 0$，供水不充分*
 
 如图#[@fig_Tdry_Twet]，从X -> A过程，初始状态水汽压不饱和。
-#box_red([
+#box-red([
   求解的过程，将该过程划分为两段：$X -> Y$ 和$Y -> A$两段，分别写出两段的感热与潜热，之后相加即可得到，在此不再赘述。
 ])
 
@@ -240,7 +240,7 @@ $ H = (gamma R_n) / (Delta + gamma) $
 
 == 通量
 
-#beamer_block([“百花丛中过，片叶不沾身”——通量])
+#beamer-block([“百花丛中过，片叶不沾身”——通量])
 
 #showybox(frame: (
     // title-color: red.darken(30%),
@@ -266,7 +266,7 @@ $ H = (gamma R_n) / (Delta + gamma) $
 
 *那能量都去哪里了？*
 
-#beamer_block([大部分能量是穿过，而非截留。])
+#beamer-block([大部分能量是穿过，而非截留。])
 
 #figure(
   image("images/蒸散发/通量-水汽.png", width: 80%),
@@ -335,7 +335,7 @@ $
 - $rho$: 空气密度，单位$"kg"\/m^3$；
 - $r_H$: 热量的传递阻力，单位$s\/m$；
 
-#beamer_block([$rho c_p$的作用是把$Delta T$转化为能量的单位。])
+#beamer-block([$rho c_p$的作用是把$Delta T$转化为能量的单位。])
 
 === 修正湿度计常数
 
@@ -416,7 +416,7 @@ $
   H = (gamma^* R_n) / (Delta + gamma^*) - (rho c_p "VPD" \/ r_H)  / (Delta + gamma^*) 
 $ <ch3_pm_h>
 
-#box_red([为何与#[@ch3_eq37]和#[@ch3_eq38]的结果不同？
+#box-red([为何与#[@ch3_eq37]和#[@ch3_eq38]的结果不同？
 
 #nonum([$
   lambda E = (Delta R_n) / (Delta + gamma^*) + rho c_p D \/ r_H
@@ -451,14 +451,14 @@ $
    &= (Delta R_n + rho c_p "VPD" \/ r_H) / (Delta + gamma ( 1 + r_s/r_H)) 
 $ <ch3_monteith1965>
 
-#beamer_block([
+#beamer-block([
 这里认为$r_H approx r_v$。根据辐射理论 #[@monteith2013] ，$r_v = (kappa / D)^0.67 r_H approx 0.93 r_H$。
 D是水汽的分子扩散系数，单位$m^2\/s$。$kappa$是空气的热扩散系数，单位$m^2\/s$。
 ])
 
 === 参考作物蒸发 (FAO98)
 
-// #beamer_block([
+// #beamer-block([
   一种假想的参考作物，高度为0.12m，固定的地表阻力为70 $s\/m$，反射率为0.23。
 
   A hypothetical reference crop with an assumed crop height of 0.12 m, a fixed surface resistance of 70 $s\/m$ and an albedo of 0.23.

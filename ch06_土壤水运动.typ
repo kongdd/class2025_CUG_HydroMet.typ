@@ -41,7 +41,7 @@ $ <d_theta>
 
 其中，上标$n$和$n+1$代表时间；下标$i-1$、$i$、$i+1$代表土壤层（图@fig_soil）。
 
-#beamer_block(
+#beamer-block(
   [1. $q$为矢量，向下为负，$-q$是为了从矢量转为标量。*进多出少，则$theta$增。反之，则降。*
   2. $Delta z_i$为正，注意区分坐标系是*向下为正，还是向上为正*。
   ]
@@ -93,7 +93,7 @@ $
   c &= pdv(q_i, theta_(i+1)) \
   r &= q_(i-1)^(n+1) + e_i
 $
-#beamer_block(
+#beamer-block(
   [另外一种理解方式：$q_0$是初始边界条件，不随$theta_0$和$theta_1$变化而变化。]
 )
 
