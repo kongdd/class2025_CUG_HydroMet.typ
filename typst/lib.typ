@@ -1,21 +1,16 @@
 #import "@preview/codly:1.0.0": *
 #import "@preview/mitex:0.2.4": *
-#import "@preview/showybox:2.0.3": showybox
 #import "@preview/physica:0.9.3": *
 #import "@preview/cuti:0.2.1": show-cn-fakebold
+#import "./box.typ": *
 
-#let format_eq(it) = {
+#let rm-bracket(it) = {
   show "{": ""
   show "}": ""
   it
 }
 
-#let beamer-block(value) =  {
-  block(
-    fill: luma(240), 
-    inset: 0.6em,
-    stroke: (left: 0.25em))[#value]
-}
+#let nonum(eq) = math.equation(block: true, numbering: none, eq)
 
 #let num-include-chapter(num) = {
   numbering("1.1", counter(heading).get().first(), num)
@@ -45,11 +40,17 @@
   }
 }
 
-#let btext(x, color: red, bg: rgb("fffd11a1")) = {
-  highlight(fill: bg)[
-    #text(x, fill: color)
-  ]
+#let highlight-text(x, color: red, bg: rgb("fffd11a1")) = {
+  highlight(fill: bg)[#text(x, fill: color)]
 }
+
+#let md-highlight(x) = {
+  // let txt = x.fields().text // content object
+  let txt = x.text
+  txt = txt.replace("==", "")
+  highlight-text(txt)
+}
+
 
 #let set-figure(body) = {
   set figure(numbering: it => strong[#numbering("1.1", it)])
@@ -82,15 +83,6 @@
   )
   it
 }
-
-// 设置paragraph
-#let fake-par = context {
-  // let b = par(box())
-  let b = box()
-  b
-  v(-measure(b + b).height)
-}
-
 
 
 #let template(doc, size: 13pt, footer: "", header: "") = {
@@ -129,8 +121,7 @@
   // show heading.where(level: 2): it => block(width: 100%)[#(it) #v(0.2em)]
   
   set math.equation(numbering: num =>
-    numbering("(1.1)", counter(heading).get().first(), num)
-  )
+    numbering("(1.1)", counter(heading).get().first(), num))
   
   show: set-figure
   show: set-table
@@ -144,45 +135,10 @@
   show raw: set text(font: ("consolas", "Microsoft Yahei", "SimSun"), size: 10pt)
 
   // 页眉页脚
-
-  // footer
   set page(
-    footer: context [
-      #text(footer, weight: "bold")
-      #h(1fr)
-      #counter(page).display("1/1", both: true)
-    ], 
-    header: align(right)[
-      #text(header, weight: "bold")
-    ],
-    numbering: "1",
-  )
-
-  show regex("==(\w+)=="): x => {
-    // let txt = x.fields().text // content object
-    let txt = x.text
-    txt = txt.replace("==", "")
-    btext(txt)
-  }
+    header: align(right)[ #text(header, weight: "bold") ],
+    footer: context [#text(footer, weight: "bold") #h(1fr) #counter(page).display("1/1", both: true) ], 
+    numbering: "1", )
+  show regex("==(\w+)=="): md-highlight
   doc
-}
-
-#let nonum(eq) = math.equation(block: true, numbering: none, eq)
-
-#let box-blue(it) = {
-  showybox(it, frame: (
-    // title-color: red.darken(30%),
-    border-color: blue.darken(10%),
-    body-color: blue.lighten(95%) ), 
-    // title: [*比热容*]
-  )
-}
-
-#let box-red(it) = {
-  showybox(it, frame: (
-    // title-color: red.darken(30%),
-    border-color: red.darken(30%),
-    body-color: red.lighten(95%) ),
-    // title: [*比热容*]
-  )
 }
