@@ -1,4 +1,5 @@
-#import "config.typ": *
+#import "./typst/lib.typ": *
+
 #counter(heading).update(3)
 #let delta(x) = $Delta #x$
 #show math.equation: set text(11.5pt)
@@ -103,7 +104,7 @@ $ f(T_s) = Q_a - epsilon sigma T_s^4 - kappa / delta(z) (T_s - T_1) - (rho c_p (
 
 *1. 牛顿梯度降。*
 
-土壤有一个表皮温度T_s（skin temperature），表皮温度与第一层土壤的平均温度，有所不同。
+土壤有一个表皮温度$T_s$（skin temperature），表皮温度与第一层土壤的平均温度，有所不同。
 
 牛顿梯度降迭代过程中，土壤温度按照如下公式进行更新。
 

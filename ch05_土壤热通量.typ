@@ -1,5 +1,5 @@
+#import "./typst/lib.typ": *
 
-#import "config.typ": *
 #counter(heading).update(4)
 #let delta(x) = $Delta #x$
 #show math.equation: set text(11pt)
@@ -249,11 +249,60 @@ $
 
 == 数值求解——简易版 偏微分方程
 
-计算每一层的土壤热通量$F_i (i=0,...,N)$，这里套用的主要是如下公式。
+=== 偏微分基础
+
+解决诸如此类问题：
 
 $
-  F_i^n = - #kappa-coef($i+1/2$) (T_i^(n+1) - T_(i+1)^(n+1))
+  (d u) / (d t) = f(u, p, t)
 $
+
+- u：要求解的状态变量；
+- p：参数；
+- t：时间。
+
+*5行代码求解偏微分方程：*
+```julia
+using DifferentialEquations
+
+f(u, p, t) = 1.01 * u
+u0 = 1 / 2
+tspan = (0.0, 1.0)
+prob = ODEProblem(f, u0, tspan)
+sol = solve(prob, Tsit5(), reltol = 1e-8, abstol = 1e-8)
+```
+
+绘图展示结果：
+
+```julia
+using Plots
+plot(sol, linewidth = 5, title = "Solution to the linear ODE with a thick line",
+    xaxis = "Time (t)", yaxis = "u(t) (in μm)", 
+    label = "My Thick Line!") # legend=false
+plot!(sol.t, t -> 0.5 * exp(1.01t), lw = 3, ls = :dash, label = "True Solution!")
+```
+
+#figure(
+  image("images/土壤热通量/ex_ODE_01.png", width: 70%),
+  caption: [
+    ODE求解示例1。
+  ]
+) <fig_>
+
+=== 偏微分实战
+
+计算每一层的土壤热通量$F_i (i=0,...,N)$，这里套用的主要是如下公式：
+
+#nonum([$
+  rho c_v^\* delta(x) delta(y) delta(z) delta(T) =  -(F_"in" - F_"out") delta(x) delta(y) delta(t)  \
+
+  c_v delta(T) / delta(t) = - delta(F) / delta(z), c_v = rho c_v^\* \
+
+// 其中，$c_v$是体积热容量（volumetric heat capacity，$J m^(-3)s^(-1)$)。写成偏微分形式，则是：
+  c_v pdv(T, t) = - pdv(F, z) = kappa pdv(T, z, 2) \
+
+  F_i^n = - #kappa-coef($i+1/2$) (T_i^(n+1) - T_(i+1)^(n+1))
+$])
 
 
 ```jl

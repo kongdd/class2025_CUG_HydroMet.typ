@@ -1,4 +1,5 @@
-#import "config.typ": *
+#import "./typst/lib.typ": *
+
 // #show math.equation: format_eq
 #counter(heading).update(2)
 #let delta(x) = $Delta #x$

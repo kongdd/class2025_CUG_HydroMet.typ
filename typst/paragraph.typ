@@ -50,16 +50,20 @@
 }
 
 
-
-#let set-heading(it, size:font.四号) = {
+#let set-heading(it, size:font.四号, fake-par: false) = {
   // https://github.com/typst/typst/issues/1896
   // https://github.com/shuosc/SHU-Bachelor-Thesis-Typst/issues/12
-  
   show heading: it => {
-    v(0.4em)
-    it
-    v(-1.0em)
-    text(size:0.0em)[h(0.0em)]
+    if fake-par {
+      v(0.4em)
+      it
+      v(-1.0em)
+      text(size:0em)[#h(0em)]
+    } else {
+      v(0.2em)
+      it
+      v(0.2em)
+    }
     // fake-par
   }
   

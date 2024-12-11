@@ -1,4 +1,4 @@
-#import "config.typ": *
+#import "./typst/lib.typ": *
 #import "@preview/showybox:2.0.2": showybox
 #import "@preview/physica:0.9.3": *
 #import "@preview/cuti:0.2.1": show-cn-fakebold

@@ -1,4 +1,4 @@
-#import "config.typ": *
+#import "./typst/lib.typ": *
 #counter(heading).update(2)
 #let delta(x) = $Delta #x$
 
