@@ -11,7 +11,46 @@
 
 = 土壤热通量
 
-为何要研究土壤热通量？在日内尺度，土壤温度变化剧烈，若想准确模拟陆表能量平衡和水量平衡过程，需要清楚土壤温度是如何变化的。本章理论主要参考#cite(<bonan2019climate>, form: "prose")。
+#beamer-block()[本章理论主要参考#cite(<bonan2019climate>, form: "prose")。]
+
+基于能量平衡公式和净辐射公式，可知：
+
+$ cases(
+    R_n - G = lambda E + H,
+    R_n = R"ns" + R"nl" = (1 - alpha) R_s + epsilon"Rln" - epsilon sigma T_s^4
+) $
+
+代入$G$, $H$, $lambda E$的公式，可得：
+
+$
+  (1 - alpha) R_s + epsilon"Rln" - epsilon sigma T_s^4 - kappa / delta(z) (T_s - T_1) = (rho c_p delta(e)) / (gamma r_v) + (rho c_p delta(T)) / r_H \
+
+  (1 - alpha) R_s + epsilon"Rln" - epsilon sigma T_s^4 - kappa / delta(z) (T_s - T_1) = (rho c_p (e_"surf" - e) ) / (gamma r_v) + (rho c_p (T_s - T_a)) / r_H
+$ <eq_5.2>
+
+- $kappa$: 热传导系数，$"W"\/m^2\/K$
+- $R_n$: 净辐射，MJ
+- $lambda$: 汽化潜热，2.5 MJ / kg
+- $gamma$：湿度计常数，kPa / K
+- $rho$: 空气密度，$"kg"\/m^3$
+- $r_v$, $r_H$：分别是水汽和热量的传导阻力，$s\/m$。
+- $T_s$：地表温度，℃
+- $T_a$：空气温度
+- $e_"surf"$：蒸发面的水汽压
+- $e$：空气水汽压
+- $T_1$：第一层土壤的温度，℃
+- $delta(z)$: 第一层土壤的厚度，m
+
+
+#box-red([
+  *为何要研究土壤热通量？*
+
+  日内尺度，土壤温度$T_s$变化剧烈，根据玻尔兹曼定律，$T_s$变化会引起地表净辐射$R_n$的变化，影响地表能量平衡和水量平衡。
+
+  1. 若想准确模拟陆表能量平衡（$lambda H$和$lambda E$）和水量平衡（$E$）过程，需要清楚土壤温度是如何变化的。
+
+  2. 厘清土壤温度与空气温度之间的关系，可应用于城市热岛研究，边界层研究，例如城市、水体对周边区域空气温度的影响。基于式#[@eq_5.2]，已知土壤温度，可求解空气温度。
+])
 
 如下图所示，表层的土壤温度变化非常剧烈，地表的土壤温度TS_0日内变化幅度甚至超过了空气温度，在空气温度为30℃时，地表温度甚至可以达到50℃。与之形成鲜明对比，深层土壤温度变化非常缓慢，40cm以下的土壤温度几乎看不到日内波动，80cm以下的土壤温度在图中几乎是一条直线。
 
@@ -34,7 +73,7 @@
   ]
 ) <fig_Tsoil_cont>
 
-#pagebreak()
+// #pagebreak()
 
 *热通量公式：*
 
@@ -62,11 +101,30 @@ $ c_v pdv(T, t) = - pdv(F, z) = kappa pdv(T, z, 2) $ <eq_heat>
   ]
 ) <fig_Tsoil_cont>
 
+
+#figure(
+  caption: [土壤热通量参数。数据源于de Vries (1963)。],
+  table(
+    columns: (3.2cm, 5.5cm, 5.4cm),
+    // inset: 10pt,
+    align: (left, center, center),
+    table.header(
+      [*Type*], [Thermal conductivity ($kappa$) \ $W m^(-1) K^(-1)$], [Heat capacity ($c_v$) \ $"MJ" m^(-3) K^(-1)$],
+    ),
+    [Quartz], [8.80], [2.12], 
+    [Clay minerals], [2.92], [2.44], 
+    [Organic matter], [0.25], [2.50], 
+    [Liquid water], [0.57], [4.19], 
+    [Ice], [2.18], [1.88], 
+    [Air], [0.025], [0.0012], 
+  )
+)
+
 // #pagebreak()
 
 == 数值求解——复杂版 三角矩阵
 
-#highlight()[如何求解土壤温度随时间的变化？] 主要用的是一个1个核心公式，式@eq_heat。
+#highlight()[如何求解土壤温度随时间的变化？] 主要用的是1个核心公式，式@eq_heat。
 
 === 差分方法
 
@@ -291,6 +349,36 @@ plot!(sol.t, t -> 0.5 * exp(1.01t), lw = 3, ls = :dash, label = "True Solution!"
 
 === 偏微分实战
 
+首先定义土壤结构体：
+```julia
+@with_kw_noshow mutable struct Soil{FT}
+  N::Int = 10                        # layers of soil
+  ibeg::Int = 1                      # index of the first layer，边界层条件指定
+  inds_obs::Vector{Int} = ibeg:N     # indices of observed layers
+
+  dt::Float64 = 3600                 # 时间步长, seconds
+  z::Vector{FT} = zeros(FT, N)       # m, 向下为负
+  z₊ₕ::Vector{FT} = zeros(FT, N)
+  Δz::Vector{FT} = zeros(FT, N)
+  Δz₊ₕ::Vector{FT} = zeros(FT, N)
+
+  # 温度
+  Tsoil::Vector{FT} = fill(NaN, N)   # [°C]
+  κ₊ₕ::Vector{FT} = zeros(FT, N - 1)  # thermal conductivity at interface [W m-1 K-1]
+  F::Vector{FT} = zeros(FT, N)       # heat flux, [W m-2]
+  Tsurf::FT = FT(NaN)                # surface temperature, [°C]
+  F0::FT = FT(NaN)                   # heat flux at the surface, [W m-2]，向下为负
+
+  ## Parameter: [水力] + [热力]参数
+  param::SoilParam{FT} = SoilParam{FT}(; N)
+
+  # ODE求解临时变量
+  u::Vector{FT} = fill(NaN, N)   # [°C], 为了从ibeg求解地温，定义的临时变量
+  du::Vector{FT} = fill(NaN, N)  # [°C]
+  timestep::Int = 0              # 迭代次数
+end
+```
+
 计算每一层的土壤热通量$F_i (i=0,...,N)$，这里套用的主要是如下公式：
 
 #nonum([$
@@ -303,7 +391,6 @@ plot!(sol.t, t -> 0.5 * exp(1.01t), lw = 3, ls = :dash, label = "True Solution!"
 
   F_i^n = - #kappa-coef($i+1/2$) (T_i^(n+1) - T_(i+1)^(n+1))
 $])
-
 
 ```jl
 function soil_HeatFlux!(F::V, T::V, κ::V, z::V, z₊ₕ::V;
@@ -372,13 +459,13 @@ end
   Tsoil = sol.u[end]
   ```
 
-- 解所有时刻（本科生可跳过）：
+- 解所有时刻：
   ```jl
-  function solve_Tsoil_ODE(soil, TS0; solver, 
+  function solve_Tsoil_ODE(soil, Tsurf; solver, 
     reltol=1e-3, abstol=1e-3, verbose=false)
     (; N, inds_obs, ibeg, dt) = soil
 
-    ntime = length(TS0)
+    ntime = length(Tsurf)
     u0 = soil.Tsoil[ibeg:end]
 
     _TsoilEquation(dT, T, p, t) = TsoilEquation_partial(dT, T, p, t; ibeg)
@@ -389,7 +476,7 @@ end
     R[1, :] .= soil.Tsoil[ibeg:end]
 
     for i = 2:ntime
-      soil.TS0 = TS0[i]
+      soil.Tsurf = Tsurf[i]
       prob.u0 .= soil.Tsoil[ibeg:end]
 
       sol = solve(prob, solver; reltol, abstol, saveat=dt)
@@ -401,6 +488,41 @@ end
     R[:, inds]
   end
   ```
-// === 参数优化
+
+完整代码见：https://github.com/CUG-hydro/SoilTemperature.jl/blob/main/test/case01_solve_Tsoil_CUG.jl。
+
+=== 参数优化
+
+随机参数，模拟结果：
+
+#figure(
+  image("images/土壤热通量/case01_Tsoil_CUG_ODE_raw.png", width: 85%),
+  caption: [
+    大气系土壤温度观测与随机参数$kappa$, $c_v$土壤温度模拟结果。
+  ]
+) <fig_cug_Tsoil_raw>
+
+
+参数优化之后，模拟结果：
+
+#figure(
+  image("images/土壤热通量/case01_Tsoil_CUG_ODE_raw.png", width: 85%),
+  caption: [
+    与图#[@fig_cug_Tsoil_raw]相似，只是参数$kappa$, $c_v$进行了优化。
+  ]
+) <fig_cug_Tsoil>
+
+参数优化过程如下，设置（1）初始参数$x_0$；（2）参数值域`[lower, upper]`；（3）目标函数$f$，之后代入优化函数`sceua`即可得到最优参数。
+
+```julia
+soil = init_soil(; soil_type=7)
+x0 = [soil.param.κ; soil.param.cv]
+lower = [fill(0.1, 9); fill(0.1, 9) * 1e6]
+upper = [fill(10.0, 9); fill(5.0, 9) * 1e6]
+
+f(theta) = goal(theta)
+@time theta, feval, exitflag = sceua(f, x0, lower, upper; maxn=Int(2 * 1e4))
+```
+
 
 #bibliography("References.bib", title: "参考文献", style:"gb-7714-2015-author-date")
