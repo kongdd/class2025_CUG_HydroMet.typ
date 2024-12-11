@@ -60,9 +60,9 @@
       v(-1.0em)
       text(size:0em)[#h(0em)]
     } else {
-      v(0.2em)
+      // v(0.2em)
       it
-      v(0.2em)
+      // v(0.2em)
     }
     // fake-par
   }
@@ -76,10 +76,14 @@
     it
   }
 
-  show heading.where(level: 2): it => {
-    set text(size: size + 1pt) 
-    it
-  }
+  // show heading.where(level: 2): it => {
+  //   set text(size: size + 1pt) 
+  //   it
+  // }
+  // show heading.where(level: 3): it => {
+  //   // set text(size: size + 1pt) 
+  //   it
+  // }
   it
   // show heading.where(level: 1): it => block(width: 100%)[#(it) #v(0.2em)]
   // show heading.where(level: 2): it => block(width: 100%)[#(it) #v(0.2em)]

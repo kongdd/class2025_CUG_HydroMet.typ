@@ -49,7 +49,6 @@ $ P =  rho R T $
 - P: 压强，单位$"Pa"$；
 - V: 体积，单位$m^3$；
 - n: 气体的摩尔数，单位$"mol"$；M: 气体的摩尔质量，单位$"kg/mol"$；
-
 - $R^*$: 理想气体常数，单位$J\/("mol" K)$；$R$: 比气体常数，单位$J\/("kg" K)$；
 - T: 温度，单位$K$；
 - m: 气体的质量，单位$"kg"$；
@@ -180,14 +179,11 @@ $
 
   - $delta(T) = T' - T$，是一个降温的过程。
   
+  根据该情景，可以推出湿球温度的理论值。
+  // #box-red[根据该情景，可以推出湿球温度的理论值。]
 
-  #box-red[
-    根据该情景，可以推出湿球温度的理论值。
-  ]
-
-  
 #figure(
-  image("images/蒸散发/湿球温度计算.png", width: 80%),
+  image("images/蒸散发/湿球温度计算.png", width: 75%),
   caption: [
     干球温度与湿球温度示意图。
   ]
@@ -235,8 +231,7 @@ $ H = (gamma R_n) / (Delta + gamma) $
   求解的过程，将该过程划分为两段：$X -> Y$ 和$Y -> A$两段，分别写出两段的感热与潜热，之后相加即可得到，在此不再赘述。
 ])
 
-// #pagebreak()
-
+#pagebreak()
 
 == 通量
 
@@ -269,7 +264,7 @@ $ H = (gamma R_n) / (Delta + gamma) $
 #beamer-block([大部分能量是穿过，而非截留。])
 
 #figure(
-  image("images/蒸散发/通量-水汽.png", width: 80%),
+  image("images/蒸散发/通量-水汽.png", width: 75%),
   caption: [
     水汽通量。图件源自#[@monteith2013] Figure 3.4。
     ]
@@ -313,7 +308,7 @@ $
 === 感热通量
 
 #figure(
-  image("images/蒸散发/通量-热量.png", width: 80%),
+  image("images/蒸散发/通量-热量.png", width: 75%),
   caption: [
     感热通量。图件源自#[@monteith2013] Figure 3.3。
     ]
@@ -352,12 +347,12 @@ $
 令$gamma^* = (c_p P) / (lambda epsilon) r_v / r_H = gamma r_v / r_H $。$gamma^*$被称为修正湿度计常数。
 
 
-== 潜热蒸散发
+== 潜在蒸散发
 
 === 水面蒸发 (Penman 1948)
 
 #figure(
-  image("images/蒸散发/Penman1948_示意图.png", width: 75%),
+  image("images/蒸散发/Penman1948_示意图.png", width: 70%),
   caption: [Penman 1948水面蒸发示意图。]
 ) <fig_penman1948>
 
@@ -471,7 +466,7 @@ D是水汽的分子扩散系数，单位$m^2\/s$。$kappa$是空气的热扩散�
   ]
 ) <fig_fao98>
 
-== 实际蒸发
+== 实际蒸散发
 
 #figure(
   image("images/蒸散发/根区土壤水分布.png", width: 85%),
@@ -484,6 +479,20 @@ D是水汽的分子扩散系数，单位$m^2\/s$。$kappa$是空气的热扩散�
 
 无论是土壤蒸发还是植被蒸腾，都与土壤水分有关。
 
+土壤水限制植被蒸腾和土壤蒸发；蒸散发抽取土壤水。二者相互影响，相互限制。
+
+== 蒸散发与土壤水、地下水的交互
+
+#figure(
+  image("images/蒸散发/ET_signal_GW.png", width: 85%),
+  caption: [蒸散发与地下水的交互。\ 数据来源：
+  https://waterdata.usgs.gov/monitoring-location/302416087505501。]
+)
+
+#figure(
+  image("images/蒸散发/ET_signal_SM.png", width: 85%),
+  caption: [蒸散发与土壤水的交互。]
+)
 
 #bibliography("References.bib", title: "参考文献", style:"gb-7714-2015-author-date")
 

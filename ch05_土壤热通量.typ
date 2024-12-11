@@ -35,9 +35,9 @@ $ <eq_5.2>
 - $rho$: 空气密度，$"kg"\/m^3$
 - $r_v$, $r_H$：分别是水汽和热量的传导阻力，$s\/m$。
 - $T_s$：地表温度，℃
-- $T_a$：空气温度
-- $e_"surf"$：蒸发面的水汽压
-- $e$：空气水汽压
+- $T_a$：空气温度，℃
+- $e_"surf"$：蒸发面的水汽压，kPa
+- $e$：空气水汽压，kPa
 - $T_1$：第一层土壤的温度，℃
 - $delta(z)$: 第一层土壤的厚度，m
 
@@ -87,9 +87,9 @@ $ F = - kappa pdv(T, z) $
 
 $ rho c_v^\* delta(x) delta(y) delta(z) delta(T) =  -(F_"in" - F_"out") delta(x) delta(y) delta(t) $
 
-$ c_v delta(T) / delta(t) = - delta(F) / delta(z), c_v = rho c_v^\* $
+$ c_v delta(T) / delta(t) = - delta(F) / delta(z), c_v = rho c_v^\* $ <eq_5.5>
 
-其中，$c_v$是体积热容量（volumetric heat capacity，$J m^(-3)s^(-1)$)。写成偏微分形式，则是：
+其中，$c_v$是体积热容量（volumetric heat capacity，$J m^(-3)s^(-1)$)，是比热容与密度的乘积。式#[@eq_5.5]写成偏微分形式，则是：
 
 $ c_v pdv(T, t) = - pdv(F, z) = kappa pdv(T, z, 2) $ <eq_heat>
 
@@ -196,6 +196,12 @@ $ a_i T_(i-1)^(n+1) + b_i T_i^(n+1) + c_i T_(i+1)^(n+1) = d_i $
 
 之后便可利用三角阵的方式进行求解。
 
+#figure(
+  image("images/土壤热通量/三角阵求解.png", width: 70%),
+  caption: [三角阵求解。]
+) <fig_>
+
+#highlight()[TODO: 补充公式推导过程。]
 
 *边界条件*
 
@@ -363,11 +369,11 @@ plot!(sol.t, t -> 0.5 * exp(1.01t), lw = 3, ls = :dash, label = "True Solution!"
   Δz₊ₕ::Vector{FT} = zeros(FT, N)
 
   # 温度
-  Tsoil::Vector{FT} = fill(NaN, N)   # [°C]
+  Tsoil::Vector{FT} = fill(NaN, N)    # [°C]
   κ₊ₕ::Vector{FT} = zeros(FT, N - 1)  # thermal conductivity at interface [W m-1 K-1]
-  F::Vector{FT} = zeros(FT, N)       # heat flux, [W m-2]
-  Tsurf::FT = FT(NaN)                # surface temperature, [°C]
-  F0::FT = FT(NaN)                   # heat flux at the surface, [W m-2]，向下为负
+  F::Vector{FT} = zeros(FT, N)   # heat flux, [W m-2]
+  Tsurf::FT = FT(NaN)            # surface temperature, [°C]
+  F0::FT = FT(NaN)               # heat flux at the surface, [W m-2]，向下为负
 
   ## Parameter: [水力] + [热力]参数
   param::SoilParam{FT} = SoilParam{FT}(; N)
@@ -394,15 +400,15 @@ $])
 
 ```jl
 function soil_HeatFlux!(F::V, T::V, κ::V, z::V, z₊ₕ::V;
-  F0::FT=NaN, TS0::FT=NaN, 
-  method="TS0", ibeg::Int=1) where {FT<:Real,V<:AbstractVector{FT}}
+  F0::FT=NaN, Tsurf::FT=NaN, 
+  method="Tsurf", ibeg::Int=1) where {FT<:Real,V<:AbstractVector{FT}}
 
   N = length(T)
-  if method == "TS0"
+  if method == "Tsurf"
     if ibeg == 1
-      F0 = -κ[1] * (TS0 - T[1]) / (0 - z[1])
+      F0 = -κ[1] * (Tsurf - T[1]) / (0 - z[1])
     elseif ibeg > 1
-      F0 = -κ[ibeg] * (TS0 - T[ibeg]) / (z[ibeg-1] - z[ibeg])
+      F0 = -κ[ibeg] * (Tsurf - T[ibeg]) / (z[ibeg-1] - z[ibeg])
     end
   end
 
@@ -425,12 +431,12 @@ $ c_(v, i) delta(z_i) (T_i^(n+1) - T_i^n) / delta(t) = -(F_(i-1)^n - F_i^n) $
 
 
 ```jl
-function TsoilEquation(dT, T, soil::Soil, t; method="TS0", ibeg::Int=1)
+function TsoilEquation(dT, T, soil::Soil, t; method="Tsurf", ibeg::Int=1)
   soil.timestep += 1
-  # TODO: 根据t，更新TS0
-  (; N, Δz, z, z₊ₕ, F, TS0) = soil
+  # TODO: 根据t，更新Tsurf
+  (; N, Δz, z, z₊ₕ, F, Tsurf) = soil
   (; κ, cv) = soil.param
-  F0 = soil_HeatFlux!(F, T, κ, z, z₊ₕ; TS0, F0=soil.F0, method, ibeg)
+  F0 = soil_HeatFlux!(F, T, κ, z, z₊ₕ; Tsurf, F0=soil.F0, method, ibeg)
 
   dT[ibeg] = -(F0 - F[ibeg]) / (Δz[ibeg] * cv[ibeg])
   @inbounds for i in ibeg+1:N
@@ -439,7 +445,7 @@ function TsoilEquation(dT, T, soil::Soil, t; method="TS0", ibeg::Int=1)
 end
 
 # 该函数目的：跳过不需要求解的签1:ibeg-1层
-function TsoilEquation_partial(dT, T, p::Soil, t; method="TS0", ibeg::Int=1)
+function TsoilEquation_partial(dT, T, p::Soil, t; method="Tsurf", ibeg::Int=1)
   p.du[ibeg:end] .= dT
   p.u[ibeg:end] .= T
   TsoilEquation(p.du, p.u, p, t; method, ibeg)
@@ -506,7 +512,7 @@ end
 参数优化之后，模拟结果：
 
 #figure(
-  image("images/土壤热通量/case01_Tsoil_CUG_ODE_raw.png", width: 85%),
+  image("images/土壤热通量/case01_Tsoil_CUG_ODE.png", width: 85%),
   caption: [
     与图#[@fig_cug_Tsoil_raw]相似，只是参数$kappa$, $c_v$进行了优化。
   ]
