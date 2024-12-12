@@ -116,10 +116,10 @@ $ T_(s, "next") = T_s - f(T_s) / pdv(f, T_s) $
 
 $ F_0 = f(T_1) = Q_a - epsilon sigma T_s^4 - (rho c_p (e_"surf" - e) ) / (gamma r_v) - (rho c_p (T_1 - T_a)) / r_H $
 
-F0求$T_1$的偏导，可得：
+F0求$T_s$的偏导，可得：
 
 $
-  pdv(F_0, T_s) = -4 epsilon sigma T_s^3 - (rho c_p pdv(e_"surf", T_1) ) / (gamma r_v) - (rho c_p) / r_H
+  pdv(F_0, T_s) = -4 epsilon sigma T_s^3 - (rho c_p pdv(e_"surf", T_s) ) / (gamma r_v) - (rho c_p) / r_H
 $ <eq_pdv_F0-T_s>
 
 // == 土壤热通量
