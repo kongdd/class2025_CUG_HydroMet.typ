@@ -1,17 +1,21 @@
-#import "./typst/lib.typ": *
+// #import "./typst/lib.typ": *
+#import "@preview/modern-cug-report:0.1.0": *
+#show: (doc) => template(doc, 
+  footer: "",
+  header: "MarrMot.jl 使用手册")
 
 #counter(heading).update(4)
 #let delta(x) = $Delta #x$
 #show math.equation: set text(11pt)
 
-#show: (doc) => template(doc, 
-  size: 13pt,
-  footer: "CUG水文气象学2024",
-  header: "土壤热通量")
+// #show: (doc) => template(doc, 
+//   size: 13pt,
+//   footer: "CUG水文气象学2024",
+//   header: "土壤热通量")
 
 = 土壤热通量
 
-#beamer-block()[本章理论主要参考#cite(<bonan2019climate>, form: "prose")。]
+#beamer-block()[本章理论主要参考#cite(<bonan2019climate>, form: "prose") chapter 5。]
 
 基于能量平衡公式和净辐射公式，可知：
 
