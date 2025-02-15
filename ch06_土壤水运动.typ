@@ -102,7 +102,7 @@ end
 
 1. *若zwt位于土壤中*，假定在第N层（i=N）。
 
-  由于下方c处于均衡状态，因此$q_"out" = q_"in" = 0, pdv(q_i, theta_(i))=0, pdv(q_i, theta_(i+1))=0$。
+  由于下方处于均衡状态，因此$q_"out" = 0 (q_i = 0), pdv(q_i, theta_(i))=0, pdv(q_i, theta_(i+1))=0$。
 
   *对于第$N$层：*
   $
