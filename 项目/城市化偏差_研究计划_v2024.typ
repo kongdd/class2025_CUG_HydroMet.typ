@@ -6,7 +6,7 @@
   footer: "",
   header: "项目研究计划")
 #show math.equation: set text(12pt)
-#show: p-indent
+// #show: p-indent
 // #set par(
 //   leading: 1em,
 //   spacing: 1.24em, 

@@ -171,6 +171,8 @@ Klat[i, j] = K0(nsoil) * Klat_factor[nsoil]
 ```
 Klat_factor取值详见下表。
 
+#[@tab1]
+
 #figure(
   caption: [土壤类型、$K$、与$K"lat"_"factor"$值。表格出自Fan et al. (2007) Table 2。],
   table(
@@ -194,8 +196,7 @@ Klat_factor取值详见下表。
     [11], [clay], [0.1123], [48], 
     [12], [peat], [0.6912], [2]
   )
-)
-
+) <tab1>
 
 == 地下水与河道的交互
 
@@ -257,7 +258,6 @@ $ Q_{"rf"} = - "RC" (z_"river" - z_{"river","bed"}) $
 == 地下水水位更新 (update_wtd)
 
 === Fan2007
-
 
 #mitex(`$$
 (z_{gw} - z_{i+1}) \theta_{sat} + (z_i - z_{gw}) \theta_e = \theta dz 

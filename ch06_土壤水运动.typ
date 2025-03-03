@@ -10,7 +10,7 @@
 
 = 土壤水运动求解
 
-#beamer-block()[本章理论主要参考#cite(<bonan2019climate>, form: "prose") chapter 8。]
+// #beamer-block()[本章理论主要参考#cite(<bonan2019climate>, form: "prose") chapter 8。]
 
 #figure(
   image("images/Bonan_Soil_SM.png", width: 55%),
@@ -58,9 +58,16 @@ $
   为了考虑土壤水与地下水的交互作用，Zeng et al. (2009)引入了均衡水势的概念$psi_E$。$q = 0$时，对应的土壤水势，即均衡水势$psi_E$，对应的土壤含水量为均衡含水量$theta_E$。当处于均衡状态时，每一层土壤的总势能均相等：
   
   $ psi_E + z = psi_"sat" [theta_E(z) / theta_"sat"]^(-B) + z = psi_"sat" + z_"wt" = C $
-  
-  $ psi_"sat" [theta_E(z) / theta_"sat"]^(-B) = C - z $
-  
+
+$ 
+  overline(theta_{E,i}) = integral_(z_1)^(z_2) theta_E(z) d z \/delta(z) &= 
+    theta_"sat" psi_"sat"^(1/B) integral_(z_1)^(z_2) (C - z)^(-1/B) d z \/delta(z) \
+ // &= theta_"sat" psi_"sat"^(1/B) B / (B-1) [-(C - z)^(1 - 1/B)]_(z_1)^(z_2) \/delta(z) \
+  &= theta_"sat" psi_"sat"^(1/B) B / (B-1) [(C - z_1)^(1 - 1/B) - (C - z_2)^(1 - 1/B)] \/delta(z)
+  $
+
+$ psi_"sat" [theta_E(z) / theta_"sat"]^(-B) = C - z $
+
   $ theta_E(z) = theta_"sat" ((C - z) / psi_"sat")^(-1/B)  
     = theta_"sat" psi_"sat"^(1/B) (C - z)^(-1/B) $
 
@@ -68,11 +75,6 @@ $
 
 从$z_1$到$z_2$的土壤的平均均衡含水量$overline(theta_E)$：
 
-$ overline(theta_E) = integral_(z_1)^(z_2) theta_E(z) d z \/delta(z) &= 
-    theta_"sat" psi_"sat"^(1/B) integral_(z_1)^(z_2) (C - z)^(-1/B) d z \/delta(z) \
-  &= theta_"sat" psi_"sat"^(1/B) B / (B-1) [-(C - z)^(1 - 1/B)]_(z_1)^(z_2) \/delta(z) \
-  &= theta_"sat" psi_"sat"^(1/B) B / (B-1) [(C - z_1)^(1 - 1/B) - (C - z_2)^(1 - 1/B)] \/delta(z)
-$
 
 - $delta(z) = z_2 - z_1$
 
@@ -88,7 +90,7 @@ function cal_θE(z1::T, z0::T, zwt::T, ψ_sat::T, B::T;
   return θE
 end
 ```
-#highlight()[TODO: 绘制均衡水势曲线，测试均衡水势函数。]
+// #highlight()[TODO: 绘制均衡水势曲线，测试均衡水势函数。]
 
 *(2) 流量$q$*
   $
@@ -138,10 +140,10 @@ end
     r &= q_(i-1)^(n) - q_(i)^(n) + e_i = q_(i-1)^(n) + e_i
   $
 
-#box-red[
-  #highlight([*思考*：])
-  *地下水与土壤水的交互，体现在什么地方？*
-]
+// #box-red[
+//   #highlight([*思考*：])
+//   *地下水与土壤水的交互，体现在什么地方？*
+// ]
 
 #figure(``, caption: "Zeng2009代码实现。", 
   supplement: text("表", weight:"bold"))
@@ -249,15 +251,15 @@ sol = solve(prob, solver; reltol, abstol, saveat=dt)
 θ_next = sol.u[end]
 ```
 
-#v(1em)
-== 如何研究土壤水运动？
+// #v(1em)
+// == 如何研究土壤水运动？
 
-#box-red[
-  土壤水运动影响因素众多，包括下渗、蒸发、地下水运动。研究问题需控制单一变量。
+// #box-red[
+//   土壤水运动影响因素众多，包括下渗、蒸发、地下水运动。研究问题需控制单一变量。
 
-  - 蒸发、地下水运动：日间尺度二者对土壤水运动的影响较小，可忽略。
-  - 下渗：土壤水运动从第2层土壤开始求解，以第一层的土壤含水量作为边界条件，可跳过下渗的问题。
-]
+//   - 蒸发、地下水运动：日间尺度二者对土壤水运动的影响较小，可忽略。
+//   - 下渗：土壤水运动从第2层土壤开始求解，以第一层的土壤含水量作为边界条件，可跳过下渗的问题。
+// ]
 
 // #pagebreak()
 
@@ -265,5 +267,4 @@ sol = solve(prob, solver; reltol, abstol, saveat=dt)
 
 // === 方程求解
 
-
-#bibliography("References.bib", title: "参考文献", style:"gb-7714-2015-author-date")
+// #bibliography("References.bib", title: "参考文献", style:"gb-7714-2015-author-date")

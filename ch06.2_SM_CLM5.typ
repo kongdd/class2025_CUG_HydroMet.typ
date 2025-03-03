@@ -42,7 +42,7 @@ $ <d_theta>
   ]
 )
 
-将公式@q_i0 、@q_i1 带入@d_theta，得到：
+将公式#[@q_i0]、#[@q_i1]带入#[@d_theta]，得到：
 
 $ (Delta theta_(i)) / (Delta t)  Delta z_i = 
     -&[calqRight(i-1, i, n, n+1)] + \
@@ -71,7 +71,7 @@ $
 
 两类边界条件。
 
-- #highlight()[i=1时：]
+- *i=1时：*
 
 $ (Delta theta_(i)) / (Delta t)  Delta z_i = 
     -q_(i-1)^(n+1) + 
@@ -92,7 +92,7 @@ $
   [另外一种理解方式：$q_0$是初始边界条件，不随$theta_0$和$theta_1$变化而变化。]
 )
 
-- #highlight()[i=N时：]
+- *i=N时：*
 
 *若底部自由排水*，$q_i^(n+1) = -K_i^(n+1) = -K_I^(n) + pdv(K_i, theta_i) Delta theta_i $，$pdv(q_i^(n+1), theta_i) = -pdv(K_i, theta_i)$、$pdv(q_i^(n+1), theta_(i+1)) = 0$，可得，
 

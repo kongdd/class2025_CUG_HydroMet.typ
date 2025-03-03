@@ -22,22 +22,24 @@
   let eq = math.equation
   
   if el != none {
+    // el.fields()    
     if el.func() == eq {
       link(el.location(), 
         // numbering("(1)", ..counter(eq).at(el.location()))
         numbering("1.1", counter(heading).get().first(), ..counter(eq).at(el.location()))
       )
-    } else if el.func() == figure {
+    } else if el.kind == figure {
       link(el.location(), 
         numbering("1.1", counter(heading).get().first(), ..counter(figure).at(el.location()))
       )
-    }
-    // else if el.func() == table {
-    //   link(el.location(), numbering("表 1",  ..counter(tab).at(el.location())))
-    // } 
+    } else if el.kind == table {
+      let count = counter(figure.where(kind: table)).at(el.location());
+      link(el.location(), numbering("1.1", counter(heading).get().first(), ..count))
+      // link(el.location(), numbering("表 1",  ..counter(table).at(el.location()))
+    } 
     // el.func()
   } else {
-    it
+    // it
   }
 }
 
@@ -87,10 +89,10 @@
 
 
 
-#let template(doc, size: 12pt, footer: "", header: "") = {
+#let template(doc, size: 12pt, footer: "", header: "", numbering: "1.1") = {
   set text(size: size) // font: ("Microsoft YaHei")
   set par(justify: true)
-  set heading(numbering: "1.1")
+  set heading(numbering: numbering)
   // set math.equation(numbering: "(1.1)")
   set math.equation(numbering: num-include-chapter)
   set list(indent: 1em)
