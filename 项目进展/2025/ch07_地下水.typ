@@ -1,6 +1,8 @@
-#import "../../typst/lib.typ": *
+#import "@local/modern-cug-report:0.1.1":*
+// #import "../../typst/lib.typ": *
 
 #show: (doc) => template(doc, 
+  _numbering: none
   // footer: "CUG水文气象学2024",
   // header: "地下水运动"
   )
@@ -8,11 +10,15 @@
 #counter(heading).update(1)
 #let delta(x) = $Delta #x$
 
-= 地下水运动耦合
+// #
+// #
+// #
+// ##
+== 3.2 地下水运动耦合
 
-// #beamer-block()[
-//   该部分模型编写主要参考了Fan et al. (2007)#[@fan_incorporating_2007]的工作。
-// ]
+#beamer-block()[
+  该部分模型编写主要参考了Fan et al. (2007)#[]的工作。
+]
 
 #figure(
   image("../../images/Figure_Soil_K.svg", width: 60%),
@@ -22,7 +28,7 @@
     ]
 ) <fig2_T>
 
-== 均衡水位
+=== 3.2.1 均衡水位
 
 $ "dS"_g / "dt" = delta(x) delta(y) R + sum_i^8 Q_n - Q_r $
 
@@ -45,7 +51,7 @@ $ delta(x) delta(y) R  = - sum_i^8 Q_n $
 
 $ sum_i^8 Q_n = Q_r $
 
-== 侧向流
+=== 3.2.2 侧向流
 
 $ Q_n = w d K ((h_n - h) / l), T = K d $
 
@@ -58,7 +64,7 @@ $ Q_n = w d K ((h_n - h) / l), T = K d $
 
 // $ 1 / K = 1/K_1 + 1/K_2 $
 
-=== 四向
+==== 3.2.2.1 四向
 
 *经纬度网格$delta(y)$的矫正：*
 
@@ -84,15 +90,14 @@ q = q + (kcell[i + 1, j] + kcell[i, j]) *    # east
 qlat[i, j] = 0.5 * q * deltat / area[i, j]   # m3 to m
 ```
 其中，0.5用于求$K_i$与$K_j$的平均值。
-
-=== 八向
+==== 3.2.2.2 八向
 
 #beamer-block()[模型中，在计算距离的时候，用的正常网格；但计算过水截面面积时，用的是正八边形网格。]
 
 
-== 导水系数
+=== 3.2.3 导水系数
 
-=== 垂向导水系数
+==== 3.2.3.1 垂向导水系数
 
 *浅层土壤的导水系数$T_1$*（1.5m以上，图@fig2_T d ）
 
@@ -104,7 +109,7 @@ qlat[i, j] = 0.5 * q * deltat / area[i, j]   # m3 to m
 
     下标m代表土壤层，$Delta z_m$代表土壤层的厚度，$K_m$代表土壤层的水力传导系数。
 
-*深层土壤的导水系数$T_2$*（1.5m以下）
+// *深层土壤的导水系数$T_2$*（1.5m以下）
 
 - 1.5m以下，认为K随深度z'指数变化：
   #mitex(`$$
@@ -122,10 +127,10 @@ qlat[i, j] = 0.5 * q * deltat / area[i, j]   # m3 to m
   ),
 )[
   其中，$ f = a / {1 + b beta}$ for $beta <= 0.16$；f = 5m for $beta > 0.16$，$beta$为坡度。
-  Fan et al. (2007)@fan_incorporating_2007 的结果中，对于土壤，a = 120m, b = 150。对于基岩，a = 20m, b = 125。
+  Fan et al. (2007) 的结果中，对于土壤，a = 120m, b = 150。对于基岩，a = 20m, b = 125。
   网上只有埋深浅于1.5m的基岩数据（http://www.soilinfo.psu.edu/index.cgi?soil_data&conus&data_cov&dtb&methods）。
 ]
-  // #highlight()[TODO: 根据上述公式可以得出 f的空间分布图，类似Fan 2007, Fig. 8c。]
+//   // #highlight()[TODO: 根据上述公式可以得出 f的空间分布图，类似Fan 2007, Fig. 8c。]
 
   模型对$e^{-z'/f}$的最小值进行了限制，即：
   $
@@ -161,7 +166,7 @@ function cal_trans(wtd::FT, f::FT) where {FT<:Real}
 end
 ```
 
-=== 侧向导水系数
+==== 3.2.3.2 侧向导水系数
 
 土壤质地：soiltextures，`[nlon, nlat, 2]`，对与第三维，分别存放的是深层（z <= -0.3）与浅层数据（z > -0.3）。
 $Q_n$主要指的是地下水的交互，因此采用的是深层的土壤质地。
@@ -197,9 +202,9 @@ Klat_factor取值详见表#[@tab1]。
   )
 ) <tab1>
 
-== 地下水与河道的交互
+=== 3.2.4 地下水与河道的交互
 
-=== $z_"wt" > z_{"river", "surf"}$ （Gaining River）
+==== 3.2.4.1 $z_"wt" > z_{"river", "surf"}$ （Gaining River）
 
 *地下水补给河道*
 
@@ -226,7 +231,7 @@ $$`)
 - $q$: 补给的流量，$m^3\/s$
 - $R_{"rf"}$: 补给河道的水量，转换为网格径流深，$m$
 
-=== $z_{"river", "surf"} >= z_{"wt"} > z_{"river", "bed"}$
+=== 3.2.5 $z_{"river", "surf"} >= z_{"wt"} > z_{"river", "bed"}$
 
 *河道补给地下水*，补给量受$z_{"wt"}$的影响
 
@@ -239,7 +244,7 @@ $$`)
 其中，$f = {w l}/ "area"_{i,j}$是水量转换因子，将河道的水位深度转换为网格的深度。
 
 
-=== $z_{"wt"} < z_{"river", "bed"}$ （Losing River）
+==== 3.2.5.1 $z_{"wt"} < z_{"river", "bed"}$ （Losing River）
 
 Losing River情景，对于Gaining River的情景进行了简化。**认为$h - overline(z)_r = overline(b)_{"rb"}$，因此公式变为：**
 
@@ -249,7 +254,7 @@ $$`)
 
 其中负号表示，河道向地下水补给。
 
-这里Fan et al. (2007) @fan_incorporating_2007 与MODFLOW6的处理方式不同，MODFLOW6认为，当$z_"wt" < z_{"river","bed"}$时，河流与含水层之间出现非饱和带，此时河流向含水层的补给量与含水层的水头$h$无关，仅与河床的厚度$b_{"rb"}$和河道的水头$overline(z)_r$有关。因此，在MODFLOW6中，$Q_{"rf"}$的计算公式为：
+这里Fan et al. (2007)  与MODFLOW6的处理方式不同，MODFLOW6认为，当$z_"wt" < z_{"river","bed"}$时，河流与含水层之间出现非饱和带，此时河流向含水层的补给量与含水层的水头$h$无关，仅与河床的厚度$b_{"rb"}$和河道的水头$overline(z)_r$有关。因此，在MODFLOW6中，$Q_{"rf"}$的计算公式为：
 $ Q_{"rf"} = - "RC" (z_"river" - z_{"river","bed"}) $
 
 

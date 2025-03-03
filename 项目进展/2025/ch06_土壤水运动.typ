@@ -1,15 +1,20 @@
-#import "../../typst/lib.typ": *
+#import "@local/modern-cug-report:0.1.1":*
+// #import "../../typst/lib.typ": *
 
 #show: (doc) => template(doc, 
-  size: font.小四,
+  _numbering: none
   // footer: "CUG水文气象学2024",
-  // header: "土壤水运动"
+  // header: "地下水运动"
 )
-#counter(heading).update(0)
+
+// #counter(heading).update(0)
 #set par(leading: 1.24em)
 #let delta(x) = $Delta #x$
 
-= 土壤水运动模型
+// #
+// #
+// #
+== 3.1 土壤水运动模型
 // #show "../../images": "../../../../images"
 
 // #beamer-block()[本章理论主要参考#cite(<bonan2019climate>, form: "prose") chapter 8。]
@@ -40,22 +45,20 @@ $
 - $e$: 蒸发量，$"cm" h^(-1)$
 
 
-== 边界层条件
+=== 3.1.1 边界层条件
 
-=== 第1层
+==== 3.1.1.1 第1层
 
 - 已知通量：表层的土壤水运动的流量$q_0$（也即是下渗量）
 - 已知状态：表层的土壤水势$psi_0$
 
-=== 第N层
+==== 3.1.1.2 第N层
 
-==== 重力排水
+*方案1：重力排水*
 
   $ q_N = -K_N $
 
-==== 与地下水交互
-
-*(1) 均衡水势$psi_E$*
+*方案2：基于均衡水势$psi_E$与地下水交互*
 
   为了考虑土壤水与地下水的交互作用，Zeng et al. (2009)引入了均衡水势的概念$psi_E$。$q = 0$时，对应的土壤水势，即均衡水势$psi_E$，对应的土壤含水量为均衡含水量$theta_E$。当处于均衡状态时，每一层土壤的总势能均相等：
   
@@ -94,14 +97,13 @@ end
 ```
 // #highlight()[TODO: 绘制均衡水势曲线，测试均衡水势函数。]
 
-*(2) 流量$q$*
+*流量$q$*
   $
     q &= -K pdv((psi + z), z) = -K pdv((psi + z - C), z) \
       &= -K pdv((psi - psi_E), z)
   $ <q_psi_e>
 
 // 式@dq1 \~ @dq4 
-
 对于i-1层， $q_"in"$: $q_(i-1)$，$q_"out"$: $q_(i)$。
 
 1. *若zwt位于土壤中*，假定在第N层（i=N）。
@@ -172,7 +174,7 @@ end
 ```
 
 #v(1em)
-== 土壤水运动求解
+=== 3.1.2 土壤水运动求解
 
 采用偏微分方程求解器（DifferentialEquations.jl）进行求解。
 
@@ -195,7 +197,7 @@ prob = ODEProblem(f, u0, tspan)
 sol = solve(prob, Tsit5(), reltol = 1e-8, abstol = 1e-8)
 ```
 
-=== 流量$q$
+==== 3.1.2.1 流量$q$
 
 ```julia
 function soil_WaterFlux!(soil::Soil{T}, θ::AbstractVector{T};
@@ -222,7 +224,7 @@ function soil_WaterFlux!(soil::Soil{T}, θ::AbstractVector{T};
 end
 ```
 
-=== 偏微分方程$(d theta) / (d t)$定义
+==== 3.1.2.2 偏微分方程$(d theta) / (d t)$定义
 
 ```julia
 """
@@ -253,27 +255,9 @@ sol = solve(prob, solver; reltol, abstol, saveat=dt)
 θ_next = sol.u[end]
 ```
 
-// #v(1em)
-// == 如何研究土壤水运动？
+=== 3.1.3 CLM土壤水运动求解方案
 
-// #box-red[
-//   土壤水运动影响因素众多，包括下渗、蒸发、地下水运动。研究问题需控制单一变量。
-
-//   - 蒸发、地下水运动：日间尺度二者对土壤水运动的影响较小，可忽略。
-//   - 下渗：土壤水运动从第2层土壤开始求解，以第一层的土壤含水量作为边界条件，可跳过下渗的问题。
-// ]
-
-// #pagebreak()
-
-// == Zeng2009 地下水与土壤水交互方案
-
-// === 方程求解
-
-// #bibliography("References.bib", title: "参考文献", style:"gb-7714-2015-author-date")
-
-== CLM土壤水运动求解方案
-
-=== 构造三角矩阵
+==== 3.1.3.1 构造三角矩阵
 
 在微积分中，若$z = f(x, y)$，则$ d z = pdv(z, x)d y + pdv(z, y) d x$。若$ q_(i-1) = f(theta_(i-1), theta_i)$，根据积分法则可以得到：
 
@@ -319,7 +303,7 @@ $
   [pdv(q_(i), theta_(i)) - pdv(q_(i-1), theta_(i)) - (Delta z_i)  / (Delta t)  ] Delta  theta_(i) + 
   pdv(q_(i), theta_(i+1)) Delta  theta_(i+1)
 
-   = q_(i-1)^(n) - q_(i)^(n) + e_i
+   = 4 q_(i-1)^(n) - q_(i)^(n) + e_i
 $
 
 因此，
@@ -382,9 +366,7 @@ $
   r &= q_(i-1)^n - q_i^n + e_i
 $
 
-// #pagebreak()
-
-=== $q$的偏微分
+==== 3.1.3.2 $q$的偏微分
 
 $ q = -K pdv(psi + z, z) $ <q>
 
@@ -416,8 +398,7 @@ $ pdv(q_(i), theta_(i+1)) =
     - pdv(K_(i+1/2), theta_(i+1)) [(psi_(i+1) + z_(i+1) - psi_(i) - z_(i)) / (z_(i+1) - z_(i))] $ <dq4>
 
 
-
-=== 给水度（specific yield）
+==== 3.1.3.3 给水度（specific yield）
 
 靠近地下水水位$z_{"wt"}$的土壤层，认为土壤水势达到均衡状态，即：
 

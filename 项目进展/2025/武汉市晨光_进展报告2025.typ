@@ -2,7 +2,7 @@
 
 #show: (doc) => template(doc, 
   size: 12pt,
-  numbering: none,
+  // numbering: none,
   footer: "",
   header: "")
 
@@ -60,6 +60,12 @@
 以通讯作者，发表中科院一区SCI论文一篇。
 
 [1] Lu J, *Kong D.*\*, Zhang Y, Xie Y, Gu X, Gulakhmadov A. Hotspots of Global Water Resource Changes and Their Causes[J]. #emph[*Earth’s Future*], 2025, 13(2): e2024EF005461. DOI:10.1029/2024EF005461.
+
+完成4种土壤水运动求解方案，包括BEPS、SITH、CoLM和CLM5；完成基于Zeng 2009均衡水势的地下水耦合方案。
+
+#include("./ch06_土壤水运动.typ")
+
+#include("./ch07_地下水.typ")
 
 #pagebreak()
 
