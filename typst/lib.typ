@@ -1,4 +1,4 @@
-#import "@preview/codly:1.0.0": *
+// #import "@preview/codly:1.0.0": *
 #import "@preview/mitex:0.2.4": *
 #import "@preview/physica:0.9.3": *
 #import "@preview/cuti:0.2.1": show-cn-fakebold
@@ -98,9 +98,9 @@
   set list(indent: 1em)
 
   // 代码
-  show raw: codly-init.with()
-  codly(stroke: 1pt + blue)
-  codly(display-icon: true)
+  // show raw: codly-init.with()
+  // codly(stroke: 1pt + blue)
+  // codly(display-icon: true)
   
   show ref: ref-zh  // 引用
   show heading: it => set-heading(it, size: size)
