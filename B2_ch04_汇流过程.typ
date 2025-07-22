@@ -111,7 +111,6 @@ $
   C_0 = (delta(t) - 2K X) / (delta(t) + 2K [1 - X]), 
   C_1 = (delta(t) + 2K X) / (delta(t) + 2K [1 - X]),
   C_2 = (-delta(t) + 2K - 2K X) / (delta(t) + 2K [1 - X])
-
 $
 上式即为马斯京根公式。
 

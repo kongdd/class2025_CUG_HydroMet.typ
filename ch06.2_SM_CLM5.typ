@@ -79,14 +79,14 @@ $ (Delta theta_(i)) / (Delta t)  Delta z_i =
     - e_i $ 
 $
   [pdv(q_i, theta_i) - (Delta z_i) / (Delta t)] Delta theta_(i) + 
-  pdv(q_i, theta_(i+1)) Delta theta_(i+1) = q_(i-1)^(n+1) + e_i
+  pdv(q_i, theta_(i+1)) Delta theta_(i+1) = q_(i-1)^(n+1) - q_i^n + e_i
 $
 
 $
   a &= 0, \
   b &= pdv(q_i, theta_i) - (Delta z_i) / (Delta t) \
   c &= pdv(q_i, theta_(i+1)) \
-  r &= q_(i-1)^(n+1) + e_i
+  r &= q_(i-1)^(n+1) - q_i^n + e_i
 $
 #beamer-block(
   [另外一种理解方式：$q_0$是初始边界条件，不随$theta_0$和$theta_1$变化而变化。]
@@ -110,13 +110,13 @@ $ (Delta theta_(i)) / (Delta t)  Delta z_i =
     q_i^(n+1) - e_i $
 
 $ -pdv(q_(i-1), theta_(i-1)) Delta theta_(i-1) 
-  -[(Delta z_i) / (Delta t) + pdv(q_(i-1), theta_i) ]Delta theta_i = q_(i-1)^n - q_i^n + e_i $
+  -[(Delta z_i) / (Delta t) + pdv(q_(i-1), theta_i) ]Delta theta_i = q_(i-1)^n - q_i^(n+1) + e_i $
 
 $
   a &= -pdv(q_(i-1), theta_(i-1)), \
   b &= -[(Delta z_i) / (Delta t) + pdv(q_(i-1), theta_i)], \
   c &= 0, \
-  r &= q_(i-1)^n - q_i^n + e_i
+  r &= q_(i-1)^n - q_i^(n+1) + e_i
 $
 
 // #pagebreak()
