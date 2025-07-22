@@ -20,23 +20,22 @@
 #let ref-zh(it) = {
   let el = it.element
   let eq = math.equation
-  
+
   if el != none {
-    // el.fields()    
+    // el.fields()
     if el.func() == eq {
-      link(el.location(), 
+      link(
+        el.location(),
         // numbering("(1)", ..counter(eq).at(el.location()))
-        numbering("1.1", counter(heading).get().first(), ..counter(eq).at(el.location()))
+        numbering("1.1", counter(heading).get().first(), ..counter(eq).at(el.location())),
       )
     } else if el.kind == figure {
-      link(el.location(), 
-        numbering("1.1", counter(heading).get().first(), ..counter(figure).at(el.location()))
-      )
+      link(el.location(), numbering("1.1", counter(heading).get().first(), ..counter(figure).at(el.location())))
     } else if el.kind == table {
-      let count = counter(figure.where(kind: table)).at(el.location());
+      let count = counter(figure.where(kind: table)).at(el.location())
       link(el.location(), numbering("1.1", counter(heading).get().first(), ..count))
       // link(el.location(), numbering("表 1",  ..counter(table).at(el.location()))
-    } 
+    }
     // el.func()
   } else {
     // it
@@ -61,9 +60,9 @@
   // set figure(numbering: it => strong[#numbering("1.1", it)])
   set figure(numbering: num => numbering("1.1", counter(heading).get().first(), num))
   // set figure(numbering: num => numbering("1.1", counter(heading).get().first(), num))
-  
-  show figure.where(kind: image): set figure(supplement:  text("图", weight:"bold"))
-  show figure.where(kind: table): set figure(supplement:  text("表", weight:"bold"))
+
+  show figure.where(kind: image): set figure(supplement: text("图", weight: "bold"))
+  show figure.where(kind: table): set figure(supplement: text("表", weight: "bold"))
   show figure.where(kind: table): set figure.caption(position: top)
   body
 }
@@ -73,7 +72,8 @@
   show table.cell.where(y: 0): strong
   // See the strokes section for details on this!
   let frame(stroke) = (x, y) => (
-    left: 0pt, right: 0pt,
+    left: 0pt,
+    right: 0pt,
     // left: if x > 0 { 0pt } else { stroke },
     // right: stroke,
     top: if y < 2 { stroke } else { 0pt },
@@ -82,7 +82,7 @@
   set table(
     // fill: (rgb("EAF2F5"), none),
     stroke: frame(rgb("21222C")),
-    align: (x, y) => ( if x > 0 { center } else { left } )
+    align: (x, y) => (if x > 0 { center } else { left }),
   )
   it
 }
@@ -101,10 +101,10 @@
   // show raw: codly-init.with()
   // codly(stroke: 1pt + blue)
   // codly(display-icon: true)
-  
-  show ref: ref-zh  // 引用
+
+  show ref: ref-zh // 引用
   show heading: it => set-heading(it, size: size)
-  
+
   show: set-figure
   show: set-table
   show: show-cn-fakebold
@@ -119,8 +119,9 @@
   // 页眉页脚
   set page(
     header: align(right)[ #text(header, weight: "bold") ],
-    footer: context [#text(footer, weight: "bold") #h(1fr) #counter(page).display("1/1", both: true) ], 
-    numbering: "1", )
+    footer: context [#text(footer, weight: "bold") #h(1fr) #counter(page).display("1/1", both: true) ],
+    numbering: "1",
+  )
   show regex("==(\w+)=="): md-highlight
   doc
 }
