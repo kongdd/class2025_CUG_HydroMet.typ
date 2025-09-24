@@ -27,7 +27,7 @@ $ "dS"_g / "dt" = delta(x) delta(y) R + sum_i^8 Q_n - Q_r $
 
 - $"S"_g$: 地下水水储量
 - $R$: 土壤对地下水的补给量
-- $Q_r$: 地下水与河道的交互
+- $Q_r$: 地下水与河道的交互，若地下水补给河道则$Q_r > 0$
 - $Q_n$: 侧向交互的流量，来源于周围的8个网格。
 
 均衡状态，$"dS"_g / "dt" = 0$，即：
@@ -65,7 +65,7 @@ $ Q_n = w d K ((h_n - h) / l), T = K d $
 
   东西方向：$ Q_n = K A delta(h) / l  = K delta(y) d delta(h) / delta(x)$
 
-  $delta(y)$随lat变化而变化，需要进行矫正。若赤道为1，则矫正后的$delta(hat(y)) = delta(y) / cos("lat")$。
+  $delta(x)$随lat变化而变化，需要进行矫正。若横向与纵向网格大小相同，则$delta(x) = delta(y) cos("lat")$。
   因此，对于南北向，矫正因子$cos("lat")$直接相乘；对于东西向，矫正因子则为$1 / cos("lat")$，详情见下表代码：
 
 ```julia
@@ -153,12 +153,15 @@ function cal_trans(wtd::FT, f::FT) where {FT<:Real}
   if wtd < -1.5
     T = f * klat * exp((wtd + 1.5) / f)
   else
-    d1 = 1.5 + wtd             # deepth of unsaturated soil
+    d1 = 1.5 + wtd           # deepth of saturated soil，土壤层中被地下水淹没的深度
     T = klat * d1 + klat * f
   end
   return T
 end
 ```
+#beamer-block[
+  代码中，wtd向下为负
+]
 
 === 侧向导水系数
 
@@ -169,9 +172,7 @@ $Q_n$主要指的是地下水的交互，因此采用的是深层的土壤质地
 nsoil = soiltxt[i, j, 1]
 Klat[i, j] = K0(nsoil) * Klat_factor[nsoil]
 ```
-Klat_factor取值详见下表。
-
-#[@tab1]
+Klat_factor取值详见下表#[@tab1]。
 
 #figure(
   caption: [土壤类型、$K$、与$K"lat"_"factor"$值。表格出自Fan et al. (2007) Table 2。],

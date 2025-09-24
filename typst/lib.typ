@@ -88,11 +88,14 @@
 }
 
 
+#let Blue(it) = {
+  text(fill: blue)[*#it*]
+}
 
 #let template(doc, size: 12pt, footer: "", header: "", numbering: "1.1") = {
   set text(size: size) // font: ("Microsoft YaHei")
   set par(justify: true)
-  set heading(numbering: numbering)
+  // set heading(numbering: numbering)
   // set math.equation(numbering: "(1.1)")
   set math.equation(numbering: num-include-chapter)
   set list(indent: 1em)
