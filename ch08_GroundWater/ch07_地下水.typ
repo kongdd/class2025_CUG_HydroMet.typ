@@ -1,27 +1,32 @@
-#import "./typst/lib.typ": *
+#import "@local/modern-cug-report:0.1.3": *
+#show: doc => template(doc, footer: "CUG水文气象学2025", header: "")
 
-#show: (doc) => template(doc, 
-  footer: "CUG水文气象学2024",
-  header: "地下水运动")
 #show math.equation: rm-bracket
 #counter(heading).update(6)
 #let delta(x) = $Delta #x$
 
-= 地下水运动
+// =
+// =
+// =
+// =
+// =
+// =
+// =
+= 8 地下水运动
 
 #beamer-block()[
   该部分模型编写主要参考了Fan et al. (2007)#[@fan_incorporating_2007]的工作。
 ]
 
 #figure(
-  image("images/Figure_Soil_K.svg", width: 60%),
+  image("Figures/Figure_Soil_K.pdf", width: 60%),
   caption: [(a)地下水储水$S_g$，侧视图；(b) 俯视图；(c)正八边形网格，边长$w = delta(x) sqrt(0.5 tan(pi\/8))$; 
     (d) 导水系数（Transmissivity，$m^2\/s$）。
     图件源自Fan et al., 2007。在地下水侧向交互时，采用的是正八边形网格，每个方向的$Q_n$通过的剖面面积和距离都相同。
     ]
 ) <fig2_T>
 
-== 均衡水位
+== 8.1 均衡水位
 
 $ "dS"_g / "dt" = delta(x) delta(y) R + sum_i^8 Q_n - Q_r $
 
@@ -44,7 +49,7 @@ $ delta(x) delta(y) R  = - sum_i^8 Q_n $
 
 $ sum_i^8 Q_n = Q_r $
 
-== 侧向流
+== 8.2 侧向流
 
 $ Q_n = w d K ((h_n - h) / l), T = K d $
 
@@ -57,7 +62,7 @@ $ Q_n = w d K ((h_n - h) / l), T = K d $
 
 // $ 1 / K = 1/K_1 + 1/K_2 $
 
-=== 四向
+=== 8.2.1 四向
 
 *经纬度网格$delta(y)$的矫正：*
 
@@ -84,14 +89,14 @@ qlat[i, j] = 0.5 * q * deltat / area[i, j]   # m3 to m
 ```
 其中，0.5用于求$K_i$与$K_j$的平均值。
 
-=== 八向
+=== 8.2.2 八向
 
 #beamer-block()[模型中，在计算距离的时候，用的正常网格；但计算过水截面面积时，用的是正八边形网格。]
 
 
-== 导水系数
+== 8.3 导水系数
 
-=== 垂向导水系数
+=== 8.3.1 垂向导水系数
 
 *浅层土壤的导水系数$T_1$*（1.5m以上，图@fig2_T d ）
 
@@ -163,7 +168,7 @@ end
   代码中，wtd向下为负
 ]
 
-=== 侧向导水系数
+=== 8.3.2 侧向导水系数
 
 土壤质地：soiltextures，`[nlon, nlat, 2]`，对与第三维，分别存放的是深层（z <= -0.3）与浅层数据（z > -0.3）。
 $Q_n$主要指的是地下水的交互，因此采用的是深层的土壤质地。
@@ -199,9 +204,9 @@ Klat_factor取值详见下表#[@tab1]。
   )
 ) <tab1>
 
-== 地下水与河道的交互
+== 8.4 地下水与河道的交互
 
-=== $z_"wt" > z_{"river", "surf"}$ （Gaining River）
+=== 8.4.1 $z_"wt" > z_{"river", "surf"}$ （Gaining River）
 
 *地下水补给河道*
 
@@ -228,7 +233,7 @@ $$`)
 - $q$: 补给的流量，$m^3\/s$
 - $R_{"rf"}$: 补给河道的水量，转换为网格径流深，$m$
 
-=== $z_{"river", "surf"} >= z_{"wt"} > z_{"river", "bed"}$
+=== 8.4.2 $z_{"river", "surf"} >= z_{"wt"} > z_{"river", "bed"}$
 
 *河道补给地下水*，补给量受$z_{"wt"}$的影响
 
@@ -241,7 +246,7 @@ $$`)
 其中，$f = {w l}/ "area"_{i,j}$是水量转换因子，将河道的水位深度转换为网格的深度。
 
 
-=== $z_{"wt"} < z_{"river", "bed"}$ （Losing River）
+=== 8.4.3 $z_{"wt"} < z_{"river", "bed"}$ （Losing River）
 
 Losing River情景，对于Gaining River的情景进行了简化。**认为$h - overline(z)_r = overline(b)_{"rb"}$，因此公式变为：**
 
@@ -256,9 +261,9 @@ $ Q_{"rf"} = - "RC" (z_"river" - z_{"river","bed"}) $
 
 
 
-== 地下水水位更新 (update_wtd)
+== 8.5 地下水水位更新 (update_wtd)
 
-=== Fan2007
+=== 8.5.1 Fan2007
 
 #mitex(`$$
 (z_{gw} - z_{i+1}) \theta_{sat} + (z_i - z_{gw}) \theta_e = \theta dz 
@@ -269,14 +274,14 @@ z_{gw} (\theta_{sat} - \theta_e) = \theta dz - z_i \theta_e + z_{i+1} \theta_{sa
 $$`)
 
 #figure(
-  image("images/Fan_土壤层定义.svg", width: 60%),
+  image("Figures/Fan_土壤层定义.svg", width: 60%),
   caption: [(a)地下水储水$S_g$，侧视图；(b) 俯视图；(c)正八边形网格，边长$w = delta(x) sqrt(0.5 tan(pi\/8))$; 
     (d) 导水系数（Transmissivity，$m^2\/s$）。
     图件源自Fan et al., 2007。在地下水侧向交互时，采用的是正八边形网格，每个方向的$Q_n$通过的剖面面积和距离都相同。
     ]
 ) // <fig2_T>
 
-=== CoLM2024
+=== 8.5.2 CoLM2024
 
 #highlight()[深层地下水与浅层地下水的更新方法。]
 
@@ -284,6 +289,6 @@ $$`)
 
 需要知道，*补给量*与*排泄量*。
 
-#bibliography("References.bib")
+#bibliography("../References.bib")
 // #import "@preview/modern-nju-thesis:0.3.4": documentclass, bilingual-bibliography
 // #bilingual-bibliography(full: true)
