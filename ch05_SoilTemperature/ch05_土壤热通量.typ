@@ -1,21 +1,49 @@
 // #import "./typst/lib.typ": *
-#import "@preview/modern-cug-report:0.1.0": *
-#show: (doc) => template(doc, 
-  footer: "",
-  header: "MarrMot.jl 使用手册")
+// #import "@preview/modern-cug-report:0.3.0": *
+#import "@local/modern-cug-report:0.1.3": *
+#show: doc => template(doc, 
+  size: 12.5pt, 
+  footer: "CUG水文气象学2025", 
+  header: "第五章 土壤热通量")
 
 #counter(heading).update(4)
 #let delta(x) = $Delta #x$
-#show math.equation: set text(11pt)
+// #show math.equation: set text(11pt)
 
 // #show: (doc) => template(doc, 
 //   size: 13pt,
 //   footer: "CUG水文气象学2024",
 //   header: "土壤热通量")
 
-= 土壤热通量
+// =
+// =
+// =
+// =
+= 5 土壤热通量
 
 #beamer-block()[本章理论主要参考#cite(<bonan2019climate>, form: "prose") chapter 5。]
+
+
+#box-red([
+  *为何要研究土壤热通量？*
+  
+  日内尺度，土壤温度$T_s$变化剧烈，根据玻尔兹曼定律，$T_s$变化会引起地表净辐射$R_n$的变化，影响地表能量平衡和水量平衡。
+  
+  1. 若想准确模拟陆表能量平衡（$lambda H$和$lambda E$）和水量平衡（$E$）过程，需要清楚土壤温度是如何变化的。
+  
+  2. 厘清土壤温度与空气温度之间的关系，可应用于城市热岛研究，边界层研究，例如城市、水体对周边区域空气温度的影响。基于式#[@eq_5.2]，已知土壤温度，可求解空气温度。
+])
+
+如下图所示，表层的土壤温度变化非常剧烈，地表的土壤温度TS_0日内变化幅度甚至超过了空气温度，在空气温度为30℃时，地表温度甚至可以达到50℃。与之形成鲜明对比，深层土壤温度变化非常缓慢，40cm以下的土壤温度几乎看不到日内波动，80cm以下的土壤温度在图中几乎是一条直线。
+
+#figure(
+  image("Figures/Figure_CUG_Tsoil_202306.svg", width: 100%),
+  caption: [中国地质大学（武汉）大气系气象观测站2023年6月逐小时土壤温度。
+    
+    其中黑线为空气温度。
+  ],
+) <fig_CUG_Tsoil>
+
 
 基于能量平衡公式和净辐射公式，可知：
 
@@ -46,31 +74,11 @@ $ <eq_5.2>
 - $delta(z)$: 第一层土壤的厚度，m
 
 
-#box-red([
-  *为何要研究土壤热通量？*
 
-  日内尺度，土壤温度$T_s$变化剧烈，根据玻尔兹曼定律，$T_s$变化会引起地表净辐射$R_n$的变化，影响地表能量平衡和水量平衡。
-
-  1. 若想准确模拟陆表能量平衡（$lambda H$和$lambda E$）和水量平衡（$E$）过程，需要清楚土壤温度是如何变化的。
-
-  2. 厘清土壤温度与空气温度之间的关系，可应用于城市热岛研究，边界层研究，例如城市、水体对周边区域空气温度的影响。基于式#[@eq_5.2]，已知土壤温度，可求解空气温度。
-])
-
-如下图所示，表层的土壤温度变化非常剧烈，地表的土壤温度TS_0日内变化幅度甚至超过了空气温度，在空气温度为30℃时，地表温度甚至可以达到50℃。与之形成鲜明对比，深层土壤温度变化非常缓慢，40cm以下的土壤温度几乎看不到日内波动，80cm以下的土壤温度在图中几乎是一条直线。
+== 5.1 基本原理
 
 #figure(
-  image("images/土壤热通量/Figure_CUG_Tsoil_202306.svg", width: 100%),
-  caption: [中国地质大学（武汉）大气系气象观测站2023年6月逐小时土壤温度。
-
-    其中黑线为空气温度。
-  ]
-) <fig_CUG_Tsoil>
-
-
-== 基本原理
-
-#figure(
-  image("images/土壤热通量/土壤热通量_连续性原理.png", width: 100%),
+  image("Figures/土壤热通量_连续性原理.png", width: 100%),
   caption: [
     （a）土壤通量与土壤温度连续性原理示意图；（b）土壤分层说明。
     $z_i$代表的是每一层土壤的中间位置；$z_(i+1/2)$代表的是每层土壤的下边界。$z$与$F$均是向下为负。
@@ -99,7 +107,7 @@ $ c_v pdv(T, t) = - pdv(F, z) = kappa pdv(T, z, 2) $ <eq_heat>
 
 
 #figure(
-  image("images/土壤热通量/土壤热通量-土壤结构.png", width: 54%),
+  image("Figures/土壤热通量-土壤结构.png", width: 54%),
   caption: [
     每层的土壤状态与土壤热通量。
   ]
@@ -126,11 +134,11 @@ $ c_v pdv(T, t) = - pdv(F, z) = kappa pdv(T, z, 2) $ <eq_heat>
 
 // #pagebreak()
 
-== 数值求解——复杂版 三角矩阵
+== 5.2 数值求解——复杂版 三角矩阵
 
 #highlight()[如何求解土壤温度随时间的变化？] 主要用的是1个核心公式，式@eq_heat。
 
-=== 差分方法
+=== 5.2.1 差分方法
 
 式#[@eq_heat]的差分方法有三种：
 
@@ -164,7 +172,7 @@ $ (T_i^(n+1) - T_i^(n)) / delta(t) = kappa / c_v (
 
 
 
-=== 求解过程
+=== 5.2.2 求解过程
 
 *(a) 隐式差分为例，展示求解过程。*
 
@@ -201,7 +209,7 @@ $ a_i T_(i-1)^(n+1) + b_i T_i^(n+1) + c_i T_(i+1)^(n+1) = d_i $
 之后便可利用三角阵的方式进行求解。
 
 #figure(
-  image("images/土壤热通量/三角阵求解.png", width: 70%),
+  image("Figures/三角阵求解.png", width: 70%),
   caption: [三角阵求解。]
 ) <fig_>
 
@@ -315,9 +323,9 @@ $
 //   - #kappa-coef($i-1/2$) T_(i-1)^(n+1) + (c_(v, i) delta(z_i) / delta(t) + #kappa-coef($i-1/2$) ) T_i^(n+1) = -F_N + c_(v, i) delta(z_i) T_i^n / delta(t)
 // $
 
-== 数值求解——简易版 偏微分方程
+== 5.3 数值求解——简易版 偏微分方程
 
-=== 偏微分基础
+=== 5.3.1 偏微分基础
 
 解决诸如此类问题：
 
@@ -351,13 +359,13 @@ plot!(sol.t, t -> 0.5 * exp(1.01t), lw = 3, ls = :dash, label = "True Solution!"
 ```
 
 #figure(
-  image("images/土壤热通量/ex_ODE_01.png", width: 70%),
+  image("Figures/ex_ODE_01.png", width: 70%),
   caption: [
     ODE求解示例1。
   ]
 ) <fig_>
 
-=== 偏微分实战
+=== 5.3.2 偏微分实战
 
 首先定义土壤结构体：
 ```julia
@@ -501,12 +509,12 @@ end
 
 完整代码见：https://github.com/CUG-hydro/SoilTemperature.jl/blob/main/test/case01_solve_Tsoil_CUG.jl。
 
-=== 参数优化
+=== 5.3.3 参数优化
 
 随机参数，模拟结果：
 
 #figure(
-  image("images/土壤热通量/case01_Tsoil_CUG_ODE_raw.png", width: 85%),
+  image("Figures/case01_Tsoil_CUG_ODE_raw.png", width: 85%),
   caption: [
     大气系土壤温度观测与随机参数$kappa$, $c_v$土壤温度模拟结果。
   ]
@@ -516,7 +524,7 @@ end
 参数优化之后，模拟结果：
 
 #figure(
-  image("images/土壤热通量/case01_Tsoil_CUG_ODE.png", width: 85%),
+  image("Figures/case01_Tsoil_CUG_ODE.png", width: 85%),
   caption: [
     与图#[@fig_cug_Tsoil_raw]相似，只是参数$kappa$, $c_v$进行了优化。
   ]
@@ -535,4 +543,4 @@ f(theta) = goal(theta)
 ```
 
 
-#bibliography("References.bib", title: "参考文献", style:"gb-7714-2015-author-date")
+#bibliography("../References.bib", title: "参考文献", style:"gb-7714-2015-author-date")

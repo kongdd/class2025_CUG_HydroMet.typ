@@ -1,16 +1,13 @@
-#import "typst/lib.typ": *
+#import "@local/modern-cug-report:0.1.3": *
+#show: doc => template(doc, footer: "CUG水文气象学2025", header: "")
 
-#show: (doc) => template(doc, 
-  size: font.小四,
-  footer: "CUG水文气象学2024",
-  header: "土壤水运动")
 #counter(heading).update(6)
 #set par(leading: 1.24em)
 #let delta(x) = $Delta #x$
 
-== CLM土壤水运动求解方案
+== 1 CLM土壤水运动求解方案
 
-=== 构造三角矩阵
+=== 1.1 构造三角矩阵
 
 在微积分中，若$z = f(x, y)$，则$ d z = pdv(z, x)d y + pdv(z, y) d x$。若$ q_(i-1) = f(theta_(i-1), theta_i)$，根据积分法则可以得到：
 
@@ -121,7 +118,7 @@ $
 
 // #pagebreak()
 
-=== $q$的偏微分
+=== 1.2 $q$的偏微分
 
 $ q = -K pdv(psi + z, z) $ <q>
 
@@ -154,7 +151,7 @@ $ pdv(q_(i), theta_(i+1)) =
 
 
 
-=== 给水度（specific yield）
+=== 1.3 给水度（specific yield）
 
 靠近地下水水位$z_{"wt"}$的土壤层，认为土壤水势达到均衡状态，即：
 

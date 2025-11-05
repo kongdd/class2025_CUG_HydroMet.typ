@@ -1,16 +1,21 @@
-#import "./typst/lib.typ": *
+// #import "./typst/lib.typ": *
+#import "@local/modern-cug-report:0.1.3": *
+#show: doc => template(doc, 
+  size: 12.5pt,
+  footer: "CUG水文气象学2025", 
+  header: "第4章 辐射与能量平衡"
+)
 
 #counter(heading).update(3)
 #let delta(x) = $Delta #x$
 #show math.equation: set text(11.5pt)
 
-#show: (doc) => template(doc, 
-  footer: "CUG水文气象学2024",
-  header: "辐射与能量平衡")
+// =
+// =
+// =
+= 4 辐射与能量平衡
 
-= 辐射与能量平衡
-
-== 能量平衡
+== 4.1 能量平衡
 
 水文学研究中两个主要的公式：水量平衡与能量平衡。能量平衡公式如下：
 
@@ -40,7 +45,7 @@ $ G = kappa / delta(z) (T_s - T_1) $
 
 #beamer-block([这里需要注意，公式1中所有变量都是通量的概念。])
 
-== 地表净辐射
+== 4.2 地表净辐射
 
 地表净辐射，主要包括长波净辐射和短波净辐射。
 
@@ -55,7 +60,7 @@ $ R_n = "Rns" + "Rnl" = (1 - alpha) R_s + epsilon"Rln" - epsilon sigma T_s^4 $ <
 
 #beamer-block([上式的推导，涉及辐射的三个基本定律。])
 
-=== 太阳辐射
+=== 4.2.1 太阳辐射
 
 #box-red([
   - 辐射能$delta(F)$：辐射的总能量，$J$；
@@ -81,7 +86,7 @@ $ F = F_0 (d_0 / d)^2 = F_0 / rho^2 $
 
 其中$d$为日地距离，$d_0$为日地平均距离，$I$为地球接收的太阳辐射强度，$F_0$为太阳辐射常数（1370 $W m^(-2)$）。
 
-== 地表能量平衡求解
+== 4.3 地表能量平衡求解
 
 辐射会加热地表和空气；地表温度升高则向外长波辐射增加，使Rn减少。二者相互作用，最终会达到均衡。
 

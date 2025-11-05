@@ -1,19 +1,24 @@
-#import "typst/lib.typ": *
+#import "@local/modern-cug-report:0.1.3": *
+#show: doc => template(doc, 
+  footer: "CUG水文气象学2025", 
+  header: "第6章 土壤水运动"
+)
 
-#show: (doc) => template(doc, 
-  size: font.小四,
-  footer: "CUG水文气象学2024",
-  header: "土壤水运动")
 #counter(heading).update(5)
 #set par(leading: 1.24em)
 #let delta(x) = $Delta #x$
 
-= 土壤水运动求解
+// =
+// =
+// =
+// =
+// =
+= 6 土壤水运动求解
 
 // #beamer-block()[本章理论主要参考#cite(<bonan2019climate>, form: "prose") chapter 8。]
 
 #figure(
-  image("images/Bonan_Soil_SM.png", width: 55%),
+  image("Figures/Bonan_Soil_SM.png", width: 55%),
   caption: [土壤分层与土壤水运动示意图。]
 ) <fig_soil>
 
@@ -38,20 +43,20 @@ $
 - $e$: 蒸发量，$"cm" h^(-1)$
 
 
-== 边界层条件
+== 6.1 边界层条件
 
-=== 第1层
+=== 6.1.1 第1层
 
 - 已知通量：表层的土壤水运动的流量$q_0$（也即是下渗量）
 - 已知状态：表层的土壤水势$psi_0$
 
-=== 第N层
+=== 6.1.2 第N层
 
-==== 重力排水
+==== 6.1.2.1 重力排水
 
   $ q_N = -K_N $
 
-==== 与地下水交互
+==== 6.1.2.2 与地下水交互
 
 *(1) 均衡水势$psi_E$*
 
@@ -170,7 +175,7 @@ end
 ```
 
 #v(1em)
-== 土壤水运动求解
+== 6.2 土壤水运动求解
 
 采用偏微分方程求解器（DifferentialEquations.jl）进行求解。
 
@@ -193,7 +198,7 @@ prob = ODEProblem(f, u0, tspan)
 sol = solve(prob, Tsit5(), reltol = 1e-8, abstol = 1e-8)
 ```
 
-=== 流量$q$
+=== 6.2.1 流量$q$
 
 ```julia
 function soil_WaterFlux!(soil::Soil{T}, θ::AbstractVector{T};
@@ -220,7 +225,7 @@ function soil_WaterFlux!(soil::Soil{T}, θ::AbstractVector{T};
 end
 ```
 
-=== 偏微分方程$(d theta) / (d t)$定义
+=== 6.2.2 偏微分方程$(d theta) / (d t)$定义
 
 ```julia
 """
