@@ -1,15 +1,6 @@
-# typst案例
+# 陆面过程基本原理
 
 
-# 依赖库
-
-```typst
-#import "@preview/showybox:2.0.2": showybox
-#import "@preview/codly:1.0.0": *
-```
-
-# References
-
-![alt text](images/README/image.png)
+## References
 
 - 1. <https://github.com/Pablo-Gonzalez-Calderon/showybox-package>

@@ -1,4 +1,4 @@
-#import "../config.typ": *
+#import "@local/modern-cug-report:0.1.3": *
 #counter(heading).update(1)
 
 #let delta(x) = $Delta #x$

@@ -1,5 +1,4 @@
-#import "./typst/lib.typ": *
-
+#import "@local/modern-cug-report:0.1.3": *
 // #show math.equation: format_eq
 #counter(heading).update(2)
 #let delta(x) = $Delta #x$

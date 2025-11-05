@@ -1,4 +1,4 @@
-#import "typst/lib.typ": *
+#import "@local/modern-cug-report:0.1.3": *
 
 #show: (doc) => template(doc, 
   size: 11.5pt,
