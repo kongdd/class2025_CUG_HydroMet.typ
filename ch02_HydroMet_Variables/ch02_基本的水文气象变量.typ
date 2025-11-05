@@ -1,6 +1,6 @@
 #import "@local/modern-cug-report:0.1.3": *
 #show: (doc) => template(doc, 
-  size: 13pt,
+  size: 12.5pt,
   footer: "CUG水文气象学2025",
   header: "第2章 基本的水文气象变量")
 #counter(heading).update(2)
@@ -13,6 +13,30 @@
   it
   v(-0.2em)
 }
+
+= 引言 // <!-- omit in toc -->
+
+#box-red[
+  1. 夏天干燥还是冬天干燥？
+  2. 沿海地区与内陆地区水汽含量差别多大？
+]
+
+// #v(0.6em)
+#figure(
+  image("Figures/Figure2_武汉_杭州_RH.png", width: 100%),
+  caption: [
+    杭州与武汉2019年逐日相对湿度$"RH"$。
+  ]
+) <fig_>
+
+#v(-0.6em)
+#figure(
+  image("Figures/Figure2_武汉_杭州_q.png", width: 100%),
+  caption: [
+    杭州与武汉2019年逐日比湿$q$。
+  ],
+) <fig_>
+
 
 = 1 物理基础
 

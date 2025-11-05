@@ -3,6 +3,7 @@
 *.gz
 
 *.csv
+*.zip
 
 PPT
 *.db
