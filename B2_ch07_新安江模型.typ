@@ -10,6 +10,7 @@
 #let WMM = $"WMM"$
 
 #let Alpha = $bold(alpha)$
+#let delta(x) = $Delta #x$
 
 $ Alpha = 1 - (1 - wm / WMM)^b $
 
@@ -91,7 +92,7 @@ $ AU = S_mm [1 - (1 - S / S_m)^(1/(EX + 1))] $ <eq_au_raw>
 $ AU = S_mm [1 - (1 - (S times FR_1 \/ FR) / S_m)^(1/(EX + 1))] $
 
 $
-  (1 - AU / S_mm ) ^ (EX + 1) = 1 - (S times FR_1 \/ FR) / S_m
+  (1 - AU / S_mm )^(EX + 1) = 1 - (S times FR_1 \/ FR) / S_m
 $
 
 $FR_1, FR$分别是上一时段和本时段的产流面积。
@@ -99,9 +100,9 @@ $FR_1, FR$分别是上一时段和本时段的产流面积。
 $
   "RS"/FR = integral_AU^{AU+PE} Alpha thin d S
   = integral_AU^{AU+PE} [1 - (1 - S / S_mm)^EX] d S \
-  = PE + S_mm / (EX + 1) (1 - S / S_mm) ^(EX + 1) |_AU^{AU+PE} \ 
-  = PE + S_m (1 - S / S_mm) ^(EX + 1) |_AU^{AU+PE} \ 
-  = PE + S_m (1 - (PE + AU) / S_mm) ^(EX + 1) - S_m (1 - AU / S_mm) ^ (EX + 1) \ 
+  = PE + S_mm / (EX + 1) (1 - S / S_mm)^(EX + 1) |_AU^{AU+PE} \
+  = PE + S_m (1 - S / S_mm)^(EX + 1) |_AU^{AU+PE} \
+  = PE + S_m (1 - (PE + AU) / S_mm)^(EX + 1) - S_m (1 - AU / S_mm)^(EX + 1) \
   = PE + S_m (1 - (PE + AU) / S_mm)^(EX + 1) - S_m + S times FR_1 / FR
 $
 
@@ -115,3 +116,27 @@ $
 $
 
 $ S = S(1 - K_I - K_G) $
+
+= 2 汇流方法
+
+== 2.1 线性水库
+
+$ dv(S, t) = I - Q = (I_1 + I_2) / 2 - (Q_1 + Q_2) / 2 $
+
+$
+  Q = S / K, Delta S = S_2 - S_1 = K(Q_2 - Q_1)
+$
+
+因此，
+
+$
+  K(Q_2 - Q_1) / (Delta t) = (I_1 + I_2) / 2 - (Q_1 + Q_2) / 2 \
+  2K(Q_2 - Q_1) = Delta t [(I_1 + I_2) - (Q_1 + Q_2) ] \
+
+  (2K + delta(t)) Q_2 = (2K - delta(t)) Q_1 + delta(t) (I_1 + I_2) \
+  Q_2 = (2K - delta(t))/ (2K + delta(t)) Q_1 + delta(t) / (2K + delta(t)) (I_1 + I_2) \
+  Q_2 = C_s Q_1 + (1 - C_S) (I_1 + I_2) / 2, C_s = (2K - delta(t))/ (2K + delta(t))
+$
+
+== 
+
