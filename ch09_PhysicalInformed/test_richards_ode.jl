@@ -26,7 +26,7 @@ println("  输出维度: $(n_layers)")
 
 # 3. 创建缓存
 println("\n创建缓存...")
-cache = RichardsCache(n_layers)
+cache = Soil(n_layers)
 println("✓ 缓存创建成功")
 
 # 4. 创建降水数据（简单的常数降水）

@@ -47,24 +47,13 @@ end
 println("训练模型...")
 callback, cache_train = create_callback(nn, st, vg, dz, h0, times, rain_values, h_obs, obs_mask)
 
-# 创建优化函数 - 修复参数签名
-function make_loss(nn, st, vg, dz, h0, times, rain_values, h_obs, obs_mask, cache_train)
-  function loss_fn(p, _)  # Optimization.jl 需要 (p, _) 签名
-    try
-      return loss_batch(p, nn, st, vg, dz, h0, times, rain_values, h_obs, obs_mask; cache=cache_train)
-    catch e
-      @warn "Loss computation failed: $e"
-      return 1e10
-    end
-  end
-  return loss_fn
-end
 
 loss_fn = make_loss(nn, st, vg, dz, h0, times, rain_values, h_obs, obs_mask, cache_train)
 
 opt_fn = OptimizationFunction(
   loss_fn,
-  Optimization.AutoZygote()  # 使用Zygote自动微分
+  # Optimization.AutoZygote()  # 使用Zygote自动微分
+  Optimization.AutoEnzyme()  # 使用Zygote自动微分
 )
 
 opt_prob = OptimizationProblem(opt_fn, ComponentArray(ps))
@@ -74,7 +63,6 @@ opt_sol = solve(opt_prob, AdamW(0.01, (0.9, 0.999), 1e-4),
   callback=callback, maxiters=100)
 
 println("\n最终损失: $(round(opt_sol.objective, digits=6))")
-
 
 # 评估
 h_pred = simulate_batch(nn, opt_sol.u, st, vg, dz, h0, times, rain_values;

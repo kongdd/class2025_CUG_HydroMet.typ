@@ -1,9 +1,10 @@
 using DifferentialEquations, DiffEqFlux, Lux, Optimization, OptimizationOptimisers
-using ComponentArrays, Random, LinearAlgebra, StaticArrays, SciMLStructures
-
+using ComponentArrays, Random, LinearAlgebra, StaticArrays, Zygote, Enzyme
+using SciMLSensitivity, SciMLStructures # 必须显式导入以使用 InterpolatingAdjoint
+using Parameters
 
 # Van Genuchten参数化 - 使用不可变结构提高性能
-struct VanGenuchten{T}
+@with_kw struct VanGenuchten{T}
   θr::T
   θs::T
   α::T
@@ -66,16 +67,19 @@ end
 end
 
 # 预分配内存的ODE求解器
-mutable struct RichardsCache{T}
-  K_vals::Vector{T}
-  C_vals::Vector{T}
+@with_kw mutable struct Soil{T}
+  dz::Vector{T}
+  K::Vector{T}
+  C::Vector{T}
   K_half::Vector{T}
   q::Vector{T}
   nn_input::Vector{T}
 end
 
-function RichardsCache(n_layers::Int, T=Float64)
-  RichardsCache(
+function Soil(dz::Vector{T}) where {T<:Real}
+  n_layers::Int = length(dz)
+  Soil(
+    dz,
     zeros(T, n_layers),
     zeros(T, n_layers),
     zeros(T, n_layers + 1),
@@ -85,8 +89,10 @@ function RichardsCache(n_layers::Int, T=Float64)
 end
 
 # 优化的Richards方程 - 使用符合SciMLStructures的参数结构
-function create_richards_ode(nn, st, cache::RichardsCache, vg, dz, rain_interp)
+function create_richards_ode(nn, st, soil::Soil, vg, rain_interp)
+
   function ode!(du, u, p_nn, t)  # p_nn 是唯一的可调参数
+    (; K, C, K_half, q, nn_input, dz) = soil
     n_layers = length(u)
 
     # 获取降水
@@ -94,89 +100,91 @@ function create_richards_ode(nn, st, cache::RichardsCache, vg, dz, rain_interp)
 
     # 批量计算水力性质
     @inbounds for i in 1:n_layers
-      _, cache.K_vals[i], cache.C_vals[i] = hydraulic_props(u[i], vg)
+      _, K[i], C[i] = hydraulic_props(u[i], vg)
     end
 
     # 界面导水率 - 调和平均
-    cache.K_half[1] = cache.K_vals[1]
+    K_half[1] = K[1]
     @inbounds for i in 2:n_layers
-      cache.K_half[i] = 2.0 / (1.0 / cache.K_vals[i-1] + 1.0 / cache.K_vals[i])
+      K_half[i] = 2.0 / (1.0 / K[i-1] + 1.0 / K[i])
     end
-    cache.K_half[n_layers+1] = cache.K_vals[n_layers]
-
+    K_half[n_layers+1] = K[n_layers]
     # 通量计算
-    cache.q[1] = rain
+    q[1] = rain
     inv_dz = 1.0 / dz
     @inbounds for i in 2:n_layers
-      cache.q[i] = -cache.K_half[i] * ((u[i] - u[i-1]) * inv_dz + 1.0)
+      q[i] = -K_half[i] * ((u[i] - u[i-1]) * inv_dz + 1.0)
     end
-    cache.q[n_layers+1] = -cache.K_half[n_layers+1]
+    q[n_layers+1] = -K_half[n_layers+1]
 
     # Richards方程
     @inbounds for i in 1:n_layers
-      du[i] = -(cache.q[i+1] - cache.q[i]) * inv_dz / cache.C_vals[i]
+      du[i] = -(q[i+1] - q[i]) * inv_dz / C[i]
     end
 
     # 神经网络修正 - 重用缓存
     @inbounds for i in 1:n_layers
-      cache.nn_input[i] = u[i]
+      soil.nn_input[i] = u[i]
     end
-    cache.nn_input[n_layers+1] = t
-    cache.nn_input[n_layers+2] = rain
+    nn_input[n_layers+1] = t
+    nn_input[n_layers+2] = rain
 
-    nn_out, _ = nn(cache.nn_input, p_nn, st)
+    nn_out, _ = nn(nn_input, p_nn, st)
     @inbounds for i in 1:n_layers
       du[i] += nn_out[i]
     end
-
     nothing
   end
   return ode!
 end
 
-# 批量模拟 - 避免重复创建问题
+
+# 批量模拟 - 使用Zygote.Buffer避免mutation错误
 function simulate_batch(nn, p_nn, st, vg, dz, h0, times, rain_values;
-  cache=nothing, solver=Tsit5())
-  n_layers = length(h0)
-  if isnothing(cache)
-    cache = RichardsCache(n_layers)
-  end
+  soil=nothing, solver=Tsit5())
+  isnothing(soil) && (soil = Soil(dz))
 
   rain_interp = RainInterp(times, rain_values)
-  ode_fn = create_richards_ode(nn, st, cache)
+  ode_fn = create_richards_ode(nn, st, soil, vg, rain_interp)
 
-  h_all = Vector{Vector{Float64}}(undef, length(times))
-  h_all[1] = copy(h0)
-  current_h = copy(h0)
+  # 使用Zygote.Buffer - 可微分的可变数组
+  h_all = Zygote.Buffer(Vector{Vector{Float64}}(undef, length(times)))
+  h_all[1] = h0
+  current_h = h0
 
-  # 重用ODE问题
+  # 逐步求解
   for i in 1:(length(times)-1)
     tspan = (times[i], times[i+1])
-    prob = ODEProblem(ode_fn, current_h, tspan, (vg, dz, rain_interp, p_nn))
+    prob = ODEProblem(ode_fn, current_h, tspan, p_nn)
     sol = solve(prob, solver,
       save_everystep=false,
       saveat=[times[i+1]],
       abstol=1e-6,
-      reltol=1e-4)
+      reltol=1e-4,
+      # 显式指定 sensealg 以避免 AD 失败警告
+      # 选项 1（推荐）：使用 ZygoteVJP
+      # sensealg=InterpolatingAdjoint(autojacvec=ZygoteVJP()),
+      sensealg=InterpolatingAdjoint(autojacvec=EnzymeVJP()),
+      # 选项 2（如果上面失败）：使用 ForwardDiff（对小系统更稳定）
+      # sensealg=InterpolatingAdjoint(autojacvec=false),
+      # 选项 3（如果都失败）：使用 QuadratureAdjoint
+      # sensealg=QuadratureAdjoint(autojacvec=ZygoteVJP()),
+      verbose=false)  # 关闭警告
 
-    if sol.retcode == ReturnCode.Success
-      current_h = sol.u[end]
-      h_all[i+1] = copy(current_h)
-    else
-      h_all[i+1] = copy(current_h)
-    end
+    current_h = sol.retcode == ReturnCode.Success ? sol.u[end] : current_h
+    h_all[i+1] = current_h
   end
 
-  return h_all
+  return copy(h_all)  # 转换为普通数组
 end
 
 # 向量化损失函数 - 确保参数是Tunable
 function loss_batch(p_nn, nn, st, vg, dz, h0, times, rain_values,
-  h_obs, obs_mask; cache=nothing)
+  h_obs, obs_mask; soil=nothing)
 
   # 使用 Lux.apply 并传递正确的参数
   h_pred = simulate_batch(nn, p_nn, st, vg, dz, h0, times, rain_values;
-    cache=cache)
+    soil=soil)
 
   # 向量化计算
   loss = 0.0
@@ -194,19 +202,31 @@ function loss_batch(p_nn, nn, st, vg, dz, h0, times, rain_values,
   return n_obs > 0 ? loss / n_obs : Inf
 end
 
+# 创建优化函数 - 修复参数签名
+function make_loss(nn, st, vg, dz, h0, times, rain_values, h_obs, obs_mask, soil_train)
+  function loss_fn(p, _)  # Optimization.jl 需要 (p, _) 签名
+    try
+      return loss_batch(p, nn, st, vg, dz, h0, times, rain_values, h_obs, obs_mask; soil=soil_train)
+    catch e
+      @warn "Loss computation failed: $e"
+      return 1e10
+    end
+  end
+  return loss_fn
+end
 
 # 使用callback监控训练
 function create_callback(nn, st, vg, dz, h0, times, rain_values, h_obs, obs_mask)
-  cache = RichardsCache(length(h0))
+  soil = Soil(length(h0))
   iter = Ref(0)
 
   function callback(p, l)
     iter[] += 1
-    if iter[] % 10 == 0
-      println("Iter $(iter[]): Loss = $(round(l, digits=6))")
-    end
+    # if iter[] % 10 == 0
+    println("Iter $(iter[]): Loss = $(round(l, digits=6))")
+    # end
     return false
   end
 
-  return callback, cache
+  return callback, soil
 end
