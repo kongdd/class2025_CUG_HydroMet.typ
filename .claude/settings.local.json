@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.sciml.ai)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

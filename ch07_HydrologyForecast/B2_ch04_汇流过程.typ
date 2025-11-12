@@ -1,9 +1,6 @@
 #import "@local/modern-cug-report:0.1.3": *
 
-#show: (doc) => template(doc, 
-  size: 11.5pt,
-  footer: "CUG水文气象学2024",
-  header: "坡面与河道汇流")
+#show: doc => template(doc, size: 11.5pt, footer: "CUG水文气象学2024", header: "坡面与河道汇流")
 #counter(heading).update(3)
 #set par(leading: 1.24em)
 #let delta(x) = $Delta #x$
@@ -12,13 +9,17 @@
 
 == 曼宁公式
 
-#mitex(`$$
+#mitex(
+  `$$
 V = \frac{R_h^{2/3}}{n}S^{1/2}, R_h = A/P
-$$`)
+$$`,
+)
 
-#mitex(`$$
+#mitex(
+  `$$
 Q = V A = \frac{A^{5/3}}{n P^{2/3}} S^{1/2}
-$$`) <eq_manning_q>
+$$`,
+) <eq_manning_q>
 
 == 运动波方程
 
@@ -33,12 +34,15 @@ $$`) <eq_manning_q>
 - $W_2$: $t_2$时刻河道的水储量$m^3$，$A(x, t + delta(t)) delta(x)$
 - $W_"part"$: 区间径流对应的水量，$m^3$
 
+#beamer-block[
+  对于一个微小距离$delta(x)$，$W = A times Delta X$；对于一个固定点$x$，两个时刻$t + delta(t)$，蓄水量变化为$[A(x, t + delta(t)) - A(x, t)] delta(x)$。
+]
+
 根据连续性原理
 
 $
   (I - O) delta(t) + q = W_2 - W_1 \
   [Q(x, t) - Q(x + delta(x), t)] delta(t) + W_"part" = [A(x, t + delta(t)) - A(x, t)] delta(x) \
-
   [ Q(x + delta(x), t) - Q(x, t)] / delta(x) + [A(x, t + delta(t)) - A(x, t)] / delta(t) = W_"part" / (delta(x) delta(t))
 $
 
@@ -56,11 +60,11 @@ $
 
 以河道汇流为例，展示求解过程。这里需要结合曼宁公式与圣维南方程。
 
-将式#[@eq_manning_q]，进行变形，A写到公式左侧，A可以写成$alpha Q ^ beta$的形式：
+将式#[@eq_manning_q]，进行变形，A写到公式左侧，A可以写成$alpha Q^beta$的形式：
 
 $
   A^(5/3) = Q (n P^(2/3)) / sqrt(S) \
-  A = ((n P^(2/3)) / sqrt(S) )^(3/5) Q ^ (3/5)  = alpha Q ^ beta
+  A = ((n P^(2/3)) / sqrt(S) )^(3/5) Q^(3/5) = alpha Q^beta
 $ <eq_A>
 
 其中，$beta$ = 0.6，$alpha = ((n P^(2/3)) / sqrt(S) )^(3/5)$。
@@ -84,8 +88,8 @@ $
 == 马斯京根（Muskingum）
 
 $
-  W &= K [X I + (1 - X) O] \ 
-    &= K [O + X (I - O)]
+  W & = K [X I + (1 - X) O] \
+    & = K [O + X (I - O)]
 $
 
 X反映的楔形度，值域在0\~0.5。
@@ -95,8 +99,8 @@ X反映的楔形度，值域在0\~0.5。
 $ (I - O) delta(t) = delta(W) $
 
 $
-  [(I_1 + I_2) / 2 - (O_1 + O_2) / 2]delta(t)  = K { [O_2 + X (I_2 - O_2)] - [O_1 + X (I_1 - O_1)] } \
-  [(I_1 + I_2 - O_1) - O_2]delta(t) = 2K [(1 - X)O_2 + X I_2 - O_1 - X (I_1 - O_1) ] \ 
+  [(I_1 + I_2) / 2 - (O_1 + O_2) / 2]delta(t) = K { [O_2 + X (I_2 - O_2)] - [O_1 + X (I_1 - O_1)] } \
+  [(I_1 + I_2 - O_1) - O_2]delta(t) = 2K [(1 - X)O_2 + X I_2 - O_1 - X (I_1 - O_1) ] \
   2K [1 - X] O_2 + O_2delta(t) = (I_1 + I_2 - O_1)delta(t) + 2K [O_1 + X (I_1 - O_1) - X I_2] \
   O_2 = ((I_1 + I_2 - O_1)delta(t) + 2K [O_1 + X (I_1 - O_1) - X I_2])/ (delta(t) + 2K [1 - X]) \
   O_2 = [(delta(t) + 2K X)I_1 + (delta(t) - 2K X)I_2 + (-delta(t) + 2K - 2K X) O_1] / (delta(t) + 2K [1 - X])
@@ -108,7 +112,7 @@ $
 $
 
 $
-  C_0 = (delta(t) - 2K X) / (delta(t) + 2K [1 - X]), 
+  C_0 = (delta(t) - 2K X) / (delta(t) + 2K [1 - X]),
   C_1 = (delta(t) + 2K X) / (delta(t) + 2K [1 - X]),
   C_2 = (-delta(t) + 2K - 2K X) / (delta(t) + 2K [1 - X])
 $
@@ -119,8 +123,8 @@ $
 == `n`段特征河长
 
 #figure(
-  image("images/河道汇流/n段特征河长.png", width: 60%),
-  caption: [n段特征河长示意图。图件来自芮孝芳(2002,水科学进展)]
+  image("Figures/n段特征河长.png", width: 60%),
+  caption: [n段特征河长示意图。图件来自芮孝芳(2002,水科学进展)],
 ) <fig_>
 
 // *特征河长*
@@ -143,23 +147,23 @@ $ O_j = O + (I - O) / delta(x) (delta(x) - j l) $
 
 $
   W_j = K_j O_j
-   = K / n [O + (I - O) / delta(x) (delta(x) - j l)]
+  = K / n [O + (I - O) / delta(x) (delta(x) - j l)]
 $
 
 总槽蓄量为n个特征河长的叠加：
 
 $
-  W = sum_(j=1)^(n) W_j =& sum_(j=1)^(n) K / n [O + (I - O) / delta(x) (delta(x) - j l)] \
-   =& K [ O + (I - O) - (I - O)(n + 1) l / (2 delta(x))] \
+  W = sum_(j=1)^(n) W_j = & sum_(j=1)^(n) K / n [O + (I - O) / delta(x) (delta(x) - j l)] \
+                        = & K [ O + (I - O) - (I - O)(n + 1) l / (2 delta(x))] \
   //  =& K [ O + (I - O)[1 - (n + 1) l / (2 delta(x))] \
-   =& K [ O + (I - O)[1 - (delta(x) + l) / (2 delta(x))] \
+                        = & K [ O + (I - O)[1 - (delta(x) + l) / (2 delta(x))] \
 $
 
 回顾，Muskingum的槽蓄方程：
 
 $
-  W &= K [X I + (1 - X) O] \ 
-    &= K [O + X (I - O)]
+  W & = K [X I + (1 - X) O] \
+    & = K [O + X (I - O)]
 $
 
 联立，上述两个公式，可得：
