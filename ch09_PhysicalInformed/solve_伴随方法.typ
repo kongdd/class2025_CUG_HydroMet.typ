@@ -108,9 +108,9 @@ $ boxed(pdv(L, theta) = integral_0^T lambda(t)^T pdv(f, theta) d t) $
 
   #text(fill: rgb("#0066cc"))[
     *为什么对时间积分？*
-    - 我们想要的是**终端时刻的值** $lambda(T)^T u_theta(T)$
+    - 我们想要的是*终端时刻的值* $lambda(T)^T u_theta(T)$
     - 上面公式只给出了某个时刻 $t$ 的导数
-    - 通过**微积分基本定理**，对时间积分可以把边界值和积分项联系起来
+    - 通过*微积分基本定理*，对时间积分可以把边界值和积分项联系起来
   ]
 
   两边从 0 积分到 $T$（应用微积分基本定理）：
@@ -280,9 +280,9 @@ end
 
   *关键区别*：
 
-  - $lambda(T) = pdv(L, u(T))$：$L$ **直接**依赖 $u(T)$，可以直接求导
+  - $lambda(T) = pdv(L, u(T))$：$L$ *直接*依赖 $u(T)$，可以直接求导
 
-  - $lambda(0) = pdv(L, u(0))$：$L$ **间接**依赖 $u(0)$，通过链式法则：
+  - $lambda(0) = pdv(L, u(0))$：$L$ *间接*依赖 $u(0)$，通过链式法则：
     $
       pdv(L, u(0)) = pdv(L, u(T)) pdv(u(T), u(0))
     $
@@ -450,9 +450,9 @@ SciMLSensitivity.jl 提供多种伴随算法：
     columns: (auto, 1fr, 1fr),
     align: (left, left, left),
     [*特性*], [*BacksolveAdjoint*], [*InterpolatingAdjoint*],
-    [前向求解], [求解 $u(t)$，**不保存**轨迹], [求解 $u(t)$，**保存插值信息**],
+    [前向求解], [求解 $u(t)$，*不保存*轨迹], [求解 $u(t)$，*保存插值信息*],
     [内存消耗], [$O(1)$（最小）], [$O(n)$（中等）],
-    [反向求解时\需要 $u(t)$], [**重新反向求解**前向ODE], [从保存的插值中直接获取],
+    [反向求解时\需要 $u(t)$], [*重新反向求解*前向ODE], [从保存的插值中直接获取],
     [数值稳定性], [差（反向求解可能不稳定）], [好（使用前向解）],
   )
 
@@ -809,7 +809,7 @@ end
 # 需要求解：st - tanh(W*x + U*st + b) = 0
 ```
 
-*答案*：**可以用，但需要修改！** → 使用**隐式函数定理**的伴随方法
+*答案*：*可以用，但需要修改！* → 使用*隐式函数定理*的伴随方法
 
 #block(
   fill: rgb("#fff8e6"),
@@ -847,7 +847,7 @@ end
 # sₜ = f(xₜ, sₜ₋₁, p)
 ```
 
-*答案*：**可以用！** → 这就是**反向传播通过时间（BPTT）**，伴随方法的离散版本
+*答案*：*可以用！* → 这就是*反向传播通过时间（BPTT）*，伴随方法的离散版本
 
 #block(
   fill: rgb("#fff8e6"),
@@ -899,7 +899,7 @@ end
 # 例如：du/dt = NN(u, x(t), θ)
 ```
 
-*答案*：**完全可以用！** 伴随方法不受影响
+*答案*：*完全可以用！* 伴随方法不受影响
 
 #block(
   fill: rgb("#fff8e6"),
@@ -1185,15 +1185,15 @@ loss_val, grads, st = gradient(loss_fn, ps, st)
 )[
   *常见误解*：`sensealg` 是求解 ODE 的算法吗？
 
-  *答案*：**不是！** 这是两种完全不同的算法：
+  *答案*：*不是！* 这是两种完全不同的算法：
 ]
 
 #table(
   columns: (auto, 1fr, 1fr),
   align: (left, left, left),
   [*参数*], [*全称*], [*作用*],
-  [`alg`], [Algorithm（求解器算法）], [**前向求解** ODE 的数值方法],
-  [`sensealg`], [**Sensitivity** Algorithm], [**反向传播** 计算梯度的方法],
+  [`alg`], [Algorithm（求解器算法）], [*前向求解* ODE 的数值方法],
+  [`sensealg`], [*Sensitivity* Algorithm], [*反向传播* 计算梯度的方法],
 )
 
 #block(
@@ -1232,7 +1232,7 @@ loss_val, grads, st = gradient(loss_fn, ps, st)
 )[
   *为什么叫 "sensitivity algorithm"？*
 
-  *sensitivity* 在数值计算中指**灵敏度分析**或**敏感度分析**：
+  *sensitivity* 在数值计算中指*灵敏度分析*或*敏感度分析*：
 
   $ "sensitivity" = pdv(u(T), theta) $
 
@@ -1240,8 +1240,8 @@ loss_val, grads, st = gradient(loss_fn, ps, st)
 
   *历史背景*：
 
-  - 在控制论、最优化领域，计算 $pdv(u, theta)$ 的方法统称为 **sensitivity analysis**
-  - 不同的计算方法（前向模式、伴随方法等）称为 **sensitivity algorithms**
+  - 在控制论、最优化领域，计算 $pdv(u, theta)$ 的方法统称为 *sensitivity analysis*
+  - 不同的计算方法（前向模式、伴随方法等）称为 *sensitivity algorithms*
   - SciML 继承了这个术语
 
   *对应关系*：
@@ -1280,10 +1280,10 @@ loss_val, grads, st = gradient(loss_fn, ps, st)
 
   *选择建议*：
 
-  - **NeuralODE**：`InterpolatingAdjoint(autojacvec=ZygoteVJP())` ✓✓✓
-  - **刚性问题**：`InterpolatingAdjoint()` 或 `QuadratureAdjoint()` ✓✓
-  - **内存受限**：`BacksolveAdjoint()` ✓
-  - **小参数量**：`ForwardDiffSensitivity()` ✓
+  - *NeuralODE*：`InterpolatingAdjoint(autojacvec=ZygoteVJP())` ✓✓✓
+  - *刚性问题*：`InterpolatingAdjoint()` 或 `QuadratureAdjoint()` ✓✓
+  - *内存受限*：`BacksolveAdjoint()` ✓
+  - *小参数量*：`ForwardDiffSensitivity()` ✓
 ]
 
 === 1.9.9 完整示例：两种算法的配合
@@ -1331,11 +1331,11 @@ println("Gradient: ", dp)
 )[
   *执行流程*：
 
-  1. **前向传播**（`alg` 起作用）：
+  1. *前向传播*（`alg` 起作用）：
      - 使用 `Tsit5()` 求解 ODE：$dv(u,t) = f(u,p,t)$
      - 得到 $u(T)$
 
-  2. **反向传播**（`sensealg` 起作用）：
+  2. *反向传播*（`sensealg` 起作用）：
      - `gradient(loss, p)` 触发自动微分
      - 使用 `InterpolatingAdjoint` 计算 $pdv(L, p)$
      - 利用伴随方法避免高维矩阵
@@ -1352,8 +1352,8 @@ println("Gradient: ", dp)
 )[
   *记忆要点*：
 
-  - `alg` = 求解器算法 = **前向**求解 ODE
-  - `sensealg` = 敏感度算法 = **反向**计算梯度
+  - `alg` = 求解器算法 = *前向*求解 ODE
+  - `sensealg` = 敏感度算法 = *反向*计算梯度
 
   *命名来源*：
   - `sens-` = sensitivity（敏感度/灵敏度）
