@@ -33,8 +33,16 @@ function van_genuchten_K(h, Ks, θs, θr, α, n)
   if h >= 0
     return Ks
   else
-    Se = ((1 + abs(α * h)^n)^(-m))
-    K = Ks * Se^0.5 * (1 - (1 - Se^(1 / m))^m)^2
+    # 计算有效饱和度，添加数值保护
+    term = 1 + abs(α * h)^n
+    Se = term^(-m)
+    Se = clamp(Se, 1e-10, 1.0)  # 防止数值问题
+
+    # 计算导水率，添加数值保护
+    inner_term = 1 - Se^(1 / m)
+    inner_term = clamp(inner_term, 0.0, 0.9999)  # 防止1^m导致的问题
+    K = Ks * Se^0.5 * (1 - inner_term^m)^2
+    K = max(K, 1e-12)  # 确保K不会太小
     return K
   end
 end
@@ -66,28 +74,37 @@ function solve_richards_step(model::RichardsModel1D, h_old, params, infiltration
 
     # 边界条件:上边界为入渗通量,下边界为自由排水
     for i in 2:nz-1
-      K_up = (K[i-1] + K[i]) / 2
-      K_down = (K[i] + K[i+1]) / 2
+      K_up = max((K[i-1] + K[i]) / 2, 1e-10)  # 防止K过小
+      K_down = max((K[i] + K[i+1]) / 2, 1e-10)
 
       flux_up = -K_up * ((h_new[i] - h_new[i-1]) / dz + 1)
       flux_down = -K_down * ((h_new[i+1] - h_new[i]) / dz + 1)
 
       dθ_dt = (flux_up - flux_down) / dz
 
-      # 水分容量
-      C = (θ[i] - van_genuchten_theta(h_old[i], θs, θr, α, n)) /
-          (h_new[i] - h_old[i] + 1e-6)
+      # 水分容量 - 改进数值稳定性
+      θ_old = van_genuchten_theta(h_old[i], θs, θr, α, n)
+      dh = h_new[i] - h_old[i]
+      C = abs(dh) > 1e-8 ? (θ[i] - θ_old) / dh : 0.01  # 使用默认容量值
 
-      h_new[i] = h_old[i] + dt * dθ_dt / (C + 1e-6)
+      # 限制更新幅度以提高稳定性
+      dh_update = dt * dθ_dt / (abs(C) + 1e-8)
+      dh_update = clamp(dh_update, -1.0, 1.0)  # 限制每步最大变化
+      h_new[i] = h_old[i] + dh_update
     end
 
-    # 上边界 (入渗)
-    K_surf = K[1]
+    # 上边界 (入渗) - 改进数值稳定性
+    K_surf = max(K[1], 1e-10)  # 防止除零
     flux_in = min(infiltration, Ks)  # 限制最大入渗率
-    h_new[1] = h_new[2] - (flux_in / K_surf - 1) * dz
+    gradient = flux_in / K_surf - 1
+    gradient = clamp(gradient, -10.0, 10.0)  # 限制梯度范围
+    h_new[1] = h_new[2] - gradient * dz
 
     # 下边界 (自由排水)
     h_new[nz] = h_new[nz-1] - dz
+
+    # 限制压力水头的合理范围
+    h_new = clamp.(h_new, -100.0, 10.0)
   end
 
   return h_new
@@ -242,6 +259,7 @@ function generate_synthetic_data(nz, nsteps=10)
 
   return h_init, z_coords, infiltration_series, θ_obs_series
 end
+
 
 function main()
   println("=== 土壤水运动模拟: Lux + Enzyme ===\n")

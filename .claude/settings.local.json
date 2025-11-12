@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:docs.sciml.ai)"
+      "WebFetch(domain:docs.sciml.ai)",
+      "WebFetch(domain:enzymead.github.io)"
     ],
     "deny": [],
     "ask": []
