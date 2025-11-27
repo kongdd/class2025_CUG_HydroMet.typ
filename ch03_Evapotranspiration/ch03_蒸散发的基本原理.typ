@@ -12,7 +12,7 @@
       block: 12pt, // 单独一行的公式
     ),
   ),
-  footer: "CUG水文气象学2024",
+  footer: "CUG水文气象学2025",
   header: "第三章 蒸散发的基本原理",
 )
 
@@ -213,7 +213,9 @@ $
 
 *(a) $R_n = 0$*
 
-*在一个密闭体积中*，从干球温度到湿度温度。图解法：
+*在一个密闭体积中*（#Blue[注意必须是密闭的容器！]这是与后续通量过程的核心区别）。
+
+从干球温度到湿度温度。图解法：
 
 如图#[@fig_Tdry_Twet]，从$X -> Y$过程，温度降低，水汽压升高。
 
@@ -270,14 +272,10 @@ $
 联立方程，即可解出$lambda E$和$H$：
 
 $
-  cases(
-    R_n = lambda E + H \
-    (lambda E ) / H = Delta / gamma
-  )
+  R_n = lambda E + H, quad (lambda E ) / H = Delta / gamma
 $
 
-$ lambda = (Delta R_n) / (Delta + gamma) $
-$ H = (gamma R_n) / (Delta + gamma) $
+$ lambda = (Delta R_n) / (Delta + gamma), quad H = (gamma R_n) / (Delta + gamma) $
 
 *(c) $R_n > 0$，供水不充分*
 
@@ -310,7 +308,13 @@ $ H = (gamma R_n) / (Delta + gamma) $
   $delta(T)$按10℃算，$1 m^3$空气，升温所需要的能量：
 
   #nonum([$
-    E_H =1103 J \/ ("kg" ℃) times 1.2"kg" times 10℃ = 13,236 J
+    "Energy"_H =1103 J \/ ("kg" ℃) times 1.2"kg" times 10℃ = 13,236 J
+  $])
+
+  蒸发过程，认为初始状态$q = 0$，最终状态$q = 4%$（常温状态下的饱和比湿），蒸发过程耗能为：
+
+  #nonum([$
+    "Energy"_E = 2.5 "MJ" \/ ("kg") times 1.2"kg" times 4% = 0.12 "MJ"
   $])
 ]
 
@@ -329,25 +333,54 @@ $ H = (gamma R_n) / (Delta + gamma) $
 
 === 3.3.1 潜热通量
 
-#highlight()[*(a) 比湿的形式：*]
+*(a) 比湿的形式：*
 
-$ E = -D pdv(rho_v, z) = -D rho pdv(q, z) $
+$ E = -D pdv(rho_v, z) = -D rho pdv(q, z) $ <eq_E_flux>
 
-- D是水汽的分子扩散系数，单位$m^2\/s$。
+- D是水汽的扩散系数，单位$m^2\/s$；$E$的单位是$"kg"\/(m^2 dot s)$，$lambda E$的单位为$W\/m^2$。
+
+#box-blue[扩散像墨水滴在水里扩散，墨水不是“每秒走几米”，而是“1秒钟扩散了多大一片面积”。所以单位是m²/s。]
 
 在积分过程中，认为大气的状态达到均衡，认为E是常数。从地表$z_1$到参考高度$z_2$进行积分，可以得到：
 
+#v(-0.6em)
 $ integral_(z_1)^(z_2) E d z = integral_(z_1)^(z_2) -D rho d q $
-
+#v(-0.4em)
 $
-  lambda E & = - lambda D rho (integral_(z_1)^(z_2) d q) / (integral_(z_1)^(z_2) d z) \
-           & = lambda rho (q(z_1) - q(z_2)) / ((z_2 - z_1) / D) \
-           & = lambda (rho delta(q)) / r_v, (r_v = (z_2 - z_1) / D)
+  lambda E & = - lambda D rho (integral_(z_1)^(z_2) d q) / (integral_(z_1)^(z_2) d z)
+             = lambda rho (q(z_1) - q(z_2)) / ((z_2 - z_1) / D)
+             = lambda (rho delta(q)) / r_v, (r_v = (z_2 - z_1) / D)
 $
 
 上式，定义了水汽传递阻力$r_v$ ($s\/m$)，导度$g_v$等于阻力的倒数（$g_v = 1/r_v$, $m\/s$），$delta(q) = q(z_1) - q(z_2)$。蒸发的水汽通常来源于湿润的地表。一般而言，$q(z_1) > q(z_2)$。
 
-#highlight()[*(b) 水汽压的形式：*]
+#v(-0.4em)
+#box-blue[
+  $integral_(z_1)^(z_2) d q = q(z_2) - q(z_1)$成立的前提是函数 $q(z)$ 在积分区间 $[z_1, z_2]$上是连续的。也即是$q$的导数存在。该式是牛顿-莱布尼茨公式的应用。
+]
+
+#v(-0.4em)
+#block(fill: yellow.lighten(80%), inset: 10pt, radius: 4pt)[
+  #set par(spacing: 1.15em)
+  *为何要进行积分？*
+  之所以要从地表 $z_1$ 到参考高度 $z_2$ 进行积分，主要是为了将微观的微分方程转化为宏观可测量的公式，并引出“阻力”的概念。
+
+  - *1. 从“梯度”到“差值” (Measurability):*
+    式#[@eq_E_flux]描述的是某一点的通量与该点水汽梯度$pdv(q, z)$的关系。
+    在实际观测中，我们很难测量某一具体点的“梯度”。我们容易测量的是两个高度上的数值（例如：地表 $z_1$ 的湿度和 2米高处 $z_2$ 的湿度）。
+    积分的作用，就是把“梯度的微分关系”变成“两点间的差值关系”$q(z_1) - q(z_2)$，让我们能用观测数据来计算通量。
+
+  - *2. 定义“阻力” (Physics Concept - Resistance):*
+    通过积分，我们将复杂的扩散系数 $D$ 和路径长度 $z_2 - z_1$ 整合到了一个项中。
+    这就导出了类似欧姆定律的形式：通量 = 势差 / 阻力。
+    即 $r_v = (z_2 - z_1) / D$。这样我们就定义了水汽传递阻力 (Aerodynamic Resistance)，这使得物理意义更加直观：通量受驱动力（湿度差）和阻力（空气动力学阻力）控制。
+
+  - *3. 常通量层的假设 (Assumption):*
+    注意文中提到“认为 $E$ 是常数”。只有假设在这段垂直距离内水汽通量 $E$ 不随高度变化，我们才能把 $E$ 从积分号里提出来，从而解出 $E$ 的表达式。
+]
+
+
+*(b) 水汽压的形式：*
 
 $
   lambda E & = -lambda D pdv(rho_v, z)
@@ -360,7 +393,6 @@ $
            & = -(D rho c_p) / gamma (e(z_2) - e(z_1)) / (z_2 - z_1)
              = (rho c_p delta(e)) / (gamma r_v), (r_v = (z_2 - z_1) / (D) )
 $
-
 
 === 3.3.2 感热通量
 
@@ -376,13 +408,13 @@ $ H = -k pdv(rho c_p T, z) = - k rho c_p pdv(T, z) $
 $ integral_(z_1)^(z_2) H d z = integral_(z_1)^(z_2) - k rho c_p d T $
 
 $
-  H = & - k rho c_p (integral_(z_1)^(z_2) d T ) / (integral_(z_1)^(z_2) d z) \
-    = & k rho c_p (T(z_1) - T(z_2)) / (z_2 - z_1) \
-    = & (rho c_p delta(T)) / r_H, (r_H = (z_2 - z_1) / k)
+  H = & - k rho c_p (integral_(z_1)^(z_2) d T ) / (integral_(z_1)^(z_2) d z)
+        = & k rho c_p (T(z_1) - T(z_2)) / (z_2 - z_1)
+            = & (rho c_p delta(T)) / r_H, (r_H = (z_2 - z_1) / k)
 $
 
 // - $kappa$：热传导系数，单位$W\/(m K)$；
-- $k$：热扩散系数，单位$m^2\/ s$；
+- $k$：热扩散系数，单位$m^2\/ s$，；
 - $H$: 感热通量，单位$W\/m^2$；
 - $c_p$: 比热容，单位$J\/("kg" K)$；
 - $rho$: 空气密度，单位$"kg"\/m^3$；
@@ -394,7 +426,7 @@ $
 
 考虑水汽和热量的传递阻力后，如图#[@fig_Tdry_Twet]，感热与潜热的公式变形为：
 
-$ lambda E = lambda (epsilon rho delta(e)) / (P r_v) V, H = (rho c_p delta(T)) / r_H V $
+$ lambda E = lambda (epsilon rho delta(e)) / (P r_v) , H = (rho c_p delta(T)) / r_H $
 
 $lambda E + H = 0$ 可得，
 $
@@ -404,15 +436,75 @@ $
 
 令$gamma^* = (c_p P) / (lambda epsilon) r_v / r_H = gamma r_v / r_H$。$gamma^*$被称为修正湿度计常数。
 
+*已知$delta(rho_v) = epsilon rho delta(e) / P, gamma = (c_p P) / (lambda epsilon)$，可得$lambda E$的5种形式：*
+$
+  boxed(
+    lambda E = lambda delta(rho_v) / r_v 
+    = cases(lambda rho delta(q) / r_v,
+      lambda (epsilon rho delta(e)) / (P r_v)
+      = (rho c_p delta(e)) / (gamma r_v) = (rho c_p delta(e)) / (gamma^* r_H) 
+    )
+  )
+$
 
 == 3.4 潜在蒸散发
 
+#h(2em)
+与上一章节不同，#Blue[对于通量而言，没有初始状态与最终状态的区别。]
+Penman公式的推导，它研究的是稳定状态下的感热与潜热通量。
+稳定状态下（也即是均衡状态下），空气温度和水汽压（$T_a$, $e_a$）已知；湿表面温度$T_w$不知，但可以确定的是湿表面的水汽压为饱和水汽压$e_s (T_w)$。对应的感热、潜热通量为：
+
+$
+  lambda E & = rho c_p (e_s (T_w) - e_a) / (gamma^* r_H) \
+         H & = rho c_p (T_w - T_a) / r_H
+$
+
+#pagebreak()
+#v(-0.9em)
 === 3.4.1 水面蒸发 (Penman 1948)
 
 #figure(
-  image("Figures/Penman1948_示意图.png", width: 65%),
-  caption: [Penman 1948水面蒸发示意图。],
+  image("Figures/Penman1948_示意图.png", width: 62%),
+  caption: [Penman 1948水面蒸发示意图。
+    点W为空气所处的状态，点X为$R_n = 0$情况下湿表面所处的点，点Y为$R_n > 0$情况下湿表面所处的点。
+  ],
 ) <fig_penman1948>
+
+
+*（a）情景1*：空气干燥，且$R_n = 0$。
+
+#box-blue[点$W$为空气所处的状态，点$X$为蒸发面（湿表面）所处的状态。]
+
+$
+  lambda E [X -> W] = -H[W -> X] = (rho c_p D) / r_H, (D = T_W - T_X) \
+$
+
+点$X$是斜率为$-gamma$且过点W的直线与饱和水汽压曲线的交点。只有$[T_w, e_s (T_w)]$处于点X，才能保持$R_n = 0$。
+
+若空气状态P饱和水汽压曲线，且在湿润面$X$的左侧，则对于空气而言$lambda E > 0, H > 0 ==> R_n > 0$；若在右侧，则反之。
+
+
+*（b）情景2*：空气饱和，且$R_n = 0$。
+
+空气处于点$X$，蒸发面处于点$V$。$lambda E[V -> X]$表征的是蒸发面在V，空气在X的情况下，蒸发面到空气的潜热通量。
+
+$ R_n = lambda E[V -> X] + H[V -> X] $
+
+$
+  lambda E[V -> X] &= rho c_p (e_s (T_V) - e_s (T_X)) / (gamma^* r_H) = rho c_p Delta (T_V - T_X) / (gamma^* r_H)  \
+  H[V -> X] &= rho c_p (T_V - T_X) / r_H \
+$
+
+因此，可以解出通量：
+$
+  lambda E[V -> X] = (Delta R_n) / (Delta + gamma^*), H[V -> X] = (gamma^* R_n) / (Delta + gamma^*)
+$
+
+#box-red[*结论*：若空气中的水汽达到饱和，净辐射驱动下$lambda E = (Delta R_n) / (Delta + gamma^*)$]
+
+
+
+*之前版本*
 
 这里水面蒸发指的是：从水面到参考高度（一般指2m）的潜热通量，图中从点W到Y的过程。
 
@@ -458,7 +550,7 @@ $
 
 $
   lambda E = rho c_p ("es"(T_w) - "es"(T_a) + "VPD") / (gamma^* r_H) \
-  = 2 rho c_p (Delta (T_w - T_a) + "VPD") / (gamma^* r_H)
+  = rho c_p (Delta (T_w - T_a) + "VPD") / (gamma^* r_H)
 $ <ch3_2_le>
 
 求出#[@ch3_2_h]中的$T_w - T_a$，代入#[@ch3_2_le]，可以得到：

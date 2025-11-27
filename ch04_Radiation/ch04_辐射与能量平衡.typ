@@ -1,7 +1,7 @@
 // #import "./typst/lib.typ": *
 #import "@local/modern-cug-report:0.1.3": *
 #show: doc => template(doc, 
-  size: 12.5pt,
+  size: 12pt,
   footer: "CUG水文气象学2025", 
   header: "第4章 辐射与能量平衡"
 )
@@ -15,7 +15,7 @@
 // =
 = 4 辐射与能量平衡
 
-== 4.1 能量平衡
+== 4.1 地表能量平衡
 
 水文学研究中两个主要的公式：水量平衡与能量平衡。能量平衡公式如下：
 
@@ -28,11 +28,14 @@ $ R_n - G = lambda E + H $ <eq_energy>
 $ lambda E = (lambda rho delta(q)) / r_v = (rho c_p delta(e)) / (gamma r_v) $
 $ H = (rho c_p delta(T)) / r_H $
 
-- $R_n$: 净辐射，MJ
-- $lambda$: 汽化潜热，2.5 MJ / kg
-- $gamma$：湿度计常数
-- $rho$: 空气密度，$"kg"\/m^3$
-- $r_v$, $r_H$：分别是水汽和热量的传导阻力。
+其中，$R_n$为净辐射，MJ；$lambda$为汽化潜热，2.5 MJ / kg；$gamma$为湿度计常数；$rho$为空气密度，$"kg"\/m^3$；$r_v$, $r_H$分别是水汽和热量的传导阻力。
+
+#figure(
+  image("Figures/感热潜热-变化.png", width: 70%),
+  caption: [
+    感热通量与潜热通量分配比例Bowen系数岁温度变化示意图。
+  ]
+) <fig_>
 
 *类似于浓度扩散、以及达西定律，$lambda E$、$H$和$G$公式形式皆是梯度×扩散效率系数的形式。*土壤热通量的表达形式如下：
 
@@ -45,7 +48,33 @@ $ G = kappa / delta(z) (T_s - T_1) $
 
 #beamer-block([这里需要注意，公式1中所有变量都是通量的概念。])
 
-== 4.2 地表净辐射
+== 4.2 大气能量平衡
+
+#figure(
+  image("Figures/能量平衡-大气02.png", width: 80%),
+  caption: [
+    大气能量平衡示意图。
+  ],
+) <fig_>
+
+#v(-1em)
+#figure(
+  image("Figures/能量平衡-大气.png", width: 80%),
+  caption: [
+    大气能量平衡示意图2。
+  ]
+) <fig_>
+
+#mitex(`$$
+\begin{align*}
+  Rns &= 45, \\
+  Rl_{in} &= 88, Rl_{out} = 104 \\
+  Rn &= 45 + 88 - 104 = 29 \\
+  Rn &= H + \lambda E
+\end{align*}
+$$`)
+
+== 4.3 地表净辐射
 
 地表净辐射，主要包括长波净辐射和短波净辐射。
 
@@ -60,7 +89,7 @@ $ R_n = "Rns" + "Rnl" = (1 - alpha) R_s + epsilon"Rln" - epsilon sigma T_s^4 $ <
 
 #beamer-block([上式的推导，涉及辐射的三个基本定律。])
 
-=== 4.2.1 太阳辐射
+=== 4.3.1 太阳辐射
 
 #box-red([
   - 辐射能$delta(F)$：辐射的总能量，$J$；
@@ -86,7 +115,7 @@ $ F = F_0 (d_0 / d)^2 = F_0 / rho^2 $
 
 其中$d$为日地距离，$d_0$为日地平均距离，$I$为地球接收的太阳辐射强度，$F_0$为太阳辐射常数（1370 $W m^(-2)$）。
 
-== 4.3 地表能量平衡求解
+== 4.4 地表能量平衡求解
 
 辐射会加热地表和空气；地表温度升高则向外长波辐射增加，使Rn减少。二者相互作用，最终会达到均衡。
 
