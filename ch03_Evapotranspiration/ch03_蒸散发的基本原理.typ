@@ -12,6 +12,7 @@
       block: 12pt, // 单独一行的公式
     ),
   ),
+  pagenum: false,
   footer: "CUG水文气象学2025",
   header: "第三章 蒸散发的基本原理",
 )
@@ -439,13 +440,14 @@ $
 *已知$delta(rho_v) = epsilon rho delta(e) / P, gamma = (c_p P) / (lambda epsilon)$，可得$lambda E$的5种形式：*
 $
   boxed(
-    lambda E = lambda delta(rho_v) / r_v 
-    = cases(lambda rho delta(q) / r_v,
+    lambda E = lambda delta(rho_v) / r_v
+    = cases(
+      lambda rho delta(q) / r_v,
       lambda (epsilon rho delta(e)) / (P r_v)
-      = (rho c_p delta(e)) / (gamma r_v) = (rho c_p delta(e)) / (gamma^* r_H) 
+      = (rho c_p delta(e)) / (gamma r_v) = (rho c_p delta(e)) / (gamma^* r_H)
     )
   )
-$
+$ <eq_LE_final>
 
 == 3.4 潜在蒸散发
 
@@ -470,13 +472,32 @@ $
   ],
 ) <fig_penman1948>
 
+#figure(
+  caption: [
+    蒸发过程的几种不同情景。
+  ],
+  table(
+    columns: (1.25cm, 1.9cm, 1.68cm, 1.55cm, 3.4cm, 3.3cm, 3.7cm),
+    // (2.0cm, 1.9cm, 1.55cm),
+    rows: (0.8cm, 0.8cm),
+    align: (horizon, horizon, horizon, horizon, left + horizon, horizon),
+    [*情景*], [*过程*], [*蒸发面*], [*空气*], [#align(center)[*条件*]], [*案例*], [*蒸发公式*],
+    [a], [$X -> W$], [$X$], [$W$], [$R_n = 0, e"饱和"$], [湿球温度], [式#[@eq_LE_final]],
+    [b], [$Y -> X$], [$Y$], [$X$], [$R_n > 0, e"饱和"$], [湖面、海面蒸发], [均衡蒸发 式#[@eq_PE0_eq]],
+    [c], [$Y -> W$], [$Y$], [$W$], [$R_n > 0, e"未饱和"$], [蒸发皿蒸发], [Penman1948 式#[@ch3_eq37]],
+  ),
+) <table_>
+
+#let es = $e_s$
+#let LE = $lambda E$
+
 
 *（a）情景1*：空气干燥，且$R_n = 0$。
 
 #box-blue[点$W$为空气所处的状态，点$X$为蒸发面（湿表面）所处的状态。]
 
 $
-  lambda E [X -> W] = -H[W -> X] = (rho c_p D) / r_H, (D = T_W - T_X) \
+  lambda E [X -> W] = -H[X -> W] = (rho c_p D) / r_H, (D = T_W - T_X) \
 $
 
 点$X$是斜率为$-gamma$且过点W的直线与饱和水汽压曲线的交点。只有$[T_w, e_s (T_w)]$处于点X，才能保持$R_n = 0$。
@@ -484,44 +505,28 @@ $
 若空气状态P饱和水汽压曲线，且在湿润面$X$的左侧，则对于空气而言$lambda E > 0, H > 0 ==> R_n > 0$；若在右侧，则反之。
 
 
-*（b）情景2*：空气饱和，且$R_n = 0$。
+*（b）情景2*：空气饱和，且$R_n > 0$，$X -> Y$的过程。
 
-空气处于点$X$，蒸发面处于点$V$。$lambda E[V -> X]$表征的是蒸发面在V，空气在X的情况下，蒸发面到空气的潜热通量。
+为了便于利用几何关系，这里采用点$V$表示蒸发面状态，点$X$表示空气状态（图#[@fig_penman1948]）。点V的温度与空气温度相同，但水汽压为饱和。空气处于点$X$，蒸发面处于点$V$。
+
+$lambda E[V -> X]$表征的是蒸发面在V，空气在X的情况下，蒸发面到空气的潜热通量。
 
 $ R_n = lambda E[V -> X] + H[V -> X] $
 
 $
-  lambda E[V -> X] &= rho c_p (e_s (T_V) - e_s (T_X)) / (gamma^* r_H) = rho c_p Delta (T_V - T_X) / (gamma^* r_H)  \
-  H[V -> X] &= rho c_p (T_V - T_X) / r_H \
+  lambda E[V -> X] & = rho c_p (e_s (T_V) - e_s (T_X)) / (gamma^* r_H)
+                     = rho c_p Delta (T_V - T_X) / (gamma^* r_H)
 $
 
+$ H[V -> X] & = rho c_p (T_V - T_X) / r_H $
+
 因此，可以解出通量：
-$
-  lambda E[V -> X] = (Delta R_n) / (Delta + gamma^*), H[V -> X] = (gamma^* R_n) / (Delta + gamma^*)
-$
+$ lambda E[V -> X] = (Delta R_n) / (Delta + gamma^*) $ <eq_PE0_eq>
+$ H[V -> X] = (gamma^* R_n) / (Delta + gamma^*) $
 
 #box-red[*结论*：若空气中的水汽达到饱和，净辐射驱动下$lambda E = (Delta R_n) / (Delta + gamma^*)$]
 
-
-
-*之前版本*
-
-这里水面蒸发指的是：从水面到参考高度（一般指2m）的潜热通量，图中从点W到Y的过程。
-
-$ lambda E [W -> X] = -H[W -> X] = (rho c_p D) / r_H $
-$ lambda E [X -> Y] = (Delta R_n) / (Delta + gamma^*) $
-$ lambda E [Y -> Z] = -H[Y -> Z] = -(rho c_p D_0) / r_H $
-
-$W -> Z$，对应的蒸发面水汽不饱和，该过程总的潜热和感热为：
-
-$ lambda E [W -> Z] = (Delta R_n) / (Delta + gamma^*) + (rho c_p (D - D_0)) / r_H $
-
-$
-  H [W -> Z] = & R_n - lambda E [W -> Z] \
-             = & (gamma^* R_n) / (Delta + gamma^*) - (rho c_p (D - D_0)) / r_H
-$
-
-若蒸发面水汽饱和（充分供水），则是$W -> Y$过程：
+*（c）情景3*：蒸发面充分供水，但空气不饱和，则是$W -> Y$过程：
 
 $ lambda E [W -> Y] = (Delta R_n) / (Delta + gamma^*) + (rho c_p D) / r_H $ <ch3_eq37>
 
@@ -563,12 +568,10 @@ $
   H = (gamma^* R_n) / (Delta + gamma^*) - (rho c_p "VPD" \/ r_H) / (Delta + gamma^*)
 $ <ch3_pm_h>
 
-#box-red([为何与#[@ch3_eq37]和#[@ch3_eq38]的结果不同？
-
+#box-red([为何#[@ch3_eq37]和#[@ch3_pm_le]的结果不同？
   #nonum([$
     lambda E = (Delta R_n) / (Delta + gamma^*) + rho c_p D \/ r_H
   $])
-
   *其实他们是等价的，因为$"VPD" = D (Delta + gamma^*)$。*可借助图#[@fig_penman1948]的几何关系，推导得出。
 ])
 
@@ -581,7 +584,18 @@ $ <ch3_pm_h>
   ],
 ) <fig_monteith>
 
-相比于水面蒸发，叶片蒸发在水汽传导阻力中多了气孔阻力。因此，$H$的表达形式不变，$lambda E$的表达形式变为：
+*湿表面发生了转移*：$"叶片内部"[T_l, es(T_l)] --> "叶片表面"[T_o, e_o] --> "空气"[T_a, es(T_a)]$。研究上述过程，套用的是潜热通量公式：$LE = (rho c_p delta(e)) / (gamma r_v)$。
+
+
+稳定状态下，$LE["L" -> "O"] = LE["O" -> "A"]$。其中L、O、A分别代表叶片内部、叶片表面和空气。也即是：
+
+$
+  (es(T_l) - e_o) / r_s = (e_o - e) / r_v = (es(T_l) - e) / (r_v + r_s)
+$ <eq_ET_leaf>
+
+
+根据式#[@eq_ET_leaf]，我们可以看到，
+相比于水面蒸发，叶片蒸发在水汽传导阻力中多了气孔阻力$r_s$。$H$的表达形式不变，$lambda E$的表达形式变为：
 
 $
   lambda E & = lambda epsilon rho (e_w - e_a) / (P (r_v + r_s) ) =
@@ -606,7 +620,7 @@ $ <ch3_monteith1965>
 === 3.4.3 参考作物蒸发 (FAO98)
 
 // #beamer-block([
-一种假想的参考作物，高度为0.12m，固定的地表阻力为70 $s\/m$，反射率为0.23。
+一种假想的参考作物（供水条件良好的草地），高度为0.12m，固定的冠层阻力为70 $s\/m$，反射率为0.23。
 
 A hypothetical reference crop with an assumed crop height of 0.12 m, a fixed surface resistance of 70 $s\/m$ and an albedo of 0.23.
 // ])
@@ -646,7 +660,7 @@ A hypothetical reference crop with an assumed crop height of 0.12 m, a fixed sur
   caption: [蒸散发与土壤水的交互。],
 )
 
-#bibliography("../References.bib", title: "参考文献", style: "gb-7714-2015-author-date")
+#bibliography("References.bib", title: "参考文献", style: "gb-7714-2015-author-date")
 
 // "gb-7714-2005-numeric"
 // China National Standard GB/T 7714-2005 (numeric, 中文)
