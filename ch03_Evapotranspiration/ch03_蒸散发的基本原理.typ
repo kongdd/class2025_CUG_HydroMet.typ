@@ -12,7 +12,7 @@
       block: 12pt, // 单独一行的公式
     ),
   ),
-  pagenum: false,
+  pagenum: true,
   footer: "CUG水文气象学2025",
   header: "第三章 蒸散发的基本原理",
 )
@@ -635,41 +635,59 @@ A hypothetical reference crop with an assumed crop height of 0.12 m, a fixed sur
 == 3.5 实际蒸散发
 
 #figure(
-  image("Figures/根区土壤水分布.png", width: 75%),
+  image("Figures/根区土壤水分布.png", width: 70%),
   caption: [根区土壤水分布。],
 ) <fig_>
 
-=== 3.5.1 植被蒸腾与植被光合
+//! === 3.5.1 植被蒸腾与植被光合
 
-=== 3.5.2 蒸散发与土壤水之间的关系
+= 4 地表能量平衡
 
-无论是土壤蒸发还是植被蒸腾，都与土壤水分有关。
+#beamer-block()[
+  地表能量平衡公式 $R_n - G = H + lambda E$ 解释了不同下垫面的温度差异。
 
-土壤水限制植被蒸腾和土壤蒸发；蒸散发抽取土壤水。二者相互影响，相互限制。
-
-== 3.6 蒸散发与土壤水、地下水的交互
+  - *城市（热岛效应）：* 不透水面多（水泥、沥青），土壤水分少，$lambda E$（蒸发潜热）很小。大部分净辐射 $R_n$ 转化为感热 $H$ 加热空气，导致城市温度显著高于郊区。
+  - *绿洲（绿洲效应）：* 植被丰富，水分充足，$lambda E$ 很大（甚至可能超过 $R_n$，此时 $H$ 为负值，即从空气吸热）。大量能量用于蒸腾，使得绿洲表面温度低于周围沙漠。
+]
 
 #figure(
-  image("Figures/ET_signal_GW.png", width: 75%),
+  image("Figures/感热潜热-变化.png", width: 70%),
+  caption: [
+    感热通量与潜热通量分配比例Bowen系数随温度变化示意图。
+  ],
+) <fig_bowen>
+
+#pagebreak()
+
+= 5 蒸散发与土壤水、地下水之间的关系
+
+== 5.1 蒸散发与土壤水之间的关系
+
+1. 无论是土壤蒸发还是植被蒸腾，都与土壤水分有关。
+2. 土壤水限制植被蒸腾和土壤蒸发；蒸散发抽取土壤水。二者相互影响，相互限制。
+
+#figure(
+  image("Figures/Figure1_土壤水临界值.png", width: 90%),
+  caption: [
+    （a）蒸散三阶段示意图；
+    （b）蒸散不同阶段土壤湿度变化速度$d theta\/"dt"$示意图。
+    其中$theta_f$为土壤田间持水量；
+    $theta_c$和$theta_w$为蒸散三阶段转折点。Ksat为土壤饱和水力传导系数。
+    // （b）基于土壤湿度变化速率的临界值$theta_c$检测。
+  ],
+) <fig_SM_trs>
+
+== 5.2 案例
+
+#figure(
+  image("Figures/ET_signal_GW.png", width: 70%),
   caption: [蒸散发与地下水的交互。\ 数据来源：
     https://waterdata.usgs.gov/monitoring-location/302416087505501。],
 )
 
 #figure(
-  image("Figures/ET_signal_SM.png", width: 75%),
+  image("Figures/ET_signal_SM.png", width: 70%),
   caption: [蒸散发与土壤水的交互。],
 )
 
 #bibliography("References.bib", title: "参考文献", style: "gb-7714-2015-author-date")
-
-// "gb-7714-2005-numeric"
-// China National Standard GB/T 7714-2005 (numeric, 中文)
-
-// "gb-7714-2015-author-date"
-// China National Standard GB/T 7714-2015 (author-date, 中文)
-
-// "gb-7714-2015-note"
-// China National Standard GB/T 7714-2015 (note, 中文)
-
-// "gb-7714-2015-numeric"
-// China National Standard GB/T 7714-2015 (numeric, 中文)
