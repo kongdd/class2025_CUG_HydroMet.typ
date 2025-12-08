@@ -213,6 +213,87 @@ $ F = F_0 (d_0 / d)^2 = F_0 / rho^2 $
 
 其中$d$为日地距离，$d_0$为日地平均距离，$I$为地球接收的太阳辐射强度，$F_0$为太阳辐射常数（1370 $W m^(-2)$）。
 
+#figure(
+  image("Figures/日地距离-02.png", width: 80%),
+  caption: [
+    日地距离与太阳辐射强度。
+  ],
+) <fig_>
+
+=== 4.2.1 太阳高度角与方位角
+
+#box-red()[
+  - *太阳高度角*：太阳入射光线与地平面所形成的夹角。
+  - *方位角*：与正北方向的夹角，顺时针为正；正北方向为0°，正东为90°。
+]
+
+#figure(
+  image("Figures/太阳高度角-01.png", width: 90%),
+  caption: [
+    太阳高度角与方位角示意图。
+  ],
+) <fig_>
+
+#figure(
+  image("Figures/太阳高度角-推导01.png", width: 90%),
+  caption: [
+    太阳高度角推导。
+  ],
+) <fig_>
+
+*应用*
+
+#mitex(`$$
+sinh = cos\phi cos\sigma cos\omega + sin\phi sin\sigma
+$$`)
+
+$phi$：纬度，OP与赤道面的夹角
+
+$sigma$：黄赤交角，太阳光线与赤道面的夹角，近似为常数23°26'。
+
+$omega$：时角，上午为负、下午为正、正午为0；每1小时，相差15°。
+
+- 太阳高度角，影子长度的年内变化特征，*划分24节气*；
+
+  正午是$omega = 0$，则
+  
+  #mitex(`$$
+  sinh_{12} = cos \phi cos \sigma + sin \phi sin \sigma
+  $$`)
+  
+- 太阳高度角，*计算日出时间、日落时间*
+
+  #mitex(`$$
+    sinh &= cos\phi cos\sigma cos\omega_0 + sin\phi sin\sigma = 0 \\
+    cosw_0 &= -\frac{sin \phi sin \sigma}{cos\phi cos\sigma } = -tan\phi tan\sigma\\
+    w_0 &= arccos(-tan\phi tan\sigma)
+  $$`)
+
+- 方位角可用来确定影子方向。
+
+  #figure(
+    image("Figures/日晷.png", width: 70%),
+    caption: [
+      日晷，https://www.gaohaipeng.com/3362.html。
+    ]
+  ) <fig_>
+
+=== 4.2.2 大气层顶太阳辐射$"Rs"_"toa"$
+
+天文太阳短射总能量：大气层顶(Top of Atmosphere, Rs_toa)理论短波辐射。
+
+$ (dif "Rs"_"toa") / (dif t) = I_0 / rho^2 sin(h) = I_0 / rho^2 (cos phi cos sigma cos omega + sin phi sin sigma) $
+
+$
+  "Rs"_"toa" &= integral_(-omega_0)^(omega_0) (dif "Rs"_"toa") / (dif t) dif t
+    = integral_(-omega_0)^(omega_0) (dif "Rs"_"toa") / (dif t) 1440 / (2 pi) dif omega \
+  &= integral_(-omega_0)^(omega_0) I_0 / rho^2 (cos phi cos sigma cos omega + sin phi sin sigma) 1440 / (2 pi) dif omega \
+  &= T / pi dot I_0 / rho^2 (cos phi cos sigma sin omega_0 + omega_0 sin phi sin sigma)
+$
+
+其中，$rho = r/r_0$；$r$为日地距离，$r_0$为日地平均距离。$I_0≈1365 W/m^2$。
+
+
 == 4.3 能量平衡
 #v(-0.8em)
 === 4.3.1 地表能量平衡
@@ -257,14 +338,37 @@ $ G = kappa / delta(z) (T_s - T_1) $
     大气能量平衡示意图。
   ],
 ) <fig_>
-
 #v(-1em)
+
+#pagebreak()
+
 #figure(
   image("Figures/能量平衡-大气.png", width: 80%),
   caption: [
     大气能量平衡示意图2。
   ],
-) <fig_>
+) <fig_atmos>
+
+大气层吸收太阳辐射和地表传来的热量，然后向太空和地表辐射能量。
+
+#Blue[*大气能量平衡*]
+
+*收入:*
+- 被大气吸收的太阳辐射 (Absorbed by atmosphere): $25$
+- 吸收的地表长波辐射: 地表辐射了 $104$，其中 $4$ 直接穿过大气（大气窗口）到了太空，剩下的被大气吸收。
+- 热对流 (Thermals): $5$
+- 蒸发释放的潜热 (Evaporation): $24$
+
+#mitex(`$$
+E_{in, atmos} = 25 + 100 + 5 + 24 = 154
+$$`)
+
+*支出：*
+
+- 大气射向太空的辐射 (Emitted by atmosphere): $66$
+- 大气射向地表的辐射 (Greenhouse effect): $88$
+
+#Blue[*地表能量平衡*]
 
 #mitex(
   `$$
@@ -290,7 +394,7 @@ $ R_n = "Rns" + "Rnl" = (1 - alpha) R_s + epsilon"Rln" - epsilon sigma T_s^4 $ <
 - $epsilon$: 地表辐射率；
 - $sigma$: 斯特藩-玻尔兹曼常数(Stefan-Boltzmann constant)，$σ=5.67×10^(-8) W (m^(-2) K^(-4)）$。
 
-#beamer-block([上式的推导，涉及辐射的三个基本定律。])
+#beamer-block([上式的推导，涉及玻尔兹曼定律与基尔霍夫定律。])
 
 #figure(
   image("Figures/albedo_V2.png", width: 70%),
@@ -298,7 +402,7 @@ $ R_n = "Rns" + "Rnl" = (1 - alpha) R_s + epsilon"Rln" - epsilon sigma T_s^4 $ <
 ) <fig_albedo>
 
 
-=== 4.5 地表能量平衡求解
+=== 4.4.1 地表能量平衡求解
 
 辐射会加热地表和空气；地表温度升高则向外长波辐射增加，使Rn减少。二者相互作用，最终会达到均衡。
 
@@ -321,6 +425,4 @@ $
 
 *牛顿梯度降：*
 
-土壤表面温度为$T_s$（skin temperature），注意表皮温度与第一层土壤的平均温度有所不同。牛顿梯度降迭代过程中，土壤温度按照如下公式进行更新。
-
-$ T_(s, "next") = T_s - f(T_s) / pdv(f, T_s) $
+土壤表面温度为$T_s$（skin temperature），注意表皮温度与第一层土壤的平均温度有所不同。牛顿梯度降迭代过程中，土壤温度不断迭代、逼近真实值：$T_(s, "next") = T_s - f(T_s) / pdv(f, T_s)$。
