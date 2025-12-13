@@ -9,8 +9,12 @@ PPT
 *.db
 *.pptx
 
-*temp*
+# *temp*
+*debug*
 作业
 
 *.png
 项目进展
+*.ipynb
+tasks.md
+*.toml
