@@ -116,7 +116,7 @@
   mv_arrow(MM1 - MM0, -0.04, MM1, text: $"PE"$)
   mv_arrow(MM0 - 0, -0.04, MM0, text: $a$)
   // content((1, -0.03), label($1.0$), anchor: "north")
-  label-title($bold((A))$) // title
+  // label-title($bold((A))$) // title
 })
 
 #let fig-S = cetz.canvas(length: 50mm, {

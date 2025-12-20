@@ -11,7 +11,7 @@
 #let WMM = $"WMM"$
 
 
-#let SM = "SM"
+#let SM = $"SM"$
 #let mm = $max$
 #let EX = $"EX"$
 #let AU = $"AU"$
@@ -99,8 +99,8 @@ $
   = "PE" + WM (1 - (a + "PE")/WMM)^(b+1) + W - WM
 $
 
+#pagebreak()
 == 2.2 自由水曲线—三水源划分
-
 
 #box-red[
   新安江模型将土壤层的蓄水分为两种：
@@ -108,8 +108,12 @@ $
   - *自由水*，超过田间持水量的重力水，可自由下渗或形成径流，可产流（地表/地下），#Blue[仅存在于已蓄满（产流）区域]
 ]
 
-// === 2.2.1 核心概念引入：张力水 vs 自由水
-模型引入*自由水蓄水库*（Free Water Storage, $S$）来分配水源。
+// !=== 2.2.1 核心概念引入：张力水 vs 自由水
+#h(2em)
+蓄水容量超出的部分，产生径流$R$，$R$进入自由水库$S$。模型引入*自由水蓄水库*（Free Water Storage, $S$）来分配水源。
+1. *溢出* $->$ 地表径流$"RS"$ ($S > S_"M"$ 时)，速度快。
+2. *侧流* $->$ 壤中流$"RI"$ ($K_"I" times S$)，速度中等。
+3. *下渗* $->$ 地下径流$"RG"$ ($K_"G" times S$)，速度最慢。
 
 #figure(
   table(
@@ -123,85 +127,79 @@ $
     [*消耗方式*], [蒸发、蒸腾], [下渗、侧流、地表径流],
     [*对应参数*], [田间持水量 FC], [饱和含水量 $theta_s$ - FC],
     [*水文功能*], [蓄存（产流前提）], [输送（径流来源）],
+    [*概化方式*], [蓄水容量曲线], [自由水曲线],
   ),
   caption: [张力水与自由水物理意义对比],
 ) <tbl:tension_vs_free>
 
-
-$R$ 进入自由水库 $S$，面临三个去向：
-1. *溢出* $->$ 地表径流$"RS"$ ($S > S_"M"$ 时)，速度快。
-2. *侧流* $->$ 壤中流$"RI"$ ($K_"I" times S$)，速度中等。
-3. *下渗* $->$ 地下径流$"RG"$ ($K_"G" times S$)，速度最慢。
+#figure(
+  caption: [
+    自由水曲线变量说明。
+  ],
+  table(
+    columns: 5,
+    // (2.0cm, 1.9cm, 1.55cm),
+    rows: (0.8cm, 0.8cm),
+    align: (horizon),
+    [变量], [说明], [单位], [], [],
+    [$Alpha$], [百分位数], [$Alpha in [0, 1]$], [], [],
+    [$SM$], [产流范围内最大一点的自由水蓄量], [mm], [], [],
+    [$SM_max$], [流域范围内最大一点的自由水蓄量], [mm], [], [],
+    [$S$], [流域平均自由水容量], [mm], [], [],
+    [$S_max$], [流域平均自由水容量最大值], [mm], [], [],
+    [$FR$], [产流面积], [$FR in [0, 1]$], [], [],
+    [$R$], [蓄水容量产流量], [mm], [], [],
+  ),
+) <table_>
 
 // #pagebreak()
-=== 2.2.2 径流分割
+=== 2.2.1 径流分割
 
 #include "Figure1_自由水曲线.typ"
 
-对自由水蓄量进行径流分割。#Blue[注意这里建模时$Alpha$指的是产流面积上的比例，后续在计算$RS$时要乘以产流面积$FR$]。因为只有产流区域才有自由水蓄量。
+$ Alpha = 1 - (1 - SM / SM_max)^EX $
 
-$ Alpha = 1 - (1 - S / S_max)^EX $
+$ S_max = SM_max / (1 + EX) $
 
-$ SM_max = S_max / (1 + EX) $
 
+
+
+1. 最初$S=0$。随着降雨的增加，部分网格张力水蓄满，产生自由水$R_0$，对应的产流面积为$FR_1$。令#Blue[$AU = R_0 / FR_1$]，$AU$代表了前期产流面积上的自由水蓄量。
 
 #let int = $integral$
 
 $
-  bold(R_1) = int_(0)^(AU) Alpha thin d S = int_(0)^(AU) [1 - (1 - S / S_max)^EX] thin d S \
-  = AU - S_max / (EX + 1) [1 - (1 - AU / S_max)^(EX + 1)] \
-  = AU - SM_max [1 - (1 - AU / S_max)^(EX + 1)]
+  bold(RS_1) = int_(0)^(AU) Alpha thin d"SM" = int_(0)^(AU) [1 - (1 - SM / SM_max)^EX] thin d"SM" \
+  = AU - SM_max / (EX + 1) [1 - (1 - AU / SM_max)^(EX + 1)] \
+  = AU - S_max [1 - (1 - AU / SM_max)^(EX + 1)]
 $
 
-*（a）若FR = 1*
-
-#v(-0.8em)
-
-$ bold(SM_1) = AU - R_1 = SM_max [1 - (1 - AU / S_max)^(EX + 1)] $
-
-$ bold(AU) = S_max [1 - (1 - SM_1 / S_max)^(1/(EX + 1))] $ <eq_au_raw>
-
-*（b）考虑FR不为1*
-
+*蓄水容量SM*
 
 $
-                  SM_1 & = AU times FR_1 - R_1 \
-  SM_1 ' = SM_1 / FR_1 & = AU - R_1/ FR_1 \
-                       & = AU - AU/FR_1 + SM_max/FR_1 [1 - (1 - AU / S_max)^(EX + 1)]
-$
+  S_1 & = AU times FR_1 - RS_1 \
+      & = AU times FR_1 - AU + S_max [1 - (1 - AU / SM_max)^(EX + 1)] \
+      & = S_max [1 - (1 - AU / SM_max)^(EX + 1)] - AU (1 - FR_1)
+$ <eq_SM>
 
-同理我们可得：
+2. 考虑到下一时刻$FR$发生变化，$S_1$的水量平铺到$FR$上，采用式#[@eq_SM]，逆向求解下一时刻的AU'（非线性解法）。
 
-$
-  SM' = AU - AU/FR + SM_max/FR [1 - (1 - AU / S_max)^(EX + 1)]
-$
+3. 根据$S_1$反推AU'，然后加上自由水的新增量R，超过蓄水容量的部分为$RS$。
 
-#box-blue()[
-  - SM_1：全流域的自由水蓄量；
-  - SM_1'：产流区域的自由水蓄量。
-]
+$ RS = int_(AU')^(AU' + R/FR) Alpha thin d S $
+$ Delta"S" = R - RS $
 
-求解AU，需要用到一个非线性的解法。
+4. 之后，$S$更新为$S_1 + delta("S")$，同时壤中流和地下径流出流。
 
-$ SM' = SM_1 ' times FR_1 / FR $
-
-根据SM'可以得到AU，然后加上自由水的新增量R，在$RS = int_(AU)^(AU + R) Alpha thin d S$中积分，得到$RS$，与$SM'$的增加量：
+$ S = S_1 + Delta"S" $
 
 $
-  SM'_"next" times FR & = SM' times FR + R - RS \
-           SM'_"next" & = SM' + (R - RS) / FR \
-$
-
-其中$R$和$RS$是通过蓄水容量曲线，推导过来的，是全流域的径流。
-
-$ S = S_1 FR_1 / FR + (R - RS) / FR $
-
-$
-  RI = K_I times S times FR \
-  RG = K_G times S times FR \
+  RI = K_I times S \
+  RG = K_G times S \
 $
 
 $ S = S(1 - K_I - K_G) $
+
 
 = 3 *汇流方法*
 

@@ -71,7 +71,7 @@
   )
 
   plot.plot(
-    y-label: [$bold("S")$], // X轴标题
+    y-label: [$bold("SM")$], // X轴标题
     ..axis-config,
     {
       plot.add(cal_MM, domain: (0, 1))
@@ -89,13 +89,13 @@
       //   x => ifelse(x > a1, MM1, cal_MM(x)),
       //   x => { MM0 },
       // )
-      // dR
-      // plot.add-fill-between(
-      //   domain: (0, a1),
-      //   style: (fill: green.lighten(80%), stroke: none),
-      //   x => { MM1 },
-      //   x => ifelse(x < a0, MM0, cal_MM(x)),
-      // )
+      // RS1
+      plot.add-fill-between(
+        domain: (0, a0),
+        style: (fill: green.lighten(80%), stroke: none),
+        x => { MM0 },
+        x => cal_MM(x),
+      )
     },
   )
 
@@ -107,11 +107,12 @@
   line((0, MM0), (1.0, MM0), stroke: (dash: "dashed", paint: blue.lighten(40%)))
   // line((0, MM1), (1, MM1), stroke: (dash: "solid", paint: blue.lighten(40%)))
 
-  content((0.25, 0.2), text(fill: black)[$bold(SM_1)$])
+  content((0.25, 0.2), text(fill: black)[$bold(S_1)$])
   // content((0.34, (MM0 + MM1) / 2), text(fill: blue)[$bold(Delta S)$])
 
-  content((0.5, 1.07), $bold(alpha) = 1 - (1 - S/S_max)^"EX"$)
-  // content((a1 / 2 - 0.05, (MM0 + MM1) / 2), text(fill: green)[$bold("RS")$])
+  content((0.5, 1.07), $bold(alpha) = 1 - (1 - SM/SM_max)^"EX"$)
+
+  content((a1 / 2 - 0.08, MM0 / 2 + 0.16), text(size: 9pt, fill: green)[$bold("RS"_1)$])
   // mv_arrow(MM1 - MM0, -0.04, MM1, text: $"R"$)
   mv_arrow(MM0 - 0, -0.04, MM0, text: $"AU"$)
 
@@ -136,7 +137,7 @@
   let MM0 = cal_MM(a0)
 
   plot.plot(
-    y-label: [$bold("S")$], // X轴标题
+    y-label: [$bold("SM")$], // X轴标题
     ..axis-config,
     {
       plot.add(cal_MM, domain: (0, 1))
@@ -172,10 +173,11 @@
   line((0, MM0), (1, MM0), stroke: (dash: "dashed", paint: blue.lighten(40%)))
   line((0, MM1), (1, MM1), stroke: (dash: "solid", paint: blue.lighten(40%)))
 
-  content((0.25, 0.15), text(fill: black)[$bold((SM_1 times "FR"_1) / "FR")$])
-  content((0.37, (MM0 + MM1) / 2), text(fill: blue)[$bold(Delta SM)$])
+  // content((0.23, 0.10), text(fill: black)[$bold((SM_1 times "FR"_1) / "FR")$])
+  content((0.23, 0.10), text(fill: black)[$bold(S_1)$])
+  content((0.37, (MM0 + MM1) / 2), text(fill: blue)[$bold(Delta"S")$])
 
-  content((0.5, 1.07), $bold(alpha) = 1 - (1 - S/S_max)^"EX"$)
+  content((0.5, 1.07), $bold(alpha) = 1 - (1 - SM/SM_max)^"EX"$)
   content((a1 / 2 - 0.05, (MM0 + MM1) / 2), text(fill: green)[$bold("RS")$])
 
   let mar = 0.035
@@ -183,7 +185,7 @@
   h_arrow(0.1, 0.5 - mar, name: "RI", text: $bold("RI")$, 0.1)
 
   mv_arrow(MM1 - MM0, -0.04, MM1, text: $"R"$)
-  mv_arrow(MM0 - 0, -0.04, MM0, text: $"AU"$)
+  mv_arrow(MM0 - 0, -0.04, MM0, text: $"AU"'$)
 
   mh_arrow(0.5, 0, -0.02, text: $"FR"$, anchor: "north", stroke: (paint: blue, thickness: 0.5pt))
 
@@ -195,8 +197,6 @@
     columns: 2,
   )[#fig-S1][#fig-S],
   caption: [
-    新安江模型蓄水容量曲线（a）与自由水蓄量曲线（b）。
-
-    S代表的是产流面积上的平均自由水蓄量。
+    新安江模型自由水蓄量曲线。
   ],
 ) <fig_>
