@@ -122,7 +122,7 @@
   v_arrow(0.1, 0.35, 0.015, name: "RG", text: $bold("RG")$, anchor: "north")
   h_arrow(0.1, 0.4 - mar, name: "RI", text: $bold("RI")$, 0.1)
 
-  label-title($bold((A))$) // title
+  label-title($bold((a))$) // title
 })
 
 
@@ -189,7 +189,7 @@
 
   mh_arrow(0.5, 0, -0.02, text: $"FR"$, anchor: "north", stroke: (paint: blue, thickness: 0.5pt))
 
-  label-title($bold((B))$) // title
+  label-title($bold((b))$) // title
 })
 
 #figure(
@@ -197,6 +197,8 @@
     columns: 2,
   )[#fig-S1][#fig-S],
   caption: [
-    新安江模型自由水蓄量曲线。
+    新安江模型自由水蓄量曲线。流域内每个网格都有一个自由水蓄量$s_i$，将所有网格的$s_i$从小到大排序后，拟合的曲线，即为流域的自由水容量曲线。
+
+    （a）前期自由水容量为0的涨水过程；（b）前期自由水容量为$S_1$的涨水过程。
   ],
 ) <fig_>
