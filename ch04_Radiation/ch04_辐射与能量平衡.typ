@@ -243,9 +243,11 @@ $ F = F_0 (d_0 / d)^2 = F_0 / rho^2 $
 
 *应用*
 
-#mitex(`$$
+#mitex(
+  `$$
 sinh = cos\phi cos\sigma cos\omega + sin\phi sin\sigma
-$$`)
+$$`,
+)
 
 $phi$：纬度，OP与赤道面的夹角
 
@@ -256,18 +258,22 @@ $omega$：时角，上午为负、下午为正、正午为0；每1小时，相�
 - 太阳高度角，影子长度的年内变化特征，*划分24节气*；
 
   正午是$omega = 0$，则
-  
-  #mitex(`$$
+
+  #mitex(
+    `$$
   sinh_{12} = cos \phi cos \sigma + sin \phi sin \sigma
-  $$`)
-  
+  $$`,
+  )
+
 - 太阳高度角，*计算日出时间、日落时间*
 
-  #mitex(`$$
+  #mitex(
+    `$$
     sinh &= cos\phi cos\sigma cos\omega_0 + sin\phi sin\sigma = 0 \\
     cosw_0 &= -\frac{sin \phi sin \sigma}{cos\phi cos\sigma } = -tan\phi tan\sigma\\
     w_0 &= arccos(-tan\phi tan\sigma)
-  $$`)
+  $$`,
+  )
 
 - 方位角可用来确定影子方向。
 
@@ -275,7 +281,7 @@ $omega$：时角，上午为负、下午为正、正午为0；每1小时，相�
     image("Figures/日晷.png", width: 70%),
     caption: [
       日晷，https://www.gaohaipeng.com/3362.html。
-    ]
+    ],
   ) <fig_>
 
 === 4.2.2 大气层顶太阳辐射$"Rs"_"toa"$
@@ -286,7 +292,7 @@ $ (dif "Rs"_"toa") / (dif t) = I_0 / rho^2 sin(h) = I_0 / rho^2 (cos phi cos sig
 
 $
   "Rs"_"toa" &= integral_(-omega_0)^(omega_0) (dif "Rs"_"toa") / (dif t) dif t
-    = integral_(-omega_0)^(omega_0) (dif "Rs"_"toa") / (dif t) 1440 / (2 pi) dif omega \
+  = integral_(-omega_0)^(omega_0) (dif "Rs"_"toa") / (dif t) 1440 / (2 pi) dif omega \
   &= integral_(-omega_0)^(omega_0) I_0 / rho^2 (cos phi cos sigma cos omega + sin phi sin sigma) 1440 / (2 pi) dif omega \
   &= T / pi dot I_0 / rho^2 (cos phi cos sigma sin omega_0 + omega_0 sin phi sin sigma)
 $
@@ -359,9 +365,11 @@ $ G = kappa / delta(z) (T_s - T_1) $
 - 热对流 (Thermals): $5$
 - 蒸发释放的潜热 (Evaporation): $24$
 
-#mitex(`$$
+#mitex(
+  `$$
 E_{in, atmos} = 25 + 100 + 5 + 24 = 154
-$$`)
+$$`,
+)
 
 *支出：*
 

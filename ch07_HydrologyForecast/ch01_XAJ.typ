@@ -165,6 +165,13 @@ $
   2. *不能假设产流区域与全流域的自由水蓄水曲线一致。*（虽然都是抛物线的形式，但是形状参数有所不同）。
 ]
 
+#box-red(width: 68%)[
+  #Blue[*基本原则：*]
+  1. *张力水未蓄满之前，不会有自由水*。
+
+  2. *不能假设产流区域与全流域的自由水蓄水曲线一致。*
+]
+
 $ Alpha = 1 - (1 - SM / SM_max)^EX $
 
 $ S_max = SM_max / (1 + EX) $
@@ -226,19 +233,31 @@ $ S = S(1 - K_I - K_G) $
 === 1.2.2 书上错在哪里？
 
 #box-red()[
-  不能假设：产流区域与全流域的自由水蓄水曲线一致。
-
-  *这是一个极端错误的假设。*
+  不能假设：产流区域与全流域的自由水蓄水曲线一致。*这是一个极端错误的假设。*
 ]
 
-#figure(
-  image("Figures/freewater_v2_results.png", width: 100%),
-  caption: [],
-) <fig_>
+我们通过数值模拟实验，揭示了新安江模型在理论基础上的一个*深层缺陷*（见图@fig:v2_shapes）。
+
+- *理论不自洽性*：模型在推导径流分割公式时假设 $EX$ 恒定，这与实际物理分布（子区域参数漂移）相矛盾。
+
+  #box-blue()[
+    - 当产流面积 $FR$ 发生变化时，自由水容量分布的形状发生了形变。虽然归一化后仍近似抛物线（$R^2 approx 1.0$），但其形状参数 $EX$ 并不稳定。
+
+    - 参数 $EX$ 表现出显著的*状态依赖性*。随着产流面积 $FR$ 减小（流域变干），$EX$ 会发生系统性漂移，逐渐趋向于 1.0（均匀分布）。
+  ]
+
+// *论文选题切入点（Problem Statement）*：
+
+- *结构性误差*：这意味着模型存在*状态依赖性结构误差*（State-dependent Structural Error）。固定的 $EX$ 参数无法同时适配湿润期（$FR -> 1$）和干旱过渡期（$FR$ 较小）。这解释了为什么新安江模型在枯水期或产流初期往往模拟效果下降。
 
 #figure(
-  image("Figures/freewater_v2_shapes.png", width: 100%),
-  caption: [],
-) <fig_>
+  image("Figures/freewater_v2_results.png", width: 90%),
+  caption: [自由水分布参数漂移测试结果。$EX$随着$FR$减小而减小，$R^2$始终保持高位。],
+) <fig:v2_results>
+
+#figure(
+  image("Figures/freewater_v2_shapes.png", width: 90%),
+  caption: [不同产流面积下的自由水分布形状对比。左图(T1)显示未归一化时无法拟合，右图(T2)显示归一化后形状高度近似。],
+) <fig:v2_shapes>
 
 // #pagebreak()
