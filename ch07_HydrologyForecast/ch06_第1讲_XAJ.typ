@@ -10,7 +10,6 @@
 #let WM = $"WM"$
 #let WMM = $"WMM"$
 
-
 #let SM = $"SM"$
 #let mm = $max$
 #let EX = $"EX"$
@@ -41,12 +40,16 @@
 
 // - `FA`: 下渗量
 
+// = L1
+// = L1
+// = L1
+// = L1
+// = L1
+= 6 *新安江模型主要原理*
 
-= 1 *新安江模型主要原理*
+== 6.1 蓄水容量曲线—产流过程
 
-== 1.1 蓄水容量曲线—产流过程
-
-#include "Figure1_蓄水曲线.typ"
+#include "Figures/Figure1_蓄水曲线.typ"
 
 #box-blue[
   #set par(leading: 0.6em, spacing: 0.5em)
@@ -99,7 +102,7 @@ $
 $
 
 #pagebreak()
-== 1.2 自由水曲线—三水源划分
+== 6.2 自由水曲线—三水源划分
 
 #box-red[
   新安江模型将土壤层的蓄水分为两种：
@@ -153,9 +156,9 @@ $
 ) <table_>
 
 // #pagebreak()
-=== 1.2.1 径流分割
+=== 6.2.1 径流分割
 
-#include "Figure1_自由水曲线.typ"
+#include "Figures/Figure1_自由水曲线.typ"
 
 #box-red()[
   #Blue[*基本原则：*]
@@ -165,12 +168,12 @@ $
   2. *不能假设产流区域与全流域的自由水蓄水曲线一致。*（虽然都是抛物线的形式，但是形状参数有所不同）。
 ]
 
-#box-red(width: 68%)[
-  #Blue[*基本原则：*]
-  1. *张力水未蓄满之前，不会有自由水*。
+// #box-red(width: 68%)[
+//   #Blue[*基本原则：*]
+//   1. *张力水未蓄满之前，不会有自由水*。
 
-  2. *不能假设产流区域与全流域的自由水蓄水曲线一致。*
-]
+//   2. *不能假设产流区域与全流域的自由水蓄水曲线一致。*
+// ]
 
 $ Alpha = 1 - (1 - SM / SM_max)^EX $
 
@@ -230,7 +233,9 @@ $
 
 $ S = S(1 - K_I - K_G) $
 
-=== 1.2.2 书上错在哪里？
+#pagebreak()
+
+=== 6.2.2 书上错在哪里？
 
 #box-red()[
   不能假设：产流区域与全流域的自由水蓄水曲线一致。*这是一个极端错误的假设。*
@@ -251,13 +256,11 @@ $ S = S(1 - K_I - K_G) $
 - *结构性误差*：这意味着模型存在*状态依赖性结构误差*（State-dependent Structural Error）。固定的 $EX$ 参数无法同时适配湿润期（$FR -> 1$）和干旱过渡期（$FR$ 较小）。这解释了为什么新安江模型在枯水期或产流初期往往模拟效果下降。
 
 #figure(
-  image("Figures/freewater_v2_results.png", width: 90%),
+  image("images/freewater_v2_results.png", width: 90%),
   caption: [自由水分布参数漂移测试结果。$EX$随着$FR$减小而减小，$R^2$始终保持高位。],
 ) <fig:v2_results>
 
 #figure(
-  image("Figures/freewater_v2_shapes.png", width: 90%),
+  image("images/freewater_v2_shapes.png", width: 90%),
   caption: [不同产流面积下的自由水分布形状对比。左图(T1)显示未归一化时无法拟合，右图(T2)显示归一化后形状高度近似。],
 ) <fig:v2_shapes>
-
-// #pagebreak()

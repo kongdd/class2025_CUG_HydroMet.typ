@@ -5,87 +5,35 @@
 #set par(leading: 1.24em)
 #let delta(x) = $Delta #x$
 
-= 坡面与河道汇流
+// != 坡面与河道汇流
 
-== 曼宁公式
+// !== 2.1 特征河长
 
-#mitex(
-  `$$
-V = \frac{R_h^{2/3}}{n}S^{1/2}, R_h = A/P
-$$`,
-)
+== 1 滞后线性水库
 
-#mitex(
-  `$$
-Q = V A = \frac{A^{5/3}}{n P^{2/3}} S^{1/2}
-$$`,
-) <eq_manning_q>
+1. 水流像“快递”一样，从产流点到出口需要固定时间 τ ，途中不堆积、不变形。
 
-== 运动波方程
+2. 出口处有一个“理想水库”，其出流与蓄水量成正比：$Q = S / K$
 
-=== 圣维南方程推导
+$ dv(S, t) = I(t) - Q(t) $
 
-该方程由法国科学家圣维南在1871年提出。
+$ K dv(Q(t), t) + Q(t) = I(t) $
 
-- $I$：入流$m^3\/s$，$Q(x, t)$
-- $O$: 出流$m^3\/s$，$Q(x + delta(x), t)$
-- $A(x, t)$: 河道过水断面平均面积$m^2$
-- $W_1$: $t_1$时刻河道的水储量$m^3$，$A(x, t) delta(x)$
-- $W_2$: $t_2$时刻河道的水储量$m^3$，$A(x, t + delta(t)) delta(x)$
-- $W_"part"$: 区间径流对应的水量，$m^3$
+产流 R(t) 先经过滞时 τ → 变成 R(t−τ)，R(t−τ) 再进入线性水库 → 输出 Q(t)
 
-#beamer-block[
-  对于一个微小距离$delta(x)$，$W = A times Delta X$；对于一个固定点$x$，两个时刻$t + delta(t)$，蓄水量变化为$[A(x, t + delta(t)) - A(x, t)] delta(x)$。
-]
+$ K dv(Q(t), t) + Q(t) = R(t - tau) $
 
-根据连续性原理
+$ K (Q_i - Q_{i-1}) / delta(t) + Q_i = R_{i-L} $
 
 $
-  (I - O) delta(t) + q = W_2 - W_1 \
-  [Q(x, t) - Q(x + delta(x), t)] delta(t) + W_"part" = [A(x, t + delta(t)) - A(x, t)] delta(x) \
-  [ Q(x + delta(x), t) - Q(x, t)] / delta(x) + [A(x, t + delta(t)) - A(x, t)] / delta(t) = W_"part" / (delta(x) delta(t))
+  Q_i = underbrace(frac(K, K + Delta t), c_s) Q_{i-1} +
+  underbrace(frac(Delta t, K + Delta t), 1 - c_s) R_{i - L}
 $
 
-令$q = W_"part" / (delta(x) delta(t))$，可得
-$
-  pdv(Q, x) + pdv(A, t) = q
-$
-
-对于河道汇流，q是区间径流对应的流量Q除以汇流长度$delta(x)$；
-
-对于坡面，q是下渗速率$m^3\/s$除以坡面长度$delta(x)$。
+$ Q_i = c_s Q_{i-1} + (1 - c_s) R_{i - L} $
 
 
-=== 数值求解
-
-以河道汇流为例，展示求解过程。这里需要结合曼宁公式与圣维南方程。
-
-将式#[@eq_manning_q]，进行变形，A写到公式左侧，A可以写成$alpha Q^beta$的形式：
-
-$
-  A^(5/3) = Q (n P^(2/3)) / sqrt(S) \
-  A = ((n P^(2/3)) / sqrt(S) )^(3/5) Q^(3/5) = alpha Q^beta
-$ <eq_A>
-
-其中，$beta$ = 0.6，$alpha = ((n P^(2/3)) / sqrt(S) )^(3/5)$。
-
-将式#[@eq_A]，带入圣维南方程可得：
-
-$
-  pdv(A, t) = alpha beta Q^(beta - 1) pdv(Q, t)
-$
-
-$
-  pdv(Q, x) + alpha beta Q^(beta - 1) pdv(Q, t) = q
-$
-
-上式在求解过程中，x为两个相邻河道断面的距离，t的求解的时间步长，Q是需要求解的变量。已知上断面的入流量，求解下断面的出流量。后续可采用数学偏微分的方法进行求解，详见Chow 1971 章节9。
-
-== 特征河长
-
-
-
-== 马斯京根（Muskingum）
+== 2 马斯京根（Muskingum）
 
 $
   W & = K [X I + (1 - X) O] \
@@ -120,7 +68,7 @@ $
 
 
 
-== `n`段特征河长
+== 3 `n`段特征河长
 
 #figure(
   image("Figures/n段特征河长.png", width: 60%),
