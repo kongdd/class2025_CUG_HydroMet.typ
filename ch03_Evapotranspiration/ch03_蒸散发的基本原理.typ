@@ -439,14 +439,13 @@ $
 
 *已知$delta(rho_v) = epsilon rho delta(e) / P, gamma = (c_p P) / (lambda epsilon)$，可得$lambda E$的5种形式：*
 $
-  boxed(
+  
     lambda E = lambda delta(rho_v) / r_v
     = cases(
       lambda rho delta(q) / r_v,
       lambda (epsilon rho delta(e)) / (P r_v)
       = (rho c_p delta(e)) / (gamma r_v) = (rho c_p delta(e)) / (gamma^* r_H)
     )
-  )
 $ <eq_LE_final>
 
 == 3.4 潜在蒸散发
@@ -641,7 +640,7 @@ A hypothetical reference crop with an assumed crop height of 0.12 m, a fixed sur
 
 //! === 3.5.1 植被蒸腾与植被光合
 
-= 4 地表能量平衡
+== 3.6 地表能量平衡
 
 #beamer-block()[
   地表能量平衡公式 $R_n - G = H + lambda E$ 解释了不同下垫面的温度差异。
@@ -659,9 +658,9 @@ A hypothetical reference crop with an assumed crop height of 0.12 m, a fixed sur
 
 #pagebreak()
 
-= 5 蒸散发与土壤水、地下水之间的关系
+== 3.7 蒸散发与土壤水、地下水之间的关系
 
-== 5.1 蒸散发与土壤水之间的关系
+=== 3.7.1 蒸散发与土壤水之间的关系
 
 1. 无论是土壤蒸发还是植被蒸腾，都与土壤水分有关。
 2. 土壤水限制植被蒸腾和土壤蒸发；蒸散发抽取土壤水。二者相互影响，相互限制。
@@ -677,7 +676,7 @@ A hypothetical reference crop with an assumed crop height of 0.12 m, a fixed sur
   ],
 ) <fig_SM_trs>
 
-== 5.2 案例
+=== 3.7.2 案例
 
 #figure(
   image("Figures/ET_signal_GW.png", width: 70%),

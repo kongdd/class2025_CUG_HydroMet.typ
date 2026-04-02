@@ -195,7 +195,7 @@ $ (d T_N)/(d t) = kappa_d / (Delta z)^2 (T_(N-1) - T_N) $
 == 1.4 模拟结果分析
 
 #figure(
-  image("Figures/solve_Tsoil_result.png", width: 90%),
+  image("../Figures/solve_Tsoil_result.png", width: 90%),
   caption: [土壤表面温度与空气温度的日变化对比。
 
     注意土壤温度滞后于空气温度，且白天最高温度更高、夜间最低温度更低——这与我们的物理直觉一致。

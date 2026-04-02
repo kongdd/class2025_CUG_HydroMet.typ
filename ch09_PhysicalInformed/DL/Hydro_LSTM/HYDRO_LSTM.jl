@@ -15,7 +15,7 @@ using LinearAlgebra
 mutable struct HydroLSTM
   input_size::Int
   state_size::Int
-  W_i::AbstractArray  # 输入权重
+  W_i::AbstractArray    # 输入权重
   W_r::Matrix{Float32}  # 循环权重
   b::Matrix{Float32}    # 偏置
 end
@@ -73,22 +73,19 @@ function (m::HydroLSTM)(x_t::AbstractVector, h_prev::AbstractVector, c_prev::Abs
 end
 
 # 序列前向传播（支持初始状态传入，用于跨batch传递）
+# 使用 map + scan 模式，避免原地修改以支持自动微分
 function forward_seq(m::HydroLSTM, x::AbstractMatrix, h_0::AbstractVector, c_0::AbstractVector)
   seq_len = size(x, 1)  # 第一维是时间步（与Python原版一致）
-  n = m.state_size
-
-  h = copy(h_0)
-  c = copy(c_0)
-
-  H = zeros(Float32, seq_len, n)
-  C = zeros(Float32, seq_len, n)
-
-  for t in 1:seq_len
-    h, c = m(Float32.(x[t, :]), h, c)
-    H[t, :] = h
-    C[t, :] = c
+  
+  # 使用 accumulate 进行状态传递（函数式编程）
+  states = accumulate(1:seq_len; init=(h_0, c_0)) do (h, c), t
+    m(Float32.(x[t, :]), h, c)
   end
-
+  
+  # 提取所有时间步的隐藏状态和细胞状态
+  H = reduce(vcat, [reshape(s[1], 1, :) for s in states])
+  C = reduce(vcat, [reshape(s[2], 1, :) for s in states])
+  
   H, C
 end
 

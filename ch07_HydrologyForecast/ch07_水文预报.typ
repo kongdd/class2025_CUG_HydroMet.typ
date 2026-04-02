@@ -45,9 +45,10 @@
 // = L1
 // = L1
 // = L1
-= 6 *新安江模型主要原理*
+// = L1
+= 7 *新安江模型主要原理*
 
-== 6.1 蓄水容量曲线—产流过程
+== 7.1 蓄水容量曲线—产流过程
 
 #include "Figures/Figure1_蓄水曲线.typ"
 
@@ -101,8 +102,8 @@ $
   = "PE" + WM (1 - (a + "PE")/WMM)^(b+1) + W - WM
 $
 
-#pagebreak()
-== 6.2 自由水曲线—三水源划分
+// #pagebreak()
+== 7.2 自由水曲线—三水源划分
 
 #box-red[
   新安江模型将土壤层的蓄水分为两种：
@@ -156,7 +157,7 @@ $
 ) <table_>
 
 // #pagebreak()
-=== 6.2.1 径流分割
+=== 7.2.1 径流分割
 
 #include "Figures/Figure1_自由水曲线.typ"
 
@@ -177,6 +178,8 @@ $
 
 $ Alpha = 1 - (1 - SM / SM_max)^EX $
 
+$ SM = SM_max [1 - (1 - Alpha)^(1/EX)] $
+
 $ S_max = SM_max / (1 + EX) $
 
 1. 最初$S=0$。随着降雨的增加，部分网格张力水蓄满，产生自由水$R_0$，对应的产流面积为$FR_1$。令#Blue[$AU = R_0 / FR_1$]，$AU$代表了前期产流面积上的自由水蓄量。
@@ -189,6 +192,12 @@ $
   = AU - S_max [1 - (1 - AU / SM_max)^(EX + 1)]
 $
 
+$
+  RS = int_(AU)^(AU + "PE") Alpha thin d"SM" \
+  = "PE" - (S_"after" - S_"before") \
+  = "PE" - S_max [ (1 - AU/SM_max)^(EX+1) - (1 - (AU+"PE")/SM_max)^(EX+1) ]
+$
+
 *蓄水容量SM*
 
 $
@@ -198,15 +207,20 @@ $
 $ <eq_SM>
 
 #box-red()[
-  *若认为在产流面积FR1与产流面积FR上，自由水分布一致。*在产流面积FR1上，
+  *若认为在产流面积FR1与产流面积FR上，自由水分布一致。*
+  在产流面积FR1上，*注意这里在产流面积上！*。
   $
-    S_1 = AU - RS_1 = S_max [1 - (1 - AU / SM_max)^(EX + 1)] \
-    1 - S_1/SM_max = (1 - AU / SM_max)^(EX + 1) \
+    bold(RS_1) = int_(0)^(AU) Alpha thin d"SM" = AU - S_max [1 - (1 - AU / SM_max)^(EX + 1)] \
+    bold(S_1) = S_max [1 - (1 - AU / SM_max)^(EX + 1)]
   $
+
+  ---
 
   - $S_1$代表的是产流面积上的平均自由水蓄量，全流域平均则为$S_1 times FR_1$。
 
   - 后续产流面积发生变化时，$S_1$的水量平铺到$FR$上，$S_1$变为$S_1 ' = S_1 times FR_1 / FR$。
+
+  $ 1 - S_1/SM_max = (1 - AU / SM_max)^(EX + 1) $
 
   $ AU = SM_max [1 - (1 - (S_1 ')/SM_max)^(1/(EX + 1))] $
 
@@ -233,15 +247,15 @@ $
 
 $ S = S(1 - K_I - K_G) $
 
-#pagebreak()
+// #pagebreak()
 
-=== 6.2.2 书上错在哪里？
+=== 7.2.2 书上错在哪里？
 
 #box-red()[
   不能假设：产流区域与全流域的自由水蓄水曲线一致。*这是一个极端错误的假设。*
 ]
 
-我们通过数值模拟实验，揭示了新安江模型在理论基础上的一个*深层缺陷*（见图@fig:v2_shapes）。
+我们通过数值模拟实验，揭示了新安江模型在理论基础上的一个*深层缺陷*（见图@fig:structural_error）。
 
 - *理论不自洽性*：模型在推导径流分割公式时假设 $EX$ 恒定，这与实际物理分布（子区域参数漂移）相矛盾。
 
@@ -256,11 +270,152 @@ $ S = S(1 - K_I - K_G) $
 - *结构性误差*：这意味着模型存在*状态依赖性结构误差*（State-dependent Structural Error）。固定的 $EX$ 参数无法同时适配湿润期（$FR -> 1$）和干旱过渡期（$FR$ 较小）。这解释了为什么新安江模型在枯水期或产流初期往往模拟效果下降。
 
 #figure(
-  image("images/freewater_v2_results.png", width: 90%),
-  caption: [自由水分布参数漂移测试结果。$EX$随着$FR$减小而减小，$R^2$始终保持高位。],
-) <fig:v2_results>
+  image("images/Figure_Error_Quantification.png", width: 100%),
+  caption: [自由水分布假设引入的结构性误差量化。
+    左图：当$FR=0.1$时（干旱初期），模型高估了活跃区域的平均蓄水容量（误差高达1150%）。
+    右图：这种参数误差导致产流量的显著低估（本例中累积低估约37mm）。],
+) <fig:structural_error>
 
-#figure(
-  image("images/freewater_v2_shapes.png", width: 90%),
-  caption: [不同产流面积下的自由水分布形状对比。左图(T1)显示未归一化时无法拟合，右图(T2)显示归一化后形状高度近似。],
-) <fig:v2_shapes>
+- *定量分析结论*：
+  1. *参数误差*：在干旱或产流初期（$FR approx 0.1$），模型假设的自由水容量可能比实际活跃区域的容量高出 *10倍以上*。
+  2. *过程误差*：过大的容量导致产流响应迟滞，在典型场次降雨中可造成数十毫米的径流总量低估。
+
+
+
+== 7.3 分布式汇流方法
+
+=== 7.3.1 曼宁公式
+
+#mitex(
+  `$$
+V = \frac{R_h^{2/3}}{n}S^{1/2}, R_h = A/P
+$$`,
+)
+
+#mitex(
+  `$$
+Q = V A = \frac{A^{5/3}}{n P^{2/3}} S^{1/2}
+$$`,
+) <eq_manning_q>
+
+=== 7.3.2 运动波方程
+
+==== 7.3.2.1 圣维南方程推导
+
+该方程由法国科学家圣维南在1871年提出。
+
+- $I$：入流$m^3\/s$，$Q(x, t)$
+- $O$: 出流$m^3\/s$，$Q(x + delta(x), t)$
+- $A(x, t)$: 河道过水断面平均面积$m^2$
+- $W_1$: $t_1$时刻河道的水储量$m^3$，$A(x, t) delta(x)$
+- $W_2$: $t_2$时刻河道的水储量$m^3$，$A(x, t + delta(t)) delta(x)$
+- $W_"part"$: 区间径流对应的水量，$m^3$
+
+#beamer-block[
+  对于一个微小距离$delta(x)$，$W = A times Delta X$；对于一个固定点$x$，两个时刻$t + delta(t)$，蓄水量变化为$[A(x, t + delta(t)) - A(x, t)] delta(x)$。
+]
+
+根据连续性原理
+
+$
+  (I - O) delta(t) + q = W_2 - W_1 \
+  [Q(x, t) - Q(x + delta(x), t)] delta(t) + W_"part" = [A(x, t + delta(t)) - A(x, t)] delta(x) \
+  [ Q(x + delta(x), t) - Q(x, t)] / delta(x) + [A(x, t + delta(t)) - A(x, t)] / delta(t) = W_"part" / (delta(x) delta(t))
+$
+
+令$q = W_"part" / (delta(x) delta(t))$，可得
+$
+  pdv(Q, x) + pdv(A, t) = q
+$
+
+对于河道汇流，q是区间径流对应的流量Q除以汇流长度$delta(x)$；
+
+对于坡面，q是下渗速率$m^3\/s$除以坡面长度$delta(x)$。
+
+
+==== 7.3.2.2 数值求解
+
+以河道汇流为例，展示求解过程。这里需要结合曼宁公式与圣维南方程。
+
+将式#[@eq_manning_q]，进行变形，A写到公式左侧，A可以写成$alpha Q^beta$的形式：
+
+$
+  A^(5/3) = Q (n P^(2/3)) / sqrt(S) \
+  A = ((n P^(2/3)) / sqrt(S) )^(3/5) Q^(3/5) = alpha Q^beta
+$ <eq_A>
+
+其中，$beta$ = 0.6，$alpha = ((n P^(2/3)) / sqrt(S) )^(3/5)$。
+
+将式#[@eq_A]，带入圣维南方程可得：
+
+$
+  pdv(A, t) = alpha beta Q^(beta - 1) pdv(Q, t)
+$
+
+$
+  pdv(Q, x) + alpha beta Q^(beta - 1) pdv(Q, t) = q
+$
+
+上式在求解过程中，x为两个相邻河道断面的距离，t的求解的时间步长，Q是需要求解的变量。已知上断面的入流量，求解下断面的出流量。后续可采用数学偏微分的方法进行求解，详见Chow 1971 章节9。
+
+== 7.4 集总式汇流方法
+
+=== 7.4.1 线性水库
+
+$ dv(S, t) = I - Q = (I_1 + I_2) / 2 - (Q_1 + Q_2) / 2 $
+
+$
+  Q = S / K, Delta S = S_2 - S_1 = K(Q_2 - Q_1)
+$
+
+因此，
+
+$
+  K(Q_2 - Q_1) / (Delta t) = (I_1 + I_2) / 2 - (Q_1 + Q_2) / 2 \
+  2K(Q_2 - Q_1) = Delta t [(I_1 + I_2) - (Q_1 + Q_2) ] \
+  (2K + delta(t)) Q_2 = (2K - delta(t)) Q_1 + delta(t) (I_1 + I_2) \
+  Q_2 = (2K - delta(t))/ (2K + delta(t)) Q_1 + delta(t) / (2K + delta(t)) (I_1 + I_2) \
+$
+
+$
+  Q_2 = C_s Q_1 + (1 - C_S) (I_1 + I_2) / 2, C_s = (2K - delta(t))/ (2K + delta(t))
+$
+
+
+=== 7.4.2 单位线
+
+2参数gamma分布，作为单位线：
+
+#let uh = $bold("uh")$
+$
+  bold(uh)(tau) = 1 / (Gamma(a) theta^a) tau^(a - 1) e^(- tau/theta)
+$
+
+$a$是形状参数，默认为2.5；$theta$是时间参数，1h。
+
+众数：$(a - 1) theta$，方差：$a theta^2$
+
+$
+  q(t) = integral_0^{tau_max} uh(tau) thin R(t - tau) thin d tau
+$
+
+#let q = $gamma$
+#let tmax = "tmax"
+
+*uh从1开始*
+$
+  Q_1 & = r_1 uh_1 \
+  Q_2 & = r_2 uh_1 + r_1 uh_2 \
+  Q_3 & = r_3 uh_1 + r_2 uh_2 + r_1 uh_3 \
+  Q_4 & = r_4 uh_1 + r_3 uh_2 +r_2 uh_3 + r_1 uh_4 \
+  Q_t & = r_t uh_1 + r_{t-1} uh_2 + ... + r_{t - tmax + 1} uh_{tmax}
+$
+
+*uh从0开始*
+$
+  Q_1 & = r_1 uh_0 \
+  Q_2 & = r_2 uh_0 + r_1 uh_1 \
+  Q_3 & = r_3 uh_0 + r_2 uh_1 + r_1 uh_2 \
+  Q_4 & = r_4 uh_0 + r_3 uh_2 +r_2 uh_2 + r_1 uh_3 \
+  Q_t & = r_t uh_0 + r_{t-1} uh_1 + ... + r_{t - tmax + 1} uh_{tmax-1} + r_{t - tmax} uh_{tmax}
+$
