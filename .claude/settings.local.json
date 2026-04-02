@@ -3,7 +3,8 @@
     "allow": [
       "WebFetch(domain:docs.sciml.ai)",
       "WebFetch(domain:enzymead.github.io)",
-      "Bash(julia:*)"
+      "Bash(julia:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []
