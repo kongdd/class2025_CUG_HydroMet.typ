@@ -1,4 +1,4 @@
-#import "@preview/cetz:0.4.2"
+#import "@preview/cetz:0.5.3"
 #import cetz.draw: content, line, rect, set-style
 
 #let ss = h(0.4em)

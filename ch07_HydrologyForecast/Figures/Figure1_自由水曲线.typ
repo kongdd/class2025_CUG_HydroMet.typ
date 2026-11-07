@@ -1,5 +1,5 @@
-#import "@preview/cetz:0.4.2"
-#import "@preview/cetz-plot:0.1.2": plot
+#import "@preview/cetz:0.5.3"
+#import "@preview/cetz-plot:0.1.4": plot
 
 #import "cetz.typ": *
 

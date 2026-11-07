@@ -1,5 +1,5 @@
-#import "@preview/cetz:0.4.2"
-#import "@preview/cetz-plot:0.1.2": plot
+#import "@preview/cetz:0.5.3"
+#import "@preview/cetz-plot:0.1.4": plot
 
 #import "cetz.typ": *
 
@@ -179,9 +179,13 @@
 
 #figure(
   grid(
-    columns: 1,
-  )[#fig-W], //#[#fig-S],
+    columns: 2,
+    [#fig-W], //[#fig-S],
+  ),
   caption: [
-    新安江模型蓄水容量曲线（a）与自由水蓄量曲线（b）。
+    新安江模型蓄水容量曲线。\ //（a）与自由水蓄量曲线（b）。
+    蓄水容量曲线表示流域蓄水容量的空间分布：将各网格按蓄水容量从小到大排序，
+    横轴$alpha$为累计面积比例，纵轴$WM$为对应的蓄水容量。
+    // 蓄水容量曲线。
   ],
 ) <fig_>
