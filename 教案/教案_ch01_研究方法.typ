@@ -6,7 +6,6 @@
 #align(center)[
   #v(3cm)
   #image("./images/logo_cug.png", width: 7cm)
-
   #text(size: 24pt, font: "SimHei")[*教　师　教　案*]
 ]
 
