@@ -35,10 +35,10 @@ TIOBE 编程语言排行榜（#link("https://www.tiobe.com/tiobe-index/")[TIOBE 
 #figure(
   caption: [常用编程语言的特点比较],
   {
-    set par(leading: 0.5em, spacing: 0.65em, first-line-indent: 0em)
+    set par(leading: 0.4em, spacing: 0.65em, first-line-indent: 0em)
     table(
       columns: (2.5cm, w1, w1, w1, w1, 1.4cm),
-      rows: (1cm, 1.4cm),
+      rows: (0.9cm, 1.3cm),
       // (2.0cm, 1.9cm, 1.55cm),
       // inset: (x: 4pt, y: 4pt),
       align: (horizon),
@@ -70,6 +70,13 @@ TIOBE 编程语言排行榜（#link("https://www.tiobe.com/tiobe-index/")[TIOBE 
 
 - 专业相关包：见https://github.com/kongdd。
 
+#figure(
+  image("Figures/AI/code-action.png", width: 100%),
+  caption: [
+    Code Action代码与文件搜索工具。适用于Mac、Linux和Windows。
+  ],
+) <fig_>
+
 #v(1em)
 
 *网络上Rust重写运动*
@@ -77,7 +84,15 @@ TIOBE 编程语言排行榜（#link("https://www.tiobe.com/tiobe-index/")[TIOBE 
 - `arfcraft`: https://github.com/storytold，Adobe全家桶Rust重写，跨平台，性能高，安全性好、开软免费。
 - `craft-anything`： https://github.com/storytold/craft-anything
 - `rea`: 反汇编，逆向解析软件，https://github.com/morluto/rea
-- 
+- `terrio`: 空间数据处理，`https://github.com/opengeos/terrio`
+
+#v(1em)
+*新兴的陆面过程与气候模型*
+#h(1em) #beamer-block()[革Fortran的命]
+
+- `legoESM`: 基于Jax的气候模型，https://github.com/climate-federation/legoESM
+- `jax-gcm`: 基于Jax的全球大气环流模式，https://github.com/climate-analytics-lab/jax-gcm/
+- `ClimaLand.jl`：陆面过程模型，https://github.com/CliMA/ClimaLand.jl
 
 === 1.2.2 AI工具的选择
 
@@ -92,7 +107,7 @@ TIOBE 编程语言排行榜（#link("https://www.tiobe.com/tiobe-index/")[TIOBE 
     caption: [常用 AI 服务订阅指南 #v(1em)],
     table(
       columns: (2.6cm, 2.5cm, 1fr, 2.2cm, 2.8cm),
-      rows: (1.1cm, 1.1cm),
+      rows: (1.05cm, 1.0cm),
       inset: (x: 4pt, y: 6pt),
       align: horizon,
       [服务], [使用与订阅入口], [API 入口], [月费参考], [推荐等级\ (10分制)],
@@ -165,6 +180,7 @@ Harness 是连接大模型与本地工具的智能体运行环境，可辅助阅
     set par(leading: 0.65em, spacing: 0.65em, first-line-indent: 0em)
     table(
       columns: (3.5cm, 6.5cm, 6cm),
+      rows: (0.9cm, 1.2cm),
       inset: (x: 4pt, y: 6pt),
       align: horizon,
       [*工具*], [*优点*], [*缺点*],
@@ -181,12 +197,13 @@ Harness 是连接大模型与本地工具的智能体运行环境，可辅助阅
 ]
 
 #figure(
-  image("Figures/AI/pi-agent.png", width: 70%),
+  image("Figures/AI/pi-agent.png", width: 100%),
   caption: [
     私人定制的pi-agent。可图片交互，显示AI auota、Token Speed、上下文消耗。\
     ↑：上传的token数，↓：下载的token数，R：缓存。
   ],
 ) <fig_>
+
 
 
 
@@ -202,7 +219,7 @@ npm install -g @anthropic-ai/claude-code
   *教师的定位是：引导哪些方面是有价值的、值得学习的。*
 ]
 
-#pagebreak()
+// #pagebreak()
 === 1.2.3 必备的工具软件
 
 - *`Git`*          : #highlight[必备的]，版本控制，一定要掌握，否则AI会把你的文件搞乱
@@ -361,7 +378,8 @@ npm install -g @anthropic-ai/claude-code
   #figure(
     image("Figures/AI/termius.png", width: 100%),
     caption: [
-      Termius手机访问电脑。
+      Termius手机访问电脑。\
+      另一个同类软件见：https://play.google.com/store/apps/details?id=dev.herdr.mobile。
     ],
   ) <fig_>
 
@@ -453,26 +471,36 @@ SSH（Secure Shell）是加密的远程登录协议，用于安全地访问服�
 #pagebreak()
 === 1.2.5 需要掌握和训练的
 
-==== 1.2.5.1 数据处理、分析与绘图
+==== 1.2.5.1 专业知识积累
+
+有专业知识积累，才能解决专业相关的问题，增加自身竞争力和不可替代性。
+
+==== 1.2.5.2 Pi Agent使用
+
+靠谱的AI工具，能帮你解决99%的学习上的问题。
+
+==== 1.2.5.3 数据处理、分析与绘图
 
 R语言可极大的提高数据处理效率、绘图效率。代码简短，仅为Python的1/3。
 // R语言是统计学家、数据科学家最常用的工具。
 
-  - 1行代码读取、写入csv、xlsx数据
-  - 3行代码绘图
-  - 5行代码数据清洗：dplyr + magrittr
-  
-  #box-red()[
-    `magrittr`: 管道符，https://magrittr.tidyverse.org/reference/index.html \
-    `dplyr`   : 数据清洗神器，https://dplyr.tidyverse.org/reference/index.html \
-    `ggplot2` : 绘图神器，https://ggplot2.tidyverse.org/reference/index.html
-  ]
-  
-==== 1.2.5.2 Pi Agent的使用
+- 1行代码读取、写入csv、xlsx数据
+- 3行代码绘图
+- 5行代码数据清洗：dplyr + magrittr
 
-靠谱的AI工具，能帮你解决99%的学习上的问题。
 
-==== 1.2.5.3 Typst编写文档
+#box-red()[
+  #h(-2em)*需要学习的R包*：\
+  `magrittr`: 管道符，https://magrittr.tidyverse.org/reference/index.html \
+  `dplyr`   : 数据清洗神器，https://dplyr.tidyverse.org/reference/index.html \
+  `ggplot2` : 绘图神器，https://ggplot2.tidyverse.org/reference/index.html
+
+  #beamer-block()[一次课程掌握两个函数，学期结束就是高手了！]
+
+  #h(-2em)*R语言快速入门：* 之前在知乎的回答，https://www.zhihu.com/question/565396884/answer/2751392539。
+]
+
+==== 1.2.5.4 Typst文档编写
 
 研究方案写的好，AI才能理解你想做什么。
 
@@ -483,10 +511,6 @@ R语言可极大的提高数据处理效率、绘图效率。代码简短，仅�
 #box-red[
   这个步骤不要指望AI帮你完成。如果连做什么AI都帮你想好了，那你可以完全被AI取代了。
 ]
-
-==== 1.2.5.4 必要专业知识积累
-
-有专业知识积累，才能解决专业相关的问题，增加自身竞争力和不可替代性。
 
 ==== 1.2.5.5 科学严谨的思维
 

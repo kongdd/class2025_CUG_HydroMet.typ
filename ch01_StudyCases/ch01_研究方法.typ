@@ -128,8 +128,6 @@ $ P - E - R = Delta S + "Human" $ <eq_water_balance>
 ) <fig_>
 
 
-
-
 == 3.2 基本概念
 
 #v(-0.9em)
