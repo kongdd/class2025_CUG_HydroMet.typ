@@ -101,6 +101,21 @@ $ y = a x + b $ <eq_1>
 ```
 // #pagebreak()
 
+=== 1.2.5 高效插件
+
+#v(-1em)
+#figure(
+  image("Figures/AI/copy_equation.png", width: 90%),
+  caption: [
+    Copy Online Latex Equations插件。链接见
+    https://chromewebstore.google.com/detail/copy-equation-from-online/eabbdifmnjhfgbmcabbojejdaadjeaak。
+  ]
+) <fig_>
+
+#beamer-block[
+  可以直接复制网页上的公式，粘贴到Typst中，自动转换为Typst语法。
+]
+
 == 1.3 R语言代码管理
 
 #figure(
@@ -186,8 +201,8 @@ cd /data/user/046241_$name # 切换到工作目录
 ```bash
 # 编辑 .envrc 文件，添加以下内容，*路径改成自己的*：
 export dir_root="/data/users/046242_**"
-export GH_CONFIG_DIR="$dir_root/.gh"
 export PI_CODING_AGENT_DIR="$dir_root/.pi"
+export GH_CONFIG_DIR="$dir_root/.gh"
 export GIT_CONFIG_GLOBAL="$dir_root/.gitconfig"
 ```
 
@@ -195,7 +210,7 @@ export GIT_CONFIG_GLOBAL="$dir_root/.gitconfig"
 
 ```bash
 # 配置git用户名和邮箱
-git config --global user.name "Dongdong Kong"
+git config --global user.name "你的姓名"
 git config --global user.email "你的GitHub邮箱"
 ```
 
@@ -220,6 +235,11 @@ gh auth status # 查看登录状态
 *步骤2*：切换到自己的目录。将`pi-vscode-context.ts`文件复制到`$PI_CODING_AGENT_DIR/extensions/`目录下，重启vscode即可。`pi-vscode-context.ts`见：https://github.com/kongdd/kong-pi-extension/blob/master/extensions/pi-vscode-context.ts。
 
 *步骤3*: VSCode中选中一些行，pi中就能看到了。
+
+  ```bash
+  # windows系统
+  cd ~/.pi/agent; mkdir extensions; start extensions
+  ```
 
 
 === 1.4.3 使用模版

@@ -7,9 +7,9 @@
 //   height: 9in * scale,
 //   margin: 0.2in,
 // )
-#show: doc => template(doc, size-config: (raw: 9pt), footer: "CUG水文气象学2025", header: "第1章 研究方法")
+#show: doc => template(doc, size-config: (raw: 9pt), footer: "CUG水文气象学2026", header: "第2.1章 研究方法")
 
-= 第1章 水文气象学研究方法 // <!-- omit in toc -->
+= 第2.1章 水文气象学研究方法 // <!-- omit in toc -->
 
 #outline(
   title: "目录",
@@ -19,43 +19,8 @@
 
 #pagebreak()
 
-= 1 AI学习法
-
-#h(2em)
-抛弃word的原因：AI难以读取word内容，难以操作word插入内容。而typst作为纯文本标记语言，AI可以轻松读取和编辑内容，能够直接插入文本、代码和公式，同时支持版本控制，非常适合与AI协作编写技术文档。
-
-#h(2em)
-AI能看到我们在编辑器中选择了哪些内容，必要时可读取上下文，能理解typst语法，并生成typst公式和文本。
-能帮我们解释我们看不懂的公式，能帮我补全相关章节的理论内容，....。
-
-#figure(
-  image("Figures/Claude_01.png", width: 70%),
-  caption: [
-    Claude交互编辑过程。
-  ],
-) <fig_>
-
-== 1.1 安装方法
-
-- Claude付费用户
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
-scoop install nodejs
-npm install -g @anthropic-ai/claude-code
-```
-
-- 国产大模型智普
-```powershell
-code $profile
-# 请私信我索要API
-$env:ANTHROPIC_AUTH_TOKEN = "78ebe840d4c24f1b8387b5a1384ed747.jVlWgUA2MsJrg"
-$env:ANTHROPIC_BASE_URL = "https://open.bigmodel.cn/api/anthropic"
-$env:API_TIMEOUT_MS = "3000000"
-$env:CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = 1
-```
-
-= 2 干旱的主要研究方法
+= 1 干旱的主要研究方法
+#v(1em)
 
 水量平衡是分析干旱的基本框架：
 
@@ -92,7 +57,7 @@ $ P - E - R = Delta S + "Human" $ <eq_water_balance>
 ]
 
 
-== 2.1 干旱的分类
+== 1.1 干旱的分类
 
 根据影响领域和表现形式，干旱可分为：
 
@@ -107,9 +72,9 @@ $ P - E - R = Delta S + "Human" $ <eq_water_balance>
 
 
 
-= 3 洪水过程
+= 2 洪水过程
 
-== 3.1 研究目的
+== 2.1 研究目的
 
 能够提前预知洪水信息：包括洪峰、洪量、峰现时间。
 
@@ -128,11 +93,11 @@ $ P - E - R = Delta S + "Human" $ <eq_water_balance>
 ) <fig_>
 
 
-== 3.2 基本概念
+== 2.2 基本概念
 
 #v(-0.9em)
 
-=== 3.2.1 水文循环过程
+=== 2.2.1 水文循环过程
 
 #figure(
   image("Figures/水文循环.png", width: 100%),
@@ -149,7 +114,7 @@ $ P - E - R = Delta S + "Human" $ <eq_water_balance>
   ],
 ) <fig_>
 
-=== 3.2.2 流域
+=== 2.2.2 流域
 
 分水线所形成的闭合区域，分水线一般为提防、山脊等高地。
 
@@ -167,7 +132,7 @@ $ P - E - R = Delta S + "Human" $ <eq_water_balance>
   ],
 ) <fig_>
 
-=== 3.2.3 流域面积
+=== 2.2.3 流域面积
 
 哪些区域的降水会从该出水口流出？是影响流量、洪峰大小的重要因素。
 
@@ -188,7 +153,7 @@ $ P - E - R = Delta S + "Human" $ <eq_water_balance>
   ],
 ) <fig_>
 
-=== 3.2.4 汇流时间
+=== 2.2.4 汇流时间
 
 降雨洪水从流域最远处汇集到出口的时间，反映流域水文响应速度。
 
@@ -209,7 +174,7 @@ $ P - E - R = Delta S + "Human" $ <eq_water_balance>
 ) <fig_>
 
 
-=== 3.2.5 地下面属性与空间异质性
+=== 2.2.5 地下面属性与空间异质性
 
 #figure(
   image("Figures/空间异质性.png", width: 70%),
@@ -226,7 +191,7 @@ $ P - E - R = Delta S + "Human" $ <eq_water_balance>
 ) <fig_>
 
 
-== 3.3 曼宁公式
+== 2.3 曼宁公式
 
 #beamer-block[曼宁公式，#Blue[用于研究地表产流]，包括坡面与河道径流。]
 
@@ -259,7 +224,7 @@ $Q$是流量，过断面单位时间体积流量 $Q = V times A$，单位 $m^3\/
   ],
 ) <fig_>
 
-=== 3.3.1 坡面汇流
+=== 2.3.1 坡面汇流
 
 对于坡面径流，$A = h b$，$P = 2h + b$。其中$b$为宽，$h$为水深，$b >> h$。
 
@@ -296,7 +261,7 @@ $ pdv(Q, x) + pdv(A, t) = q $
 
 *该方程的作用*：已知入流$Q(x, t)$与河道断面信息$A(x, t)、A(x, t + delta(t))$，求解出流$Q(x + delta(x), t)$。
 
-=== 3.3.2 河道汇流
+=== 2.3.2 河道汇流
 
 #figure(
   image("Figures/河道断面.png", width: 90%),
@@ -306,7 +271,7 @@ $ pdv(Q, x) + pdv(A, t) = q $
 ) <fig_>
 
 
-=== 3.3.3 下渗
+=== 2.3.3 下渗
 
 净雨到达地表之后，分为三部分：地表积水、地表产流与下渗。
 
@@ -359,7 +324,7 @@ inf = min(inf_potential * dt_h, water_available)  # [cm]
 z_water_new = water_available - inf  # [cm]
 ```
 
-== 3.4 达西定律
+== 2.4 达西定律
 
 #figure(
   image("Figures/土壤水运动.png", width: 100%),
@@ -375,7 +340,7 @@ z_water_new = water_available - inf  # [cm]
   ],
 ) <fig_>
 
-= 4 陆面植被过程
+= 3 陆面植被过程
 
 #figure(
   image("Figures/SPAC连续体.png", width: 80%),
@@ -384,7 +349,7 @@ z_water_new = water_available - inf  # [cm]
   ],
 ) <fig_>
 
-== 4.1 植被对水文过程的影响
+== 3.1 植被对水文过程的影响
 
 1. 冠层截留蒸发
 
@@ -414,7 +379,7 @@ z_water_new = water_available - inf  # [cm]
   ],
 ) <fig_>
 
-== 4.2 水文过程对植被的影响
+== 3.2 水文过程对植被的影响
 
 1. 干旱
 
